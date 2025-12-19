@@ -1,10 +1,24 @@
+import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { LicenseTable } from "@/components/dashboard/LicenseTable";
+import { LicenseFormModal, LicenseFormData } from "@/components/licenses/LicenseFormModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Filter, Search } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const LicensesPage = () => {
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleAddLicense = (data: LicenseFormData) => {
+    console.log("New license:", data);
+    toast({
+      title: "Lisans Eklendi",
+      description: `${data.name} lisansı başarıyla oluşturuldu.`,
+    });
+  };
+
   return (
     <MainLayout>
       <Header title="Lisanslar" subtitle="Tüm lisanslarınızı görüntüleyin ve yönetin" />
@@ -29,7 +43,7 @@ const LicensesPage = () => {
               <Download className="h-4 w-4 mr-2" />
               Dışa Aktar
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Yeni Lisans
             </Button>
@@ -39,6 +53,13 @@ const LicensesPage = () => {
         {/* License Table */}
         <LicenseTable />
       </div>
+
+      {/* Add License Modal */}
+      <LicenseFormModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onSubmit={handleAddLicense}
+      />
     </MainLayout>
   );
 };
