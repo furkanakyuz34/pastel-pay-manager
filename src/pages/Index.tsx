@@ -1,12 +1,27 @@
+import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { LicenseTable } from "@/components/dashboard/LicenseTable";
 import { PaymentList } from "@/components/dashboard/PaymentList";
 import { Button } from "@/components/ui/button";
+import { LicenseFormModal, LicenseFormData } from "@/components/licenses/LicenseFormModal";
 import { KeyRound, CreditCard, TrendingUp, Users, Plus, Download } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleAddLicense = (data: LicenseFormData) => {
+    // In a real app, this would make an API call
+    console.log("New license:", data);
+    toast({
+      title: "Lisans Eklendi",
+      description: `${data.name} lisansı başarıyla oluşturuldu.`,
+    });
+  };
+
   return (
     <MainLayout>
       <Header title="Dashboard" subtitle="Lisans ve ödeme işlemlerinizi takip edin" />
@@ -62,7 +77,7 @@ const Index = () => {
                   <Download className="h-4 w-4 mr-2" />
                   Dışa Aktar
                 </Button>
-                <Button size="sm">
+                <Button size="sm" onClick={() => setAddModalOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Yeni Lisans
                 </Button>
@@ -86,6 +101,13 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Add License Modal */}
+      <LicenseFormModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onSubmit={handleAddLicense}
+      />
     </MainLayout>
   );
 };

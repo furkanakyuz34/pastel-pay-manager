@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
@@ -7,18 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LicenseFormModal, License, LicenseFormData } from "@/components/licenses/LicenseFormModal";
+import { DeleteLicenseDialog } from "@/components/licenses/DeleteLicenseDialog";
+import { useToast } from "@/hooks/use-toast";
 
-interface License {
-  id: string;
-  name: string;
-  customer: string;
-  type: string;
-  status: "active" | "expired" | "pending";
-  expiryDate: string;
-  amount: string;
-}
-
-const licenses: License[] = [
+const initialLicenses: License[] = [
   {
     id: "LIC-001",
     name: "Enterprise Pro",
@@ -72,95 +66,170 @@ const statusConfig = {
   pending: { label: "Beklemede", variant: "pending" as const },
 };
 
-export function LicenseTable() {
+interface LicenseTableProps {
+  onAddClick?: () => void;
+  showAddButton?: boolean;
+}
+
+export function LicenseTable({ onAddClick, showAddButton = false }: LicenseTableProps) {
+  const [licenses, setLicenses] = useState<License[]>(initialLicenses);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedLicense, setSelectedLicense] = useState<License | null>(null);
+  const { toast } = useToast();
+
+  const handleEdit = (license: License) => {
+    setSelectedLicense(license);
+    setEditModalOpen(true);
+  };
+
+  const handleDelete = (license: License) => {
+    setSelectedLicense(license);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedLicense) {
+      setLicenses((prev) => prev.filter((l) => l.id !== selectedLicense.id));
+      toast({
+        title: "Lisans Silindi",
+        description: `${selectedLicense.name} lisansı başarıyla silindi.`,
+      });
+      setSelectedLicense(null);
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  const handleUpdateLicense = (data: LicenseFormData) => {
+    if (selectedLicense) {
+      setLicenses((prev) =>
+        prev.map((l) =>
+          l.id === selectedLicense.id
+            ? {
+                ...l,
+                name: data.name,
+                customer: data.customer,
+                type: data.type,
+                status: data.status,
+                expiryDate: data.expiryDate.toISOString().split("T")[0],
+                amount: `₺${data.amount}`,
+              }
+            : l
+        )
+      );
+      setSelectedLicense(null);
+    }
+  };
+
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card animate-slide-up" style={{ animationDelay: "200ms" }}>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border bg-muted/50">
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Lisans ID
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Müşteri
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Tip
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Durum
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Bitiş Tarihi
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Tutar
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                İşlem
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {licenses.map((license) => (
-              <tr
-                key={license.id}
-                className="transition-colors hover:bg-muted/30"
-              >
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div>
-                    <p className="font-medium text-foreground">{license.id}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {license.name}
-                    </p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-foreground">
-                  {license.customer}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <Badge variant="secondary">{license.type}</Badge>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <Badge variant={statusConfig[license.status].variant}>
-                    {statusConfig[license.status].label}
-                  </Badge>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-foreground">
-                  {new Date(license.expiryDate).toLocaleDateString("tr-TR")}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 font-medium text-foreground">
-                  {license.amount}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Görüntüle
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Düzenle
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Sil
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
+    <>
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card animate-slide-up" style={{ animationDelay: "200ms" }}>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border bg-muted/50">
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Lisans ID
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Müşteri
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Tip
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Durum
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Bitiş Tarihi
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Tutar
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  İşlem
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {licenses.map((license) => (
+                <tr
+                  key={license.id}
+                  className="transition-colors hover:bg-muted/30"
+                >
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <div>
+                      <p className="font-medium text-foreground">{license.id}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {license.name}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-foreground">
+                    {license.customer}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <Badge variant="secondary">{license.type}</Badge>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <Badge variant={statusConfig[license.status].variant}>
+                      {statusConfig[license.status].label}
+                    </Badge>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-foreground">
+                    {new Date(license.expiryDate).toLocaleDateString("tr-TR")}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 font-medium text-foreground">
+                    {license.amount}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          Görüntüle
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEdit(license)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Düzenle
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleDelete(license)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Sil
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {/* Edit Modal */}
+      <LicenseFormModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        license={selectedLicense}
+        onSubmit={handleUpdateLicense}
+      />
+
+      {/* Delete Dialog */}
+      <DeleteLicenseDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        licenseName={selectedLicense?.name || ""}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   );
 }
