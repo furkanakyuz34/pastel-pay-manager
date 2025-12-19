@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { PaymentList } from "@/components/dashboard/PaymentList";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { PaymentFormModal, PaymentFormData } from "@/components/payments/PaymentFormModal";
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -12,8 +14,20 @@ import {
   Clock, 
   AlertCircle 
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const PaymentsPage = () => {
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleAddPayment = (data: PaymentFormData) => {
+    console.log("New payment:", data);
+    toast({
+      title: "Ödeme Eklendi",
+      description: `${data.description} işlemi başarıyla oluşturuldu.`,
+    });
+  };
+
   return (
     <MainLayout>
       <Header title="Ödemeler" subtitle="Paynet ödeme işlemlerini takip edin" />
@@ -67,7 +81,7 @@ const PaymentsPage = () => {
               <Download className="h-4 w-4 mr-2" />
               Rapor İndir
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Manuel Ödeme
             </Button>
@@ -79,6 +93,13 @@ const PaymentsPage = () => {
           <PaymentList />
         </div>
       </div>
+
+      {/* Add Payment Modal */}
+      <PaymentFormModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onSubmit={handleAddPayment}
+      />
     </MainLayout>
   );
 };

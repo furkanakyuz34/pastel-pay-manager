@@ -1,18 +1,19 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, ArrowDownRight, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight, ArrowDownRight, Clock, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { PaymentFormModal, Payment, PaymentFormData } from "@/components/payments/PaymentFormModal";
+import { DeletePaymentDialog } from "@/components/payments/DeletePaymentDialog";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
-interface Payment {
-  id: string;
-  description: string;
-  customer: string;
-  amount: string;
-  status: "completed" | "pending" | "failed";
-  date: string;
-  type: "incoming" | "outgoing";
-}
-
-const payments: Payment[] = [
+const initialPayments: Payment[] = [
   {
     id: "PAY-001",
     description: "Enterprise Pro Lisans Ödemesi",
@@ -66,59 +67,158 @@ const statusConfig = {
   failed: { label: "Başarısız", variant: "destructive" as const },
 };
 
-export function PaymentList() {
+interface PaymentListProps {
+  showActions?: boolean;
+}
+
+export function PaymentList({ showActions = true }: PaymentListProps) {
+  const [payments, setPayments] = useState<Payment[]>(initialPayments);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const { toast } = useToast();
+
+  const handleEdit = (payment: Payment) => {
+    setSelectedPayment(payment);
+    setEditModalOpen(true);
+  };
+
+  const handleDelete = (payment: Payment) => {
+    setSelectedPayment(payment);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedPayment) {
+      setPayments((prev) => prev.filter((p) => p.id !== selectedPayment.id));
+      toast({
+        title: "Ödeme Silindi",
+        description: `${selectedPayment.description} işlemi başarıyla silindi.`,
+      });
+      setSelectedPayment(null);
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  const handleUpdatePayment = (data: PaymentFormData) => {
+    if (selectedPayment) {
+      setPayments((prev) =>
+        prev.map((p) =>
+          p.id === selectedPayment.id
+            ? {
+                ...p,
+                description: data.description,
+                customer: data.customer,
+                type: data.type,
+                status: data.status,
+                date: data.date.toISOString().split("T")[0],
+                amount: `₺${data.amount}`,
+              }
+            : p
+        )
+      );
+      setSelectedPayment(null);
+    }
+  };
+
   return (
-    <div className="space-y-3 animate-slide-up" style={{ animationDelay: "300ms" }}>
-      {payments.map((payment) => (
-        <div
-          key={payment.id}
-          className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-200 hover:shadow-card-hover"
-        >
-          {/* Icon */}
+    <>
+      <div className="space-y-3 animate-slide-up" style={{ animationDelay: "300ms" }}>
+        {payments.map((payment) => (
           <div
-            className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-full",
-              payment.type === "incoming"
-                ? "bg-success/15 text-success"
-                : "bg-destructive/15 text-destructive"
-            )}
+            key={payment.id}
+            className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-200 hover:shadow-card-hover"
           >
-            {payment.status === "pending" ? (
-              <Clock className="h-5 w-5" />
-            ) : payment.type === "incoming" ? (
-              <ArrowDownRight className="h-5 w-5" />
-            ) : (
-              <ArrowUpRight className="h-5 w-5" />
-            )}
-          </div>
-
-          {/* Details */}
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-foreground truncate">
-              {payment.description}
-            </p>
-            <p className="text-sm text-muted-foreground">{payment.customer}</p>
-          </div>
-
-          {/* Amount & Status */}
-          <div className="text-right">
-            <p
+            {/* Icon */}
+            <div
               className={cn(
-                "font-semibold",
+                "flex h-10 w-10 items-center justify-center rounded-full shrink-0",
                 payment.type === "incoming"
-                  ? "text-success"
-                  : "text-destructive"
+                  ? "bg-success/15 text-success"
+                  : "bg-destructive/15 text-destructive"
               )}
             >
-              {payment.type === "incoming" ? "+" : "-"}
-              {payment.amount}
-            </p>
-            <Badge variant={statusConfig[payment.status].variant} className="mt-1">
-              {statusConfig[payment.status].label}
-            </Badge>
+              {payment.status === "pending" ? (
+                <Clock className="h-5 w-5" />
+              ) : payment.type === "incoming" ? (
+                <ArrowDownRight className="h-5 w-5" />
+              ) : (
+                <ArrowUpRight className="h-5 w-5" />
+              )}
+            </div>
+
+            {/* Details */}
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-foreground truncate">
+                {payment.description}
+              </p>
+              <p className="text-sm text-muted-foreground">{payment.customer}</p>
+            </div>
+
+            {/* Amount & Status */}
+            <div className="text-right shrink-0">
+              <p
+                className={cn(
+                  "font-semibold",
+                  payment.type === "incoming"
+                    ? "text-success"
+                    : "text-destructive"
+                )}
+              >
+                {payment.type === "incoming" ? "+" : "-"}
+                {payment.amount}
+              </p>
+              <Badge variant={statusConfig[payment.status].variant} className="mt-1">
+                {statusConfig[payment.status].label}
+              </Badge>
+            </div>
+
+            {/* Actions */}
+            {showActions && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <Eye className="mr-2 h-4 w-4" />
+                    Görüntüle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleEdit(payment)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Düzenle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="text-destructive"
+                    onClick={() => handleDelete(payment)}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Sil
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      {/* Edit Modal */}
+      <PaymentFormModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        payment={selectedPayment}
+        onSubmit={handleUpdatePayment}
+      />
+
+      {/* Delete Dialog */}
+      <DeletePaymentDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        paymentDescription={selectedPayment?.description || ""}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   );
 }
