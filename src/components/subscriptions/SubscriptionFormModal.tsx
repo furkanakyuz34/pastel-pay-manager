@@ -35,10 +35,11 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { Customer } from "@/components/customers/CustomerFormModal";
-import { Plan } from "@/components/plans/PlanFormModal";
+import { Subscription, Customer, Plan } from "@/types";
 
 const subscriptionSchema = z.object({
   customerId: z.string().min(1, "Müşteri seçiniz"),
@@ -48,11 +49,12 @@ const subscriptionSchema = z.object({
   startDate: z.date({ required_error: "Başlangıç tarihi seçiniz" }),
   nextBillingDate: z.date().optional(),
   trialEndDate: z.date().optional(),
+  autoRenew: z.boolean().default(true),
 
-  // Paynet API fields
+  // iyzico/Paynet API fields
   name_surname: z.string().min(2, "İsim ve soyisim giriniz"),
   amount: z.string().min(1, "Tutar giriniz").regex(/^[\d.,]+$/, "Geçerli bir tutar giriniz"),
-  interval: z.number().min(0).max(3, "Geçersiz interval").default(2), // 0:Günlük, 1:Haftalık, 2:Aylık, 3:Yıllık
+  interval: z.number().min(0).max(3, "Geçersiz interval").default(2),
   interval_count: z.number().min(1, "En az 1 olmalıdır"),
   begin_date: z.date({ required_error: "Başlangıç tarihi seçiniz" }),
   reference_no: z.string().min(1, "Referans numarası giriniz"),
@@ -63,7 +65,7 @@ const subscriptionSchema = z.object({
   company_amount: z.string().optional(),
   end_user_desc: z.string().min(1, "Açıklama giriniz"),
   add_comission_to_amount: z.boolean().default(false),
-  currency: z.string().default("TL"),
+  currency: z.string().default("TRY"),
   period: z.number().optional(),
   user_name: z.string().optional(),
   agent_note: z.string().optional(),
@@ -74,7 +76,6 @@ const subscriptionSchema = z.object({
   send_mail: z.boolean().default(false),
   send_sms: z.boolean().default(false),
   is_fixed_price: z.boolean().default(true),
-  auto_renew: z.boolean().default(true),
   agent_logo: z.string().optional(),
   attempt_day_count: z.number().min(1).max(30).default(3),
   daily_attempt_count: z.number().min(1).max(10).default(3),
@@ -84,21 +85,6 @@ const subscriptionSchema = z.object({
 });
 
 export type SubscriptionFormData = z.infer<typeof subscriptionSchema>;
-
-export interface Subscription {
-  id: string;
-  customerId: string;
-  customerName: string;
-  planId: string;
-  planName: string;
-  billingCycle: "monthly" | "yearly" | "trial";
-  status: "active" | "cancelled" | "expired" | "trial" | "pending";
-  startDate: string;
-  nextBillingDate?: string;
-  trialEndDate?: string;
-  amount: string;
-  autoRenew: boolean;
-}
 
 interface SubscriptionFormModalProps {
   open: boolean;
@@ -130,11 +116,12 @@ export function SubscriptionFormModal({
       startDate: subscription?.startDate ? new Date(subscription.startDate) : undefined,
       nextBillingDate: subscription?.nextBillingDate ? new Date(subscription.nextBillingDate) : undefined,
       trialEndDate: subscription?.trialEndDate ? new Date(subscription.trialEndDate) : undefined,
+      autoRenew: subscription?.autoRenew ?? true,
 
-      // Paynet API defaults
+      // iyzico/Paynet API defaults
       name_surname: subscription?.name_surname || "",
       amount: subscription?.amount || "",
-      interval: subscription?.interval ?? 2, // Default to monthly
+      interval: subscription?.interval ?? 2,
       interval_count: subscription?.interval_count || 12,
       begin_date: subscription?.begin_date ? new Date(subscription.begin_date) : undefined,
       reference_no: subscription?.reference_no || "",
@@ -145,7 +132,7 @@ export function SubscriptionFormModal({
       company_amount: subscription?.company_amount || "",
       end_user_desc: subscription?.end_user_desc || "",
       add_comission_to_amount: subscription?.add_comission_to_amount ?? false,
-      currency: subscription?.currency || "TL",
+      currency: subscription?.currency || "TRY",
       period: subscription?.period || 0,
       user_name: subscription?.user_name || "",
       agent_note: subscription?.agent_note || "",
@@ -156,7 +143,6 @@ export function SubscriptionFormModal({
       send_mail: subscription?.send_mail ?? false,
       send_sms: subscription?.send_sms ?? false,
       is_fixed_price: subscription?.is_fixed_price ?? true,
-      auto_renew: subscription?.auto_renew ?? true,
       agent_logo: subscription?.agent_logo || "",
       attempt_day_count: subscription?.attempt_day_count ?? 3,
       daily_attempt_count: subscription?.daily_attempt_count ?? 3,
@@ -184,7 +170,6 @@ export function SubscriptionFormModal({
     }
   }, [selectedCustomerId, availablePlans, form]);
 
-  // Calculate next billing date based on billing cycle
   const calculateNextBillingDate = (startDate: Date, billingCycle: "monthly" | "yearly" | "trial") => {
     const nextDate = new Date(startDate);
     if (billingCycle === "monthly") {
@@ -234,7 +219,7 @@ export function SubscriptionFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto bg-card border-border">
+      <DialogContent className="w-[95vw] max-w-[700px] max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-foreground">
             {isEditing ? "Aboneliği Düzenle" : "Yeni Abonelik Oluştur"}
@@ -248,279 +233,235 @@ export function SubscriptionFormModal({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {/* Customer Selection */}
-            <FormField
-              control={form.control}
-              name="customerId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Müşteri</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue placeholder="Müşteri seçin" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {customers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id}>
-                          {customer.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="basic">Temel Bilgiler</TabsTrigger>
+                <TabsTrigger value="payment">Ödeme Ayarları</TabsTrigger>
+                <TabsTrigger value="advanced">Gelişmiş</TabsTrigger>
+              </TabsList>
 
-            {/* Plan Selection */}
-            <FormField
-              control={form.control}
-              name="planId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Abonelik Planı</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                    disabled={!selectedCustomerId}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue placeholder={selectedCustomerId ? "Plan seçin" : "Önce müşteri seçin"} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {availablePlans.length > 0 ? (
-                        availablePlans.map((plan) => (
-                          <SelectItem key={plan.id} value={plan.id}>
-                            {plan.name} - ₺{plan.monthlyPrice}/ay
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                          {selectedCustomerId ? "Bu müşteriye ait plan bulunmamaktadır" : "Önce müşteri seçin"}
+              <TabsContent value="basic" className="space-y-4 mt-4">
+                {/* Customer Selection */}
+                <FormField
+                  control={form.control}
+                  name="customerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Müşteri</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-background border-border">
+                            <SelectValue placeholder="Müşteri seçin" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {customers.map((customer) => (
+                            <SelectItem key={customer.id} value={customer.id}>
+                              {customer.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Plan Selection */}
+                <FormField
+                  control={form.control}
+                  name="planId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Abonelik Planı</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                        disabled={!selectedCustomerId}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-background border-border">
+                            <SelectValue placeholder={selectedCustomerId ? "Plan seçin" : "Önce müşteri seçin"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {availablePlans.length > 0 ? (
+                            availablePlans.map((plan) => (
+                              <SelectItem key={plan.id} value={plan.id}>
+                                {plan.name} - {plan.monthlyPrice}/ay
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                              {selectedCustomerId ? "Bu müşteriye ait plan bulunmamaktadır" : "Önce müşteri seçin"}
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      {selectedPlan && (
+                        <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                          {selectedPlan.description && <p>{selectedPlan.description}</p>}
+                          {selectedPlan.projectName && <p>Proje: {selectedPlan.projectName}</p>}
+                          {selectedPlan.productNames && selectedPlan.productNames.length > 0 && (
+                            <p>Ürünler: {selectedPlan.productNames.join(", ")}</p>
+                          )}
                         </div>
                       )}
-                    </SelectContent>
-                  </Select>
-                  {selectedPlan && (
-                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
-                      {selectedPlan.description && <p>{selectedPlan.description}</p>}
-                      {selectedPlan.projectName && (
-                        <p>Proje: {selectedPlan.projectName}</p>
-                      )}
-                      {selectedPlan.productNames && selectedPlan.productNames.length > 0 && (
-                        <p>Ürünler: {selectedPlan.productNames.join(", ")}</p>
-                      )}
-                    </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                />
 
-            {/* Billing Cycle & Status Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="billingCycle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Faturalama Döngüsü</FormLabel>
-                    <Select 
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        handleBillingCycleChange(value as "monthly" | "yearly" | "trial");
-                      }} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Döngü seçin" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="monthly">Aylık</SelectItem>
-                        <SelectItem value="yearly">Yıllık</SelectItem>
-                        <SelectItem value="trial">Deneme (14 gün)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Durum</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Durum seçin" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="active">Aktif</SelectItem>
-                        <SelectItem value="trial">Deneme</SelectItem>
-                        <SelectItem value="pending">Beklemede</SelectItem>
-                        <SelectItem value="cancelled">İptal Edildi</SelectItem>
-                        <SelectItem value="expired">Süresi Doldu</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Start Date */}
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Başlangıç Tarihi</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "pl-3 text-left font-normal bg-background border-border",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "dd MMM yyyy", { locale: tr })
-                          ) : (
-                            <span>Tarih seçin</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => {
-                          field.onChange(date);
-                          if (date) handleStartDateChange(date);
-                        }}
-                        initialFocus
-                        className="p-3 pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Next Billing Date or Trial End Date */}
-            {selectedBillingCycle === "trial" ? (
-              <FormField
-                control={form.control}
-                name="trialEndDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Deneme Bitiş Tarihi</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "pl-3 text-left font-normal bg-background border-border",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "dd MMM yyyy", { locale: tr })
-                            ) : (
-                              <span>Tarih seçin</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : (
-              <FormField
-                control={form.control}
-                name="nextBillingDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Sonraki Faturalama Tarihi</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "pl-3 text-left font-normal bg-background border-border",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "dd MMM yyyy", { locale: tr })
-                            ) : (
-                              <span>Tarih seçin</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {/* Paynet API Fields */}
-            <div className="border-t border-border pt-4 mt-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Paynet Ödeme Bilgileri</h3>
-
-              {/* User Information Section */}
-              <div className="space-y-4 mb-6">
-                <h4 className="text-sm font-medium text-foreground">Kullanıcı Bilgileri</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Billing Cycle & Status Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="name_surname"
+                    name="billingCycle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>İsim Soyisim *</FormLabel>
+                        <FormLabel>Faturalama Döngüsü</FormLabel>
+                        <Select 
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            handleBillingCycleChange(value as "monthly" | "yearly" | "trial");
+                          }} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="bg-background border-border">
+                              <SelectValue placeholder="Döngü seçin" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="monthly">Aylık</SelectItem>
+                            <SelectItem value="yearly">Yıllık</SelectItem>
+                            <SelectItem value="trial">Deneme (14 gün)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Durum</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-background border-border">
+                              <SelectValue placeholder="Durum seçin" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="active">Aktif</SelectItem>
+                            <SelectItem value="trial">Deneme</SelectItem>
+                            <SelectItem value="pending">Beklemede</SelectItem>
+                            <SelectItem value="cancelled">İptal Edildi</SelectItem>
+                            <SelectItem value="expired">Süresi Doldu</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Start Date */}
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Başlangıç Tarihi</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "pl-3 text-left font-normal bg-background border-border",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "dd MMM yyyy", { locale: tr })
+                              ) : (
+                                <span>Tarih seçin</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              if (date) handleStartDateChange(date);
+                            }}
+                            initialFocus
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Auto Renew */}
+                <FormField
+                  control={form.control}
+                  name="autoRenew"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Otomatik Yenileme</FormLabel>
+                        <p className="text-xs text-muted-foreground">
+                          Abonelik süresi dolduğunda otomatik olarak yenilensin
+                        </p>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+
+              <TabsContent value="payment" className="space-y-4 mt-4">
+                {/* Name Surname */}
+                <FormField
+                  control={form.control}
+                  name="name_surname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ad Soyad</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Müşteri adı soyadı" className="bg-background" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Amount & Currency */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="amount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tutar</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ad Soyad" {...field} className="bg-background border-border" />
+                          <Input {...field} placeholder="0.00" className="bg-background" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -528,60 +469,99 @@ export function SubscriptionFormModal({
                   />
                   <FormField
                     control={form.control}
+                    name="currency"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Para Birimi</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-background">
+                              <SelectValue placeholder="Para birimi" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="TRY">TRY</SelectItem>
+                            <SelectItem value="USD">USD</SelectItem>
+                            <SelectItem value="EUR">EUR</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Email & GSM */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
                     name="end_user_email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email *</FormLabel>
+                        <FormLabel>E-posta</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="email@example.com" {...field} className="bg-background border-border" />
+                          <Input {...field} type="email" placeholder="ornek@email.com" className="bg-background" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="end_user_gsm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>GSM</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="5XXXXXXXXX" className="bg-background" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+
+                {/* Reference No & Description */}
                 <FormField
                   control={form.control}
-                  name="end_user_gsm"
+                  name="reference_no"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>GSM Numarası *</FormLabel>
+                      <FormLabel>Referans No</FormLabel>
                       <FormControl>
-                        <Input placeholder="+905XXXXXXXXX" {...field} className="bg-background border-border" />
+                        <Input {...field} placeholder="Benzersiz referans numarası" className="bg-background" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {/* Payment Details Section */}
-              <div className="space-y-4 mb-6">
-                <h4 className="text-sm font-medium text-foreground">Ödeme Detayları</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tutar (×100) *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="1000" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="end_user_desc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Açıklama</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Ödeme açıklaması" className="bg-background" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Interval Settings */}
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="interval"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Periyod *</FormLabel>
-                        <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={field.value?.toString()}>
+                        <FormLabel>Periyot Tipi</FormLabel>
+                        <Select onValueChange={(v) => field.onChange(parseInt(v))} defaultValue={field.value?.toString()}>
                           <FormControl>
-                            <SelectTrigger className="bg-background border-border">
-                              <SelectValue placeholder="Periyod seçin" />
+                            <SelectTrigger className="bg-background">
+                              <SelectValue placeholder="Periyot tipi" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -600,261 +580,32 @@ export function SubscriptionFormModal({
                     name="interval_count"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Çekim Adedi *</FormLabel>
+                        <FormLabel>Periyot Sayısı</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="12" {...field} onChange={(e) => field.onChange(Number(e.target.value))} className="bg-background border-border" />
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            className="bg-background" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="begin_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Başlangıç Tarihi *</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "pl-3 text-left font-normal bg-background border-border",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "dd MMM yyyy", { locale: tr })
-                                ) : (
-                                  <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                              className="p-3 pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="reference_no"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Referans No *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="REF-001" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
 
-              {/* Commission & Amount Distribution */}
-              <div className="space-y-4 mb-6">
-                <h4 className="text-sm font-medium text-foreground">Komisyon ve Tutar Dağılımı</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="agent_amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bayi Tutarı</FormLabel>
-                        <FormControl>
-                          <Input placeholder="500" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="company_amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Şirket Tutarı</FormLabel>
-                        <FormControl>
-                          <Input placeholder="500" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="currency"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Para Birimi</FormLabel>
-                        <FormControl>
-                          <Input placeholder="TL" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="add_comission_to_amount"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          checked={field.value}
-                          onChange={field.onChange}
-                          className="h-4 w-4 rounded border-border"
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Komisyonu tutara ekle</FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Description & User Info */}
-              <div className="space-y-4 mb-6">
-                <h4 className="text-sm font-medium text-foreground">Açıklama ve Kullanıcı Bilgileri</h4>
-                <FormField
-                  control={form.control}
-                  name="end_user_desc"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kullanıcı Açıklaması *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Aidat ödemeniz için düzenli ödeme onayı istiyoruz" {...field} className="bg-background border-border" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="user_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Kullanıcı Adı</FormLabel>
-                        <FormControl>
-                          <Input placeholder="admin" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="agent_note"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bayi Notu</FormLabel>
-                        <FormControl>
-                          <Input placeholder="İç not" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Webhooks */}
-              <div className="space-y-4 mb-6">
-                <h4 className="text-sm font-medium text-foreground">Webhook URL'leri</h4>
-                <div className="grid grid-cols-1 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="confirmation_webhook"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Onay Webhook URL</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://api.example.com/confirm" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="suceed_webhook"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Başarılı Ödeme Webhook URL</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://api.example.com/success" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="error_webhook"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Hata Webhook URL</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://api.example.com/error" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="confirmation_redirect_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Onay Redirect URL</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com/success" {...field} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Settings & Options */}
-              <div className="space-y-4 mb-6">
-                <h4 className="text-sm font-medium text-foreground">Ayarlar ve Seçenekler</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Notification Options */}
+                <div className="flex gap-6">
                   <FormField
                     control={form.control}
                     name="send_mail"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                      <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                         <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="h-4 w-4 rounded border-border"
-                          />
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Email gönder</FormLabel>
-                        </div>
+                        <FormLabel className="font-normal">E-posta Gönder</FormLabel>
                       </FormItem>
                     )}
                   />
@@ -862,103 +613,91 @@ export function SubscriptionFormModal({
                     control={form.control}
                     name="send_sms"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                      <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                         <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="h-4 w-4 rounded border-border"
-                          />
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>SMS gönder</FormLabel>
-                        </div>
+                        <FormLabel className="font-normal">SMS Gönder</FormLabel>
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              </TabsContent>
+
+              <TabsContent value="advanced" className="space-y-4 mt-4">
+                {/* Agent Settings */}
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="is_fixed_price"
+                    name="agent_id"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                      <FormItem>
+                        <FormLabel>Bayi ID</FormLabel>
                         <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="h-4 w-4 rounded border-border"
-                          />
+                          <Input {...field} placeholder="Bayi ID" className="bg-background" />
                         </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Sabit tutar</FormLabel>
-                        </div>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name="auto_renew"
+                    name="agent_amount"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                      <FormItem>
+                        <FormLabel>Bayi Tutarı</FormLabel>
                         <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="h-4 w-4 rounded border-border"
-                          />
+                          <Input {...field} placeholder="0.00" className="bg-background" />
                         </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Otomatik yenile</FormLabel>
-                        </div>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="otp_control"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="h-4 w-4 rounded border-border"
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>OTP kontrolü</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="is_charge_on_card_confirmation"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="h-4 w-4 rounded border-border"
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Onayda karttan çek</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                {/* Webhooks */}
+                <FormField
+                  control={form.control}
+                  name="confirmation_webhook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Onay Webhook URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://..." className="bg-background" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="suceed_webhook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Başarı Webhook URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://..." className="bg-background" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="error_webhook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hata Webhook URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://..." className="bg-background" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Retry Settings */}
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="attempt_day_count"
@@ -966,7 +705,12 @@ export function SubscriptionFormModal({
                       <FormItem>
                         <FormLabel>Deneme Gün Sayısı</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="3" {...field} onChange={(e) => field.onChange(Number(e.target.value))} className="bg-background border-border" />
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            className="bg-background" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -979,77 +723,76 @@ export function SubscriptionFormModal({
                       <FormItem>
                         <FormLabel>Günlük Deneme Sayısı</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="3" {...field} onChange={(e) => field.onChange(Number(e.target.value))} className="bg-background border-border" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="period"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Periyod</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="0" {...field} onChange={(e) => field.onChange(Number(e.target.value))} className="bg-background border-border" />
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            className="bg-background" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {/* Additional Options */}
+                <div className="space-y-3">
                   <FormField
                     control={form.control}
-                    name="agent_id"
+                    name="is_fixed_price"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bayi Kodu</FormLabel>
+                      <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                         <FormControl>
-                          <Input placeholder="BAYI-001" {...field} className="bg-background border-border" />
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <FormLabel className="font-normal">Sabit Fiyat</FormLabel>
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name="group_reference_no"
+                    name="add_comission_to_amount"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Grup Referans No</FormLabel>
+                      <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                         <FormControl>
-                          <Input placeholder="GRP-001" {...field} className="bg-background border-border" />
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <FormLabel className="font-normal">Komisyonu Tutara Ekle</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="is_charge_on_card_confirmation"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormLabel className="font-normal">Kart Onayında Çekim Yap</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="otp_control"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormLabel className="font-normal">OTP Kontrolü</FormLabel>
                       </FormItem>
                     )}
                   />
                 </div>
-                <FormField
-                  control={form.control}
-                  name="agent_logo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bayi Logo URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/logo.png" {...field} className="bg-background border-border" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+              </TabsContent>
+            </Tabs>
 
             {/* Submit Buttons */}
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 İptal
               </Button>
               <Button type="submit">
@@ -1062,4 +805,3 @@ export function SubscriptionFormModal({
     </Dialog>
   );
 }
-

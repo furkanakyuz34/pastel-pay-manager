@@ -1,21 +1,19 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Eye, Edit, Trash2, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CustomerFormModal, Customer, CustomerFormData } from "@/components/customers/CustomerFormModal";
+import { CustomerFormModal } from "@/components/customers/CustomerFormModal";
 import { DeleteCustomerDialog } from "@/components/customers/DeleteCustomerDialog";
 import { CustomerDetailModal } from "@/components/customers/CustomerDetailModal";
-import { Subscription } from "@/components/subscriptions/SubscriptionFormModal";
-import { Payment } from "@/components/payments/PaymentFormModal";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/hooks/use-toast";
-import { Users } from "lucide-react";
+import { Customer, Subscription, Payment, CustomerFormData } from "@/types";
 
 const initialCustomers: Customer[] = [
   {
@@ -42,6 +40,7 @@ const initialCustomers: Customer[] = [
     email: "demo@demo.com",
     phone: "+90 555 123 45 67",
     company: "Demo",
+    address: "",
     status: "active",
   },
   {

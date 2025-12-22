@@ -7,9 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Subscription } from "@/components/subscriptions/SubscriptionFormModal";
-import { Payment } from "@/components/payments/PaymentFormModal";
-import { Customer } from "./CustomerFormModal";
+import { Subscription, Payment, Customer } from "@/types";
 import { Mail, Phone, Building2, MapPin, RefreshCw } from "lucide-react";
 
 interface CustomerDetailModalProps {

@@ -1,22 +1,20 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Edit, Trash2, RefreshCw } from "lucide-react";
+import { MoreHorizontal, Eye, Edit, Trash2, RefreshCw, Repeat } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Repeat } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SubscriptionFormModal, Subscription, SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
+import { SubscriptionFormModal } from "@/components/subscriptions/SubscriptionFormModal";
+import type { SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
 import { DeleteSubscriptionDialog } from "@/components/subscriptions/DeleteSubscriptionDialog";
 import { SubscriptionDetailModal } from "@/components/subscriptions/SubscriptionDetailModal";
 import { useToast } from "@/hooks/use-toast";
-import { Customer } from "@/components/customers/CustomerFormModal";
-import { Plan } from "@/components/plans/PlanFormModal";
-import { Payment } from "@/components/payments/PaymentFormModal";
+import { Subscription, Customer, Plan, Payment } from "@/types";
 
 const initialSubscriptions: Subscription[] = [
   {
