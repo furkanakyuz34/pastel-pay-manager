@@ -16,8 +16,8 @@ const SettingsPage = () => {
     <MainLayout>
       <Header title="Ayarlar" subtitle="Hesap ve uygulama ayarlarınızı yönetin" />
       
-      <div className="p-6 space-y-6">
-        <div className="grid gap-6 lg:grid-cols-3">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
+        <div className="grid gap-4 lg:gap-6 lg:grid-cols-3">
           {/* Sidebar Navigation */}
           <div className="space-y-2">
             <SettingsNavItem icon={User} label="Profil" active />

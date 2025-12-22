@@ -123,43 +123,45 @@ export function PaymentList({ showActions = true }: PaymentListProps) {
 
   return (
     <>
-      <div className="space-y-3 animate-slide-up" style={{ animationDelay: "300ms" }}>
+      <div className="space-y-3 animate-slide-up max-w-full overflow-hidden" style={{ animationDelay: "300ms" }}>
         {payments.map((payment) => (
           <div
             key={payment.id}
-            className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-200 hover:shadow-card-hover"
+            className="group flex items-center gap-3 lg:gap-4 rounded-lg lg:rounded-xl border border-border bg-card p-3 lg:p-4 transition-all duration-200 hover:shadow-md"
           >
             {/* Icon */}
             <div
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-full shrink-0",
+                "flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-full shrink-0",
                 payment.type === "incoming"
                   ? "bg-success/15 text-success"
                   : "bg-destructive/15 text-destructive"
               )}
             >
               {payment.status === "pending" ? (
-                <Clock className="h-5 w-5" />
+                <Clock className="h-4 w-4 lg:h-5 lg:w-5" />
               ) : payment.type === "incoming" ? (
-                <ArrowDownRight className="h-5 w-5" />
+                <ArrowDownRight className="h-4 w-4 lg:h-5 lg:w-5" />
               ) : (
-                <ArrowUpRight className="h-5 w-5" />
+                <ArrowUpRight className="h-4 w-4 lg:h-5 lg:w-5" />
               )}
             </div>
 
             {/* Details */}
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground truncate">
+              <p className="font-medium text-xs lg:text-sm text-foreground truncate" title={payment.description}>
                 {payment.description}
               </p>
-              <p className="text-sm text-muted-foreground">{payment.customer}</p>
+              <p className="text-xs text-muted-foreground truncate" title={payment.customer}>
+                {payment.customer}
+              </p>
             </div>
 
             {/* Amount & Status */}
             <div className="text-right shrink-0">
               <p
                 className={cn(
-                  "font-semibold",
+                  "text-sm lg:text-base font-semibold",
                   payment.type === "incoming"
                     ? "text-success"
                     : "text-destructive"
@@ -168,7 +170,7 @@ export function PaymentList({ showActions = true }: PaymentListProps) {
                 {payment.type === "incoming" ? "+" : "-"}
                 {payment.amount}
               </p>
-              <Badge variant={statusConfig[payment.status].variant} className="mt-1">
+              <Badge variant={statusConfig[payment.status].variant} className="mt-1 text-xs">
                 {statusConfig[payment.status].label}
               </Badge>
             </div>

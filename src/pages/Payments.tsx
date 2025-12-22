@@ -32,9 +32,9 @@ const PaymentsPage = () => {
     <MainLayout>
       <Header title="Ödemeler" subtitle="Paynet ödeme işlemlerini takip edin" />
       
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Stats */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Toplam Gelir"
             value="₺284.500"

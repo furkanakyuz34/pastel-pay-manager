@@ -1,27 +1,27 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
-import { LicenseTable } from "@/components/dashboard/LicenseTable";
-import { LicenseFormModal, LicenseFormData } from "@/components/licenses/LicenseFormModal";
+import { ProjectTable } from "@/components/dashboard/ProjectTable";
+import { ProjectFormModal, ProjectFormData } from "@/components/projects/ProjectFormModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Filter, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const LicensesPage = () => {
+const ProjectsPage = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleAddLicense = (data: LicenseFormData) => {
-    console.log("New license:", data);
+  const handleAddProject = (data: ProjectFormData) => {
+    console.log("New project:", data);
     toast({
-      title: "Lisans Eklendi",
-      description: `${data.name} lisansı başarıyla oluşturuldu.`,
+      title: "Proje Eklendi",
+      description: `${data.name} projesi başarıyla oluşturuldu.`,
     });
   };
 
   return (
     <MainLayout>
-      <Header title="Lisanslar" subtitle="Tüm lisanslarınızı görüntüleyin ve yönetin" />
+      <Header title="Projeler" subtitle="Tüm projelerinizi görüntüleyin ve yönetin" />
       
       <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Actions Bar */}
@@ -30,7 +30,7 @@ const LicensesPage = () => {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Lisans ara..."
+              placeholder="Proje ara..."
               className="h-10 w-full sm:w-80 rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
@@ -45,23 +45,24 @@ const LicensesPage = () => {
             </Button>
             <Button size="sm" onClick={() => setAddModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Yeni Lisans
+              Yeni Proje
             </Button>
           </div>
         </div>
 
-        {/* License Table */}
-        <LicenseTable />
+        {/* Project Table */}
+        <ProjectTable />
       </div>
 
-      {/* Add License Modal */}
-      <LicenseFormModal
+      {/* Add Project Modal */}
+      <ProjectFormModal
         open={addModalOpen}
         onOpenChange={setAddModalOpen}
-        onSubmit={handleAddLicense}
+        onSubmit={handleAddProject}
       />
     </MainLayout>
   );
 };
 
-export default LicensesPage;
+export default ProjectsPage;
+
