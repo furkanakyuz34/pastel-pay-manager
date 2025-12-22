@@ -40,6 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Subscription, Customer, Plan } from "@/types";
+import { PlanPriceDisplay } from "@/components/plans/PlanPriceDisplay";
 
 const subscriptionSchema = z.object({
   customerId: z.string().min(1, "Müşteri seçiniz"),
@@ -307,6 +308,18 @@ export function SubscriptionFormModal({
                           )}
                         </div>
                       )}
+
+                      {/* Plan Fiyatı ve İskonto Gösterimi */}
+                      {selectedPlan && selectedCustomerId && (
+                        <div className="mt-4">
+                          <PlanPriceDisplay
+                            plan={selectedPlan}
+                            customerId={selectedCustomerId}
+                            billingCycle={selectedBillingCycle || "monthly"}
+                          />
+                        </div>
+                      )}
+
                       <FormMessage />
                     </FormItem>
                   )}

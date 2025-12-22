@@ -14,6 +14,45 @@ export interface Discount {
   usedCount?: number;
 }
 
+/**
+ * Customer-Plan Discount: Müşteri bazlı plan iskontolarını tanımlar
+ * Örn: Müşteri A için PROFESSIONAL plan'ı %10 indirimle, Müşteri B için %15 indirimle
+ */
+export interface PlanDiscount {
+  id: string;
+  planId: string;
+  customerId: string;
+  discountType: DiscountType; // "percentage" veya "amount"
+  discountValue: number; // İskonto değeri (% veya sabit tutar)
+  isActive: boolean;
+  validFrom: string;
+  validUntil?: string;
+  createdAt: string;
+  notes?: string;
+}
+
+/**
+ * Plan Pricing: Müşteri bazlı uyarlanabilir plan fiyatlandırması
+ * Ürün fiyatları sabit, plan fiyatlandırması müşteri bazlı belirlenir
+ */
+export interface PlanCustomerPricing {
+  id: string;
+  planId: string;
+  customerId: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  monthlyDiscount?: PlanDiscount;
+  yearlyDiscount?: PlanDiscount;
+  monthlyPriceAfterDiscount: number; // Hesaplanan son fiyat
+  yearlyPriceAfterDiscount: number;
+  billingStartDate: string;
+  validUntil?: string;
+}
+
+/**
+ * @deprecated Use PlanCustomerPricing instead
+ * Eski ürün bazlı iskonto sistemi yerine plan bazlı kullanılmalı
+ */
 export interface CustomerPricing {
   id: string;
   customerId: string;
@@ -40,7 +79,17 @@ export interface Subscription {
   startDate: string;
   nextBillingDate?: string;
   trialEndDate?: string;
-  amount: string;
+  
+  // Fiyatlandırma: Plan fiyatı + müşteri bazlı iskonto
+  planPrice: string; // Orijinal plan fiyatı
+  discountAmount?: string; // İskonto tutarı (varsa)
+  discountPercent?: number; // İskonto yüzdesi
+  finalAmount: string; // Son ödeme tutarı (iskonto sonrası)
+  
+  // İskonto referansı
+  planDiscountId?: string; // PlanDiscount referansı
+  planCustomerPricingId?: string; // PlanCustomerPricing referansı
+  
   autoRenew: boolean;
   cancelledAt?: string;
   cancelReason?: string;
@@ -135,27 +184,24 @@ export interface Product {
   description?: string;
   projectId: string;
   projectName: string;
-  basePrice: number; // Base price before any discount
-  currency: string;
+  
+  // Ürün fiyatı SABIT - İskontolar plan seviyesinde uygulanır
+  price: string; // Display price format (e.g., "₺5.000")
+  basePrice: number; // Base price (numeric, for calculations)
+  currency?: string; // Default: "TRY"
+  
   status: "active" | "inactive" | "discontinued";
   
-  // Discount settings
-  discountType: DiscountType;
-  discountValue: number; // Percentage or fixed amount
-  discountValidFrom?: string;
-  discountValidUntil?: string;
-  
-  // Calculated fields
-  finalPrice: number; // Price after discount
-  discountAmount?: number; // Actual discount amount
-  
   // SaaS specific
-  billingType: "one_time" | "recurring";
+  billingType?: "one_time" | "recurring";
   recurringInterval?: "daily" | "weekly" | "monthly" | "yearly";
   trialDays?: number;
   features?: string[];
   maxUsers?: number;
   storageLimit?: string;
+  
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ==================== Payment Types ====================
@@ -165,7 +211,7 @@ export interface Payment {
   customer: string;
   customerId?: string;
   amount: string;
-  status: "completed" | "pending" | "failed" | "refunded" | "partial";
+  status: "completed" | "pending" | "failed";
   date: string;
   type: "incoming" | "outgoing";
   subscriptionId?: string;
@@ -212,33 +258,46 @@ export interface InvoiceItem {
 }
 
 // ==================== Plan Types ====================
+/**
+ * Plan: SaaS ürün planları (aylık, yıllık)
+ * Fiyatlar SABIT - Müşteri bazlı iskontolar PlanDiscount ve PlanCustomerPricing ile yönetilir
+ */
 export interface Plan {
   id: string;
   name: string;
   description?: string;
-  customerId?: string; // Optional: for customer-specific plans
-  customerName?: string;
   projectId: string;
   projectName?: string;
+  
+  // Plan içeriği: Hangi ürünleri içeriyor
   productIds: string[];
   productNames?: string[];
-  monthlyPrice: number;
+  
+  // Sabit fiyatlar (iskontosuz)
+  monthlyPrice: number; // Numeric value
   yearlyPrice: number;
-  currency: string;
+  currency?: string; // Default: "TRY"
+  
+  // Plan özellikleri
   features?: string;
   featuresList?: string[];
-  status: "active" | "inactive";
-  trialDays: number;
-  isStaticPlan: boolean; // true: public plan, false: customer-specific
   
-  // Plan discounts
-  monthlyDiscount?: Discount;
-  yearlyDiscount?: Discount;
+  // Status
+  status: "active" | "inactive";
+  
+  // Trial dönem
+  trialDays: number;
+  
+  // Plan tipi
+  isStaticPlan?: boolean; // true: herkese açık public plan, false: custom plan (deprecated)
   
   // Usage limits
   maxUsers?: number;
   maxStorage?: string;
   maxApiCalls?: number;
+  
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ==================== License Types ====================
@@ -328,12 +387,13 @@ export interface WebhookEvent {
 // ==================== Form Data Types ====================
 export type CustomerFormData = Omit<Customer, 'id' | 'customPricing' | 'createdAt'>;
 export type ProjectFormData = Omit<Project, 'id'> & { startDate: Date; endDate?: Date };
-export type ProductFormData = Omit<Product, 'id' | 'projectName' | 'finalPrice' | 'discountAmount'>;
-export type PlanFormData = Omit<Plan, 'id' | 'customerName' | 'projectName' | 'productNames' | 'featuresList'>;
+export type ProductFormData = Omit<Product, 'id' | 'projectName' | 'createdAt' | 'updatedAt'>;
+export type PlanFormData = Omit<Plan, 'id' | 'projectName' | 'productNames' | 'featuresList' | 'createdAt' | 'updatedAt'>;
 export type PaymentFormData = Omit<Payment, 'id'>;
 export type LicenseFormData = Omit<License, 'id' | 'productName' | 'activationHistory'>;
 export type InvoiceFormData = Omit<Invoice, 'id' | 'invoiceNumber' | 'customerName'>;
-export type CustomerPricingFormData = Omit<CustomerPricing, 'id' | 'customerName' | 'productName'>;
+export type PlanDiscountFormData = Omit<PlanDiscount, 'id' | 'createdAt'>;
+export type PlanCustomerPricingFormData = Omit<PlanCustomerPricing, 'id'>;
 
 // ==================== Utility Types ====================
 export interface PaginatedResponse<T> {

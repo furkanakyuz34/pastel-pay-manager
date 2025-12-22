@@ -357,7 +357,7 @@ export function ProductFormModal({
             {/* Pricing Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <BadgeTurkishLira className="h-4 w-4" />
+                <CircleDollarSign className="h-4 w-4" />
                 Fiyatlandırma
               </h3>
 

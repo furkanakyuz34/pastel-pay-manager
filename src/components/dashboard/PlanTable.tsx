@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PlanFormModal, Plan, PlanFormData } from "@/components/plans/PlanFormModal";
 import { DeletePlanDialog } from "@/components/plans/DeletePlanDialog";
-import { PlanDetailModal } from "@/components/plans/PlanDetailModal";
+import { PlanDetailsModal } from "@/components/plans/PlanDetailsModal";
 import { Customer } from "@/components/customers/CustomerFormModal";
 import { Project } from "@/components/projects/ProjectFormModal";
 import { Product } from "@/components/products/ProductFormModal";
@@ -354,7 +354,7 @@ export function PlanTable({
       />
 
       {/* Detail Modal */}
-      <PlanDetailModal
+      <PlanDetailsModal
         open={detailModalOpen}
         onOpenChange={setDetailModalOpen}
         plan={selectedPlan}

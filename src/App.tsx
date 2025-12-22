@@ -12,6 +12,10 @@ import PlansPage from "./pages/Plans";
 import ProjectsPage from "./pages/Projects";
 import ProductsPage from "./pages/Products";
 import SettingsPage from "./pages/Settings";
+import InvoicesPage from "./pages/Invoices";
+import UsagePage from "./pages/Usage";
+import BillingHistoryPage from "./pages/BillingHistory";
+import DiscountsPage from "./pages/Discounts";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
@@ -89,6 +93,38 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoices"
+            element={
+              <ProtectedRoute>
+                <InvoicesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/usage"
+            element={
+              <ProtectedRoute>
+                <UsagePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing-history"
+            element={
+              <ProtectedRoute>
+                <BillingHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/discounts"
+            element={
+              <ProtectedRoute>
+                <DiscountsPage />
               </ProtectedRoute>
             }
           />

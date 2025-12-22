@@ -8,6 +8,7 @@ import productSlice from '../features/productSlice';
 import paymentSlice from '../features/paymentSlice';
 import planSlice from '../features/planSlice';
 import licenseSlice from '../features/licenseSlice';
+import discountSlice from '../features/discountSlice';
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     payments: paymentSlice,
     plans: planSlice,
     licenses: licenseSlice,
+    discounts: discountSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(

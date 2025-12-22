@@ -12,6 +12,10 @@ import {
   Users,
   FolderKanban,
   ShoppingBag,
+  FileText,
+  BarChart3,
+  Receipt,
+  Tag,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,6 +25,10 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Repeat, label: "Abonelikler", path: "/subscriptions" },
   { icon: CreditCard, label: "Ödemeler", path: "/payments" },
+  { icon: FileText, label: "Faturalar", path: "/invoices" },
+  { icon: BarChart3, label: "Kullanım Takibi", path: "/usage" },
+  { icon: Receipt, label: "Ödeme Geçmişi", path: "/billing-history" },
+  { icon: Tag, label: "İskonto Yönetimi", path: "/discounts" },
   { icon: Users, label: "Müşteriler", path: "/customers" },
   { icon: Package, label: "Abonelik Planları", path: "/plans" },
   { icon: FolderKanban, label: "Projeler", path: "/projects" },
