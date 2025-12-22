@@ -1,4 +1,5 @@
-import { Bell, Search, User, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bell, Search, User, LogOut, Command as CommandIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { CommandPalette } from "./CommandPalette";
 
 interface HeaderProps {
   title: string;
@@ -20,6 +22,7 @@ export function Header({ title, subtitle }: HeaderProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const userEmail = localStorage.getItem("userEmail") || "Kullanıcı";
+  const [commandOpen, setCommandOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -30,6 +33,18 @@ export function Header({ title, subtitle }: HeaderProps) {
     });
     navigate("/login");
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur-sm">
@@ -42,15 +57,19 @@ export function Header({ title, subtitle }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-2 lg:gap-3">
-          {/* Search */}
-          <div className="relative hidden lg:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Ara..."
-              className="h-9 w-48 xl:w-64 rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
+          {/* Command Palette Trigger (Search) */}
+          <button
+            type="button"
+            onClick={() => setCommandOpen(true)}
+            className="hidden lg:flex items-center gap-2 h-9 w-52 xl:w-64 rounded-lg border border-border bg-card px-3 text-xs lg:text-sm text-muted-foreground hover:border-primary/60 hover:text-foreground transition-colors"
+          >
+            <Search className="h-4 w-4" />
+            <span className="flex-1 text-left truncate">Komut paleti ile ara...</span>
+            <span className="inline-flex items-center gap-0.5 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+              <CommandIcon className="h-3 w-3" />
+              <span>K</span>
+            </span>
+          </button>
 
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="h-9 w-9 relative">
@@ -83,6 +102,8 @@ export function Header({ title, subtitle }: HeaderProps) {
           </DropdownMenu>
         </div>
       </div>
+
+      <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
     </header>
   );
 }

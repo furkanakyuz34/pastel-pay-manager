@@ -73,6 +73,7 @@ interface CustomerTableProps {
   showAddButton?: boolean;
   subscriptions?: Subscription[];
   payments?: Payment[];
+  searchQuery?: string;
 }
 
 export function CustomerTable({ 
@@ -80,6 +81,7 @@ export function CustomerTable({
   showAddButton = false,
   subscriptions = [],
   payments = [],
+  searchQuery = "",
 }: CustomerTableProps) {
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -136,12 +138,24 @@ export function CustomerTable({
     }
   };
 
-  if (customers.length === 0) {
+  const normalizedQuery = searchQuery.toLowerCase().trim();
+  const filteredCustomers = normalizedQuery
+    ? customers.filter((c) => {
+        const haystack = `${c.id} ${c.name} ${c.company ?? ""} ${c.email ?? ""} ${c.phone ?? ""}`.toLowerCase();
+        return haystack.includes(normalizedQuery);
+      })
+    : customers;
+
+  if (filteredCustomers.length === 0) {
     return (
       <EmptyState
         icon={<Users className="h-12 w-12" />}
-        title="Müşteri bulunamadı"
-        description="Henüz hiç müşteri eklenmemiş. Yeni bir müşteri eklemek için yukarıdaki butona tıklayın."
+        title={customers.length === 0 ? "Müşteri bulunamadı" : "Sonuç bulunamadı"}
+        description={
+          customers.length === 0
+            ? "Henüz hiç müşteri eklenmemiş. Yeni bir müşteri eklemek için yukarıdaki butona tıklayın."
+            : "Arama kriterlerinizi değiştirerek tekrar deneyin."
+        }
       />
     );
   }
@@ -150,7 +164,7 @@ export function CustomerTable({
     <>
       {/* Mobile Card View */}
       <div className="lg:hidden space-y-3">
-        {customers.map((customer) => (
+        {filteredCustomers.map((customer) => (
           <div
             key={customer.id}
             className="p-4 rounded-lg border border-border bg-card space-y-3"
@@ -241,7 +255,7 @@ export function CustomerTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {customers.map((customer) => (
+              {filteredCustomers.map((customer) => (
                 <tr
                   key={customer.id}
                   className="transition-colors hover:bg-muted/30"

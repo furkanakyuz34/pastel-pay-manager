@@ -49,7 +49,8 @@ export function SubscriptionDetailModal({
     expired: { label: "Süresi Doldu", variant: "destructive" as const },
     cancelled: { label: "İptal Edildi", variant: "secondary" as const },
     pending: { label: "Beklemede", variant: "warning" as const },
-  };
+    paused: { label: "Donduruldu", variant: "secondary" as const },
+  } as const;
 
   const billingCycleConfig = {
     monthly: "Aylık",
@@ -116,11 +117,19 @@ export function SubscriptionDetailModal({
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg border border-border bg-card text-center">
               <p className="text-sm text-muted-foreground mb-1">Faturalama Döngüsü</p>
               <p className="text-lg font-semibold text-foreground">
                 {billingCycleConfig[subscription.billingCycle]}
+              </p>
+            </div>
+            <div className="p-4 rounded-lg border border-border bg-card text-center">
+              <p className="text-sm text-muted-foreground mb-1">Abonelik Türü</p>
+              <p className="text-lg font-semibold text-foreground">
+                {subscription.autoRenew && !subscription.trialEndDate && subscription.status === "active"
+                  ? "Süresiz (otomatik yenilenen)"
+                  : "Süreli"}
               </p>
             </div>
             <div className="p-4 rounded-lg border border-border bg-card text-center">

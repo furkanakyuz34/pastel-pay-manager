@@ -3,8 +3,9 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { CustomerTable } from "@/components/dashboard/CustomerTable";
 import { CustomerFormModal } from "@/components/customers/CustomerFormModal";
+import { CustomerSalesWizard } from "@/components/customers/wizard/CustomerSalesWizard";
 import { Button } from "@/components/ui/button";
-import { Plus, Download, Filter, Search } from "lucide-react";
+import { Plus, Download, Filter, Search, Wand2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Subscription, Payment, CustomerFormData } from "@/types";
 
@@ -101,6 +102,8 @@ const mockPayments: Payment[] = [
 
 const CustomersPage = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const { toast } = useToast();
 
   const handleAddCustomer = (data: CustomerFormData) => {
@@ -123,10 +126,12 @@ const CustomersPage = () => {
             <input
               type="text"
               placeholder="Müşteri ara..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="h-10 w-full sm:w-80 rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 justify-end">
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
               Filtrele
@@ -134,6 +139,15 @@ const CustomersPage = () => {
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
               Dışa Aktar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setWizardOpen(true)}
+              className="hidden sm:inline-flex"
+            >
+              <Wand2 className="h-4 w-4 mr-2" />
+              Satış Sihirbazı
             </Button>
             <Button size="sm" onClick={() => setAddModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -143,7 +157,11 @@ const CustomersPage = () => {
         </div>
 
         {/* Customer Table */}
-        <CustomerTable subscriptions={mockSubscriptions} payments={mockPayments} />
+        <CustomerTable
+          subscriptions={mockSubscriptions}
+          payments={mockPayments}
+          searchQuery={search}
+        />
       </div>
 
       {/* Add Customer Modal */}
@@ -152,6 +170,9 @@ const CustomersPage = () => {
         onOpenChange={setAddModalOpen}
         onSubmit={handleAddCustomer}
       />
+
+      {/* Customer Sales Wizard */}
+      <CustomerSalesWizard open={wizardOpen} onOpenChange={setWizardOpen} />
     </MainLayout>
   );
 };

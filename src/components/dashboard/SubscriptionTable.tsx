@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Edit, Trash2, RefreshCw, Repeat } from "lucide-react";
+import { MoreHorizontal, Eye, Edit, Trash2, RefreshCw, Repeat, PauseCircle, PlayCircle } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import { DeleteSubscriptionDialog } from "@/components/subscriptions/DeleteSubsc
 import { SubscriptionDetailModal } from "@/components/subscriptions/SubscriptionDetailModal";
 import { useToast } from "@/hooks/use-toast";
 import { Subscription, Customer, Plan, Payment } from "@/types";
+import { useUpdateSubscriptionMutation } from "@/services/subscriptionApi";
 
 const initialSubscriptions: Subscription[] = [
   {
@@ -90,7 +91,8 @@ const statusConfig = {
   expired: { label: "Süresi Doldu", variant: "destructive" as const },
   cancelled: { label: "İptal Edildi", variant: "secondary" as const },
   pending: { label: "Beklemede", variant: "warning" as const },
-};
+  paused: { label: "Donduruldu", variant: "secondary" as const },
+} as const;
 
 const billingCycleConfig = {
   monthly: { label: "Aylık", variant: "secondary" as const },
@@ -106,6 +108,8 @@ interface SubscriptionTableProps {
   payments?: Payment[];
   subscriptions?: Subscription[];
   loading?: boolean;
+  searchQuery?: string;
+  statusFilter?: "all" | "active" | "trial" | "expired" | "cancelled" | "pending";
 }
 
 export function SubscriptionTable({
@@ -116,6 +120,8 @@ export function SubscriptionTable({
   payments = [],
   subscriptions: propSubscriptions,
   loading = false,
+  searchQuery = "",
+  statusFilter = "all",
 }: SubscriptionTableProps) {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(propSubscriptions || initialSubscriptions);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -123,6 +129,7 @@ export function SubscriptionTable({
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
   const { toast } = useToast();
+  const [updateSubscription] = useUpdateSubscriptionMutation();
 
   useEffect(() => {
     if (propSubscriptions) {
@@ -191,6 +198,59 @@ export function SubscriptionTable({
     }
   };
 
+  const handleTogglePause = async (subscription: Subscription) => {
+    if (subscription.status === "cancelled" || subscription.status === "expired") {
+      toast({
+        title: "İşlem yapılamıyor",
+        description: "İptal edilmiş veya süresi dolmuş abonelikler dondurulamaz.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newStatus: Subscription["status"] =
+      subscription.status === "paused" ? "active" : "paused";
+
+    // Optimistic update
+    setSubscriptions((prev) =>
+      prev.map((s) => (s.id === subscription.id ? { ...s, status: newStatus } : s))
+    );
+
+    try {
+      await updateSubscription({ id: subscription.id, data: { status: newStatus } }).unwrap();
+      toast({
+        title: newStatus === "paused" ? "Abonelik Donduruldu" : "Abonelik Devam Ettirildi",
+        description:
+          newStatus === "paused"
+            ? `${subscription.id} aboneliği geçici olarak durduruldu.`
+            : `${subscription.id} aboneliği tekrar aktif hale getirildi.`,
+      });
+    } catch (error) {
+      // Revert on error
+      setSubscriptions((prev) =>
+        prev.map((s) => (s.id === subscription.id ? { ...s, status: subscription.status } : s))
+      );
+      toast({
+        title: "İşlem başarısız",
+        description: "Abonelik durumu güncellenirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const normalizedQuery = searchQuery.toLowerCase().trim();
+  const filteredByStatus =
+    statusFilter === "all"
+      ? subscriptions
+      : subscriptions.filter((s) => s.status === statusFilter);
+
+  const filteredSubscriptions = normalizedQuery
+    ? filteredByStatus.filter((s) => {
+        const haystack = `${s.id} ${s.customerName} ${s.planName}`.toLowerCase();
+        return haystack.includes(normalizedQuery);
+      })
+    : filteredByStatus;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -202,12 +262,16 @@ export function SubscriptionTable({
     );
   }
 
-  if (subscriptions.length === 0) {
+  if (filteredSubscriptions.length === 0) {
     return (
       <EmptyState
         icon={<Repeat className="h-12 w-12" />}
-        title="Abonelik bulunamadı"
-        description="Henüz hiç abonelik oluşturulmamış. Yeni bir abonelik oluşturmak için yukarıdaki butona tıklayın."
+        title={subscriptions.length === 0 ? "Abonelik bulunamadı" : "Sonuç bulunamadı"}
+        description={
+          subscriptions.length === 0
+            ? "Henüz hiç abonelik oluşturulmamış. Yeni bir abonelik oluşturmak için yukarıdaki butona tıklayın."
+            : "Arama ya da filtre kriterlerinizi değiştirerek tekrar deneyin."
+        }
       />
     );
   }
@@ -216,7 +280,7 @@ export function SubscriptionTable({
     <>
       {/* Mobile Card View */}
       <div className="lg:hidden space-y-3 max-w-full overflow-hidden">
-        {subscriptions.map((subscription) => (
+        {filteredSubscriptions.map((subscription) => (
           <div
             key={subscription.id}
             className="p-4 rounded-lg border border-border bg-card space-y-3"
@@ -322,7 +386,7 @@ export function SubscriptionTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {subscriptions.map((subscription) => (
+              {filteredSubscriptions.map((subscription) => (
                 <tr
                   key={subscription.id}
                   className="transition-colors hover:bg-muted/30"
@@ -381,6 +445,22 @@ export function SubscriptionTable({
                         <DropdownMenuItem onClick={() => handleEdit(subscription)} className="text-xs xl:text-sm">
                           <Edit className="mr-2 h-3 w-3 xl:h-4 xl:w-4" />
                           Düzenle
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleTogglePause(subscription)}
+                          className="text-xs xl:text-sm"
+                        >
+                          {subscription.status === "paused" ? (
+                            <>
+                              <PlayCircle className="mr-2 h-3 w-3 xl:h-4 xl:w-4" />
+                              Devam Ettir
+                            </>
+                          ) : (
+                            <>
+                              <PauseCircle className="mr-2 h-3 w-3 xl:h-4 xl:w-4" />
+                              Dondur
+                            </>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="text-destructive text-xs xl:text-sm"
