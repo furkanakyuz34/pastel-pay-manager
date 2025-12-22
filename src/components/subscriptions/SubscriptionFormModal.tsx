@@ -36,6 +36,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -51,6 +52,12 @@ const subscriptionSchema = z.object({
   nextBillingDate: z.date().optional(),
   trialEndDate: z.date().optional(),
   autoRenew: z.boolean().default(true),
+
+  // Payment method
+  paymentMethod: z.enum(["credit_card", "cash", "mixed"]).default("credit_card"),
+  cashPortion: z.string().optional(),
+  cardPortion: z.string().optional(),
+  customerCardId: z.string().optional(),
 
   // iyzico/Paynet API fields
   name_surname: z.string().min(2, "İsim ve soyisim giriniz"),
@@ -118,6 +125,10 @@ export function SubscriptionFormModal({
       nextBillingDate: subscription?.nextBillingDate ? new Date(subscription.nextBillingDate) : undefined,
       trialEndDate: subscription?.trialEndDate ? new Date(subscription.trialEndDate) : undefined,
       autoRenew: subscription?.autoRenew ?? true,
+      paymentMethod: subscription?.paymentMethod || "credit_card",
+      cashPortion: subscription?.cashPortion,
+      cardPortion: subscription?.cardPortion,
+      customerCardId: subscription?.customerCardId,
 
       // iyzico/Paynet API defaults
       name_surname: subscription?.name_surname || "",
@@ -156,6 +167,7 @@ export function SubscriptionFormModal({
   const selectedBillingCycle = form.watch("billingCycle");
   const selectedPlanId = form.watch("planId");
   const selectedCustomerId = form.watch("customerId");
+  const paymentMethod = form.watch("paymentMethod");
   
   // Filter plans by selected customer
   const availablePlans = plans.filter((p) => p.customerId === selectedCustomerId);
@@ -450,6 +462,44 @@ export function SubscriptionFormModal({
               </TabsContent>
 
               <TabsContent value="payment" className="space-y-4 mt-4">
+                {/* Payment Method */}
+                <FormField
+                  control={form.control}
+                  name="paymentMethod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ödeme Yöntemi</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          className="flex flex-col sm:flex-row gap-2"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <div className="flex items-center space-x-2 rounded-md border border-border px-3 py-2">
+                            <RadioGroupItem value="credit_card" id="pm-card" />
+                            <label htmlFor="pm-card" className="text-sm cursor-pointer">
+                              Kredi Kartı
+                            </label>
+                          </div>
+                          <div className="flex items-center space-x-2 rounded-md border border-border px-3 py-2">
+                            <RadioGroupItem value="cash" id="pm-cash" />
+                            <label htmlFor="pm-cash" className="text-sm cursor-pointer">
+                              Nakit
+                            </label>
+                          </div>
+                          <div className="flex items-center space-x-2 rounded-md border border-border px-3 py-2">
+                            <RadioGroupItem value="mixed" id="pm-mixed" />
+                            <label htmlFor="pm-mixed" className="text-sm cursor-pointer">
+                              Kısmi Nakit + Kart
+                            </label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 {/* Name Surname */}
                 <FormField
                   control={form.control}
@@ -503,6 +553,37 @@ export function SubscriptionFormModal({
                     )}
                   />
                 </div>
+
+                {paymentMethod === "mixed" && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="cashPortion"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nakit Tutar</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Örn: 1.000" className="bg-background" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="cardPortion"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Kart ile Ödenecek</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Örn: 1.500" className="bg-background" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
 
                 {/* Email & GSM */}
                 <div className="grid grid-cols-2 gap-4">

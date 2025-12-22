@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +7,10 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Subscription, Payment, Customer } from "@/types";
-import { Mail, Phone, Building2, MapPin, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Subscription, Payment, Customer, CustomerCard } from "@/types";
+import { Mail, Phone, Building2, MapPin, RefreshCw, CreditCard } from "lucide-react";
+import { CustomerCardsModal } from "./CustomerCardsModal";
 
 interface CustomerDetailModalProps {
   open: boolean;
@@ -25,6 +27,14 @@ export function CustomerDetailModal({
   subscriptions,
   payments,
 }: CustomerDetailModalProps) {
+  const [cardsOpen, setCardsOpen] = useState(false);
+  const [customerCards, setCustomerCards] = useState<CustomerCard[]>(
+    customer?.cards || []
+  );
+  const [defaultCardId, setDefaultCardId] = useState<string | undefined>(
+    customer?.defaultCardId
+  );
+
   const customerSubscriptions = useMemo(() => {
     if (!customer) return [];
     return subscriptions.filter((sub) => sub.customerId === customer.id);
@@ -51,52 +61,72 @@ export function CustomerDetailModal({
       }, 0);
   }, [customerPayments]);
 
+  const handleAddCard = (card: CustomerCard) => {
+    setCustomerCards([...customerCards, card]);
+    if (customerCards.length === 0) {
+      setDefaultCardId(card.id);
+    }
+  };
+
+  const handleDeleteCard = (cardId: string) => {
+    setCustomerCards(customerCards.filter((c) => c.id !== cardId));
+    if (defaultCardId === cardId) {
+      const remainingCards = customerCards.filter((c) => c.id !== cardId);
+      setDefaultCardId(remainingCards[0]?.id);
+    }
+  };
+
+  const handleSetDefault = (cardId: string) => {
+    setDefaultCardId(cardId);
+  };
+
   if (!customer) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[900px] max-h-[90vh] overflow-y-auto bg-card border-border">
-        <DialogHeader>
-          <DialogTitle className="text-foreground flex items-center justify-between">
-            <span>{customer.name}</span>
-            <Badge variant={customer.status === "active" ? "success" : "secondary"}>
-              {customer.status === "active" ? "Aktif" : "Pasif"}
-            </Badge>
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="w-[95vw] max-w-[900px] max-h-[90vh] overflow-y-auto bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center justify-between">
+              <span>{customer.name}</span>
+              <Badge variant={customer.status === "active" ? "success" : "secondary"}>
+                {customer.status === "active" ? "Aktif" : "Pasif"}
+              </Badge>
+            </DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Customer Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg border border-border bg-muted/30">
-            {customer.company && (
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Şirket:</span>
-                <span className="text-sm font-medium text-foreground">{customer.company}</span>
-              </div>
-            )}
-            {customer.email && (
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">E-posta:</span>
-                <span className="text-sm font-medium text-foreground">{customer.email}</span>
-              </div>
-            )}
-            {customer.phone && (
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Telefon:</span>
-                <span className="text-sm font-medium text-foreground">{customer.phone}</span>
-              </div>
-            )}
-            {customer.address && (
-              <div className="flex items-center gap-2 md:col-span-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Adres:</span>
-                <span className="text-sm font-medium text-foreground">{customer.address}</span>
-              </div>
-            )}
-          </div>
+          <div className="space-y-6">
+            {/* Customer Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg border border-border bg-muted/30">
+              {customer.company && (
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Şirket:</span>
+                  <span className="text-sm font-medium text-foreground">{customer.company}</span>
+                </div>
+              )}
+              {customer.email && (
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">E-posta:</span>
+                  <span className="text-sm font-medium text-foreground">{customer.email}</span>
+                </div>
+              )}
+              {customer.phone && (
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Telefon:</span>
+                  <span className="text-sm font-medium text-foreground">{customer.phone}</span>
+                </div>
+              )}
+              {customer.address && (
+                <div className="flex items-center gap-2 md:col-span-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Adres:</span>
+                  <span className="text-sm font-medium text-foreground">{customer.address}</span>
+                </div>
+              )}
+            </div>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4">
@@ -114,6 +144,45 @@ export function CustomerDetailModal({
               <p className="text-sm text-muted-foreground">Toplam Ödeme</p>
               <p className="text-2xl font-bold text-success">₺{totalPaymentAmount.toLocaleString("tr-TR")}</p>
             </div>
+          </div>
+
+          {/* Cards Section */}
+          <div className="p-4 rounded-lg border border-border bg-muted/30">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium text-foreground">Ödeme Kartları</span>
+              </div>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => setCardsOpen(true)}
+              >
+                {customerCards.length > 0 ? `${customerCards.length} Kart` : "Kart Ekle"}
+              </Button>
+            </div>
+            {customerCards.length > 0 && (
+              <div className="space-y-2">
+                {customerCards.slice(0, 3).map((card) => (
+                  <div key={card.id} className="flex items-center gap-2 text-sm">
+                    <Badge 
+                      variant={card.isDefault ? "default" : "secondary"}
+                      className="whitespace-nowrap"
+                    >
+                      {card.cardNumber}
+                    </Badge>
+                    <span className="text-muted-foreground text-xs">
+                      {card.expiryMonth}/{card.expiryYear}
+                    </span>
+                  </div>
+                ))}
+                {customerCards.length > 3 && (
+                  <p className="text-xs text-muted-foreground">
+                    +{customerCards.length - 3} daha
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Tabs for Subscriptions and Payments */}
@@ -152,7 +221,21 @@ export function CustomerDetailModal({
         </div>
       </DialogContent>
     </Dialog>
-  );
+
+    {/* Customer Cards Modal */}
+    <CustomerCardsModal
+        open={cardsOpen}
+        onOpenChange={setCardsOpen}
+        customerId={customer?.id || ""}
+        customerName={customer?.name || ""}
+        cards={customerCards}
+        defaultCardId={defaultCardId}
+        onAddCard={handleAddCard}
+        onDeleteCard={handleDeleteCard}
+        onSetDefault={handleSetDefault}
+    />
+  </>
+);
 }
 
 // Simplified Subscription Table for Customer Detail

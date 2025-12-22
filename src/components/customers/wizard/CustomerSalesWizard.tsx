@@ -16,9 +16,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useCustomerCards } from "@/hooks/useCustomerCards";
+import { CustomerCardsModal } from "@/components/customers/CustomerCardsModal";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
-import { CalendarIcon, CheckCircle2, Users, Package, Repeat, Tag } from "lucide-react";
+import { CalendarIcon, CheckCircle2, Users, Package, Repeat, Tag, CreditCard } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -69,6 +71,11 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [autoRenew, setAutoRenew] = useState(true);
   const [notes, setNotes] = useState("");
+  const [selectedCardId, setSelectedCardId] = useState<string>("");
+  const [showCardsModal, setShowCardsModal] = useState(false);
+
+  // Customer cards management
+  const { cards: customerCards, loading: cardsLoading } = useCustomerCards(selectedCustomerId);
 
   const selectedCustomer = useMemo(
     () => customers.find((c) => c.id === selectedCustomerId),
@@ -116,6 +123,8 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
     setStartDate(new Date());
     setAutoRenew(true);
     setNotes("");
+    setSelectedCardId("");
+    setShowCardsModal(false);
   };
 
   const handleClose = (value: boolean) => {
@@ -249,8 +258,9 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border">
+    <>
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle>Yeni Müşteri Satış Sihirbazı</DialogTitle>
           <DialogDescription>
@@ -523,6 +533,63 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
 
           {step === 4 && (
             <div className="space-y-4">
+              {/* Card Selection */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  <CreditCard className="h-4 w-4" />
+                  Ödeme Kartı
+                </h3>
+                {customerCards.length > 0 ? (
+                  <div className="space-y-2">
+                    <Select value={selectedCardId} onValueChange={setSelectedCardId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Kartlardan birini seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customerCards.map((card) => (
+                          <SelectItem key={card.id} value={card.id}>
+                            <div className="flex items-center gap-2">
+                              <span>{card.cardholderName}</span>
+                              {card.bankName && (
+                                <Badge variant="outline" className="text-xs">
+                                  {card.bankName}
+                                </Badge>
+                              )}
+                              <span className="text-muted-foreground">•••• {card.cardNumber.slice(-4)}</span>
+                              {card.isDefault && (
+                                <Badge className="text-xs">Varsayılan</Badge>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowCardsModal(true)}
+                      className="w-full"
+                    >
+                      Yeni Kart Ekle
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="rounded-md border border-dashed border-border bg-muted/30 p-3 text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">Müşteriye henüz kart eklenmemiş</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowCardsModal(true)}
+                      className="w-full"
+                    >
+                      İlk Kartı Ekle
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h3 className="font-semibold text-sm">Başlangıç tarihi</h3>
@@ -615,6 +682,19 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
                       )}
                     </span>
                   </p>
+                  {selectedCardId && (
+                    <p>
+                      <span className="text-muted-foreground">Kart: </span>
+                      <span>
+                        {customerCards.find((c) => c.id === selectedCardId)?.cardholderName || "-"}
+                        {customerCards.find((c) => c.id === selectedCardId)?.bankName && (
+                          <span className="text-muted-foreground ml-2">
+                            ({customerCards.find((c) => c.id === selectedCardId)?.bankName})
+                          </span>
+                        )}
+                      </span>
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -662,6 +742,23 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Customer Cards Modal */}
+    {selectedCustomerId && (
+      <CustomerCardsModal
+        open={showCardsModal}
+        onOpenChange={setShowCardsModal}
+        customerId={selectedCustomerId}
+        customerName={selectedCustomer?.name || newCustomer.name || ""}
+        onCardAdded={() => {
+          // Auto-select the newly added card if no card is selected
+          if (!selectedCardId && customerCards.length > 0) {
+            setSelectedCardId(customerCards[0].id);
+          }
+        }}
+      />
+    )}
+    </>
   );
 }
 

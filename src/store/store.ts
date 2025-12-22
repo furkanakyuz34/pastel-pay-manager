@@ -9,6 +9,7 @@ import paymentSlice from '../features/paymentSlice';
 import planSlice from '../features/planSlice';
 import licenseSlice from '../features/licenseSlice';
 import discountSlice from '../features/discountSlice';
+import customerCardSlice from '../features/customerCardSlice';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     // Slices
     subscriptions: subscriptionSlice,
     customers: customerSlice,
+    customerCards: customerCardSlice,
     projects: projectSlice,
     products: productSlice,
     payments: paymentSlice,

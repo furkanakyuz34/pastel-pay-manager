@@ -94,6 +94,12 @@ export interface Subscription {
   cancelledAt?: string;
   cancelReason?: string;
 
+  // Ödeme yöntemi bilgileri
+  paymentMethod?: "credit_card" | "cash" | "mixed";
+  cashPortion?: string; // Kısmi nakit ödeme tutarı
+  cardPortion?: string; // Kısmi kart ödeme tutarı
+  customerCardId?: string; // Kullanılan kart referansı
+
   // iyzico/Paynet API fields
   subscription_id?: string;
   company_code?: string;
@@ -142,6 +148,30 @@ export interface SubscriptionPlanDetail {
   status_desc: string;
 }
 
+// ==================== Customer Card Types ====================
+export interface CustomerCard {
+  id: string;
+  customerId: string;
+  cardholderName: string;
+  bankName?: string; // Banka/kart adı (Garanti, TEB, Akbank, vb.)
+  cardNumber: string; // Last 4 digits for display (e.g., "****1234")
+  cardNumberFull?: string; // Encrypted full card number (server-side only)
+  expiryMonth: number;
+  expiryYear: number;
+  cardBrand: "visa" | "mastercard" | "amex" | "other"; // Card brand/type
+  cvv?: string; // Server-side only, never returned in responses
+  isDefault: boolean; // Default card for payments
+  isActive: boolean; // Card is valid and can be used
+  savedFrom?: string; // Where the card was saved from (iyzico, paynet, etc.)
+  binNumber?: string; // Bank Identification Number (first 6 digits)
+  lastUsedAt?: string;
+  expiresAt?: string; // When the card will expire (YYYY-MM-DD)
+  createdAt: string;
+  updatedAt: string;
+  iyzcoCardToken?: string; // iyzico card token for API calls
+  paynetCardToken?: string; // Paynet card token for API calls
+}
+
 // ==================== Customer Types ====================
 export interface Customer {
   id: string;
@@ -160,6 +190,9 @@ export interface Customer {
   customPricing?: CustomerPricing[];
   discountTier?: "standard" | "silver" | "gold" | "platinum";
   defaultDiscountPercent?: number;
+  // Customer cards
+  cards?: CustomerCard[];
+  defaultCardId?: string;
 }
 
 // ==================== Project Types ====================
