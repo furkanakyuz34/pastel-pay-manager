@@ -2,12 +2,11 @@ import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { CustomerTable } from "@/components/dashboard/CustomerTable";
-import { CustomerFormModal, CustomerFormData } from "@/components/customers/CustomerFormModal";
-import { Subscription } from "@/components/subscriptions/SubscriptionFormModal";
-import { Payment } from "@/components/payments/PaymentFormModal";
+import { CustomerFormModal } from "@/components/customers/CustomerFormModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Filter, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Subscription, Payment, CustomerFormData } from "@/types";
 
 // Mock data - In a real app, this would come from an API or context
 const mockSubscriptions: Subscription[] = [

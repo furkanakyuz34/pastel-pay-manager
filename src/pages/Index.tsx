@@ -6,9 +6,9 @@ import { SubscriptionTable } from "@/components/dashboard/SubscriptionTable";
 import { PaymentList } from "@/components/dashboard/PaymentList";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { Button } from "@/components/ui/button";
-import { SubscriptionFormModal, SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
-import { Customer } from "@/components/customers/CustomerFormModal";
-import { Plan } from "@/components/plans/PlanFormModal";
+import { SubscriptionFormModal } from "@/components/subscriptions/SubscriptionFormModal";
+import type { SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
+import { Customer, Plan } from "@/types";
 import { CreditCard, TrendingUp, Users, Plus, Download, Repeat } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 

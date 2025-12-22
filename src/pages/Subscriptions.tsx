@@ -2,12 +2,12 @@ import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { SubscriptionTable } from "@/components/dashboard/SubscriptionTable";
-import { SubscriptionFormModal, SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
-import type { Subscription } from "@/components/subscriptions/SubscriptionFormModal";
+import { SubscriptionFormModal } from "@/components/subscriptions/SubscriptionFormModal";
+import type { SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Filter, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useAppSelector } from "@/hooks/redux";
+import { Subscription } from "@/types";
 import {
   useGetSubscriptionsQuery,
   useCreateSubscriptionMutation,

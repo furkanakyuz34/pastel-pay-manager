@@ -1,15 +1,14 @@
 import { ReactNode, useState } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
   children: ReactNode;
-  onWizardOpen?: () => void;
 }
 
-export function MainLayout({ children, onWizardOpen }: MainLayoutProps) {
+export function MainLayout({ children }: MainLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -29,7 +28,7 @@ export function MainLayout({ children, onWizardOpen }: MainLayoutProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <Sidebar onClose={() => setSidebarOpen(false)} onWizardOpen={onWizardOpen} />
+        <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
 
       {/* Main Content */}
