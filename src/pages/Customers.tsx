@@ -21,7 +21,8 @@ const mockSubscriptions: Subscription[] = [
     status: "active",
     startDate: "2024-01-15",
     nextBillingDate: "2025-01-15",
-    amount: "₺24.000",
+    planPrice: "₺24.000",
+    finalAmount: "₺24.000",
     autoRenew: true,
   },
   {
@@ -34,7 +35,8 @@ const mockSubscriptions: Subscription[] = [
     status: "active",
     startDate: "2024-12-01",
     nextBillingDate: "2025-01-01",
-    amount: "₺2.500",
+    planPrice: "₺2.500",
+    finalAmount: "₺2.500",
     autoRenew: true,
   },
   {
@@ -47,7 +49,8 @@ const mockSubscriptions: Subscription[] = [
     status: "trial",
     startDate: "2024-12-20",
     trialEndDate: "2025-01-03",
-    amount: "₺0",
+    planPrice: "₺0",
+    finalAmount: "₺0",
     autoRenew: false,
   },
 ];

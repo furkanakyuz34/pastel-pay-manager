@@ -5,7 +5,7 @@ import { PlanTable } from "@/components/dashboard/PlanTable";
 import { PlanFormModal, PlanFormData } from "@/components/plans/PlanFormModal";
 import { Customer } from "@/components/customers/CustomerFormModal";
 import { Project } from "@/components/projects/ProjectFormModal";
-import { Product } from "@/components/products/ProductFormModal";
+import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Filter, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -58,6 +58,7 @@ const mockProducts: Product[] = [
     projectId: "PRJ-001",
     projectName: "E-Ticaret Platformu",
     price: "₺5.000",
+    basePrice: 5000,
     status: "active",
   },
   {
@@ -67,6 +68,7 @@ const mockProducts: Product[] = [
     projectId: "PRJ-001",
     projectName: "E-Ticaret Platformu",
     price: "₺2.500",
+    basePrice: 2500,
     status: "active",
   },
   {
@@ -76,6 +78,7 @@ const mockProducts: Product[] = [
     projectId: "PRJ-002",
     projectName: "Mobil Uygulama",
     price: "₺3.000",
+    basePrice: 3000,
     status: "active",
   },
 ];

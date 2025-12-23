@@ -47,7 +47,7 @@ export function CustomerDetailModal({
 
   const totalSubscriptionAmount = useMemo(() => {
     return customerSubscriptions.reduce((sum, sub) => {
-      const amount = parseFloat(sub.amount.replace("₺", "").replace(".", "").replace(",", ".")) || 0;
+      const amount = parseFloat(sub.finalAmount.replace("₺", "").replace(".", "").replace(",", ".")) || 0;
       return sum + amount;
     }, 0);
   }, [customerSubscriptions]);
@@ -307,7 +307,7 @@ function CustomerSubscriptionTable({ subscriptions }: { subscriptions: Subscript
                     ? new Date(subscription.nextBillingDate).toLocaleDateString("tr-TR")
                     : "-"}
                 </td>
-                <td className="px-4 py-3 text-sm font-medium text-foreground">{subscription.amount}</td>
+                <td className="px-4 py-3 text-sm font-medium text-foreground">{subscription.finalAmount}</td>
               </tr>
             ))}
           </tbody>
