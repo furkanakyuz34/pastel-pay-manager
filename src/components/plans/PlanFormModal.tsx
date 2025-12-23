@@ -28,14 +28,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Customer } from "@/components/customers/CustomerFormModal";
-import { Project } from "@/components/projects/ProjectFormModal";
-import { Product } from "@/types";
+import { Customer, Project, Product, Plan } from "@/types";
 
 const planSchema = z.object({
   name: z.string().min(2, "Plan adı en az 2 karakter olmalıdır").max(100, "Plan adı en fazla 100 karakter olabilir"),
   description: z.string().optional(),
-  customerId: z.string().min(1, "Müşteri seçiniz"),
   projectId: z.string().min(1, "Proje seçiniz"),
   productIds: z.array(z.string()).min(1, "En az bir ürün seçiniz"),
   monthlyPrice: z.string().min(1, "Aylık fiyat giriniz").regex(/^[\d.,]+$/, "Geçerli bir fiyat giriniz"),
@@ -46,23 +43,6 @@ const planSchema = z.object({
 });
 
 export type PlanFormData = z.infer<typeof planSchema>;
-
-export interface Plan {
-  id: string;
-  name: string;
-  description?: string;
-  customerId: string;
-  customerName?: string;
-  projectId: string;
-  projectName?: string;
-  productIds: string[];
-  productNames?: string[];
-  monthlyPrice: string;
-  yearlyPrice: string;
-  features?: string;
-  status: "active" | "inactive";
-  trialDays: number;
-}
 
 interface PlanFormModalProps {
   open: boolean;
@@ -91,11 +71,10 @@ export function PlanFormModal({
     defaultValues: {
       name: plan?.name || "",
       description: plan?.description || "",
-      customerId: plan?.customerId || "",
       projectId: plan?.projectId || "",
       productIds: plan?.productIds || [],
-      monthlyPrice: plan?.monthlyPrice?.replace("₺", "").replace(".", "").trim() || "",
-      yearlyPrice: plan?.yearlyPrice?.replace("₺", "").replace(".", "").trim() || "",
+      monthlyPrice: plan?.monthlyPrice ? String(plan.monthlyPrice) : "",
+      yearlyPrice: plan?.yearlyPrice ? String(plan.yearlyPrice) : "",
       features: plan?.features || "",
       status: plan?.status || undefined,
       trialDays: plan?.trialDays || 14,
@@ -129,42 +108,17 @@ export function PlanFormModal({
       <DialogContent className="w-[95vw] max-w-[500px] max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-foreground">
-            {isEditing ? "Planı Düzenle" : "Yeni Müşteriye Özel Plan Oluştur"}
+            {isEditing ? "Planı Düzenle" : "Yeni Plan Oluştur"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             {isEditing
               ? "Plan bilgilerini güncelleyin."
-              : "Müşteriye özel bir abonelik planı oluşturmak için formu doldurun."}
+              : "Proje bazlı bir abonelik planı oluşturmak için formu doldurun."}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {/* Customer Selection */}
-            <FormField
-              control={form.control}
-              name="customerId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Müşteri</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue placeholder="Müşteri seçin" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {customers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id}>
-                          {customer.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Project Selection */}
             <FormField

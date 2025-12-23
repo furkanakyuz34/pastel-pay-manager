@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plan } from "./PlanFormModal";
+import { Plan } from "@/types";
 import { User, FolderKanban, ShoppingBag, CheckCircle2, XCircle } from "lucide-react";
 
 interface PlanDetailModalProps {
@@ -48,16 +48,16 @@ export function PlanDetailModal({
           <div className="grid grid-cols-1 gap-4">
             <div className="p-4 rounded-lg border border-border bg-muted/30">
               <div className="flex items-center gap-2 mb-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Müşteri</span>
+                <FolderKanban className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Proje</span>
               </div>
-              <p className="text-sm text-muted-foreground">{plan.customerName || "-"}</p>
+              <p className="text-sm text-muted-foreground">{plan.projectName || "-"}</p>
             </div>
 
             <div className="p-4 rounded-lg border border-border bg-muted/30">
               <div className="flex items-center gap-2 mb-2">
-                <FolderKanban className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Proje</span>
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Proje Detayı</span>
               </div>
               <p className="text-sm text-muted-foreground">{plan.projectName || "-"}</p>
             </div>

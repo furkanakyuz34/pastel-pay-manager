@@ -9,27 +9,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PlanFormModal, Plan, PlanFormData } from "@/components/plans/PlanFormModal";
+import { PlanFormModal, PlanFormData } from "@/components/plans/PlanFormModal";
 import { DeletePlanDialog } from "@/components/plans/DeletePlanDialog";
 import { PlanDetailsModal } from "@/components/plans/PlanDetailsModal";
-import { Customer } from "@/components/customers/CustomerFormModal";
-import { Project } from "@/components/projects/ProjectFormModal";
-import { Product } from "@/components/products/ProductFormModal";
+import { Customer, Project, Product, Plan } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { formatCurrency } from "@/lib/pricing";
 
 const initialPlans: Plan[] = [
   {
     id: "PLAN-001",
     name: "Premium Plan",
     description: "Tüm özellikler dahil, en gelişmiş plan",
-    customerId: "CUS-001",
-    customerName: "ABC Teknoloji A.Ş.",
     projectId: "PRJ-001",
     projectName: "E-Ticaret Platformu",
     productIds: ["PRD-001", "PRD-002"],
     productNames: ["Premium Paket", "Standart Paket"],
-    monthlyPrice: "₺2.000",
-    yearlyPrice: "₺20.000",
+    monthlyPrice: 2000,
+    yearlyPrice: 20000,
     features: "Sınırsız kullanıcı\nÖncelikli destek\nGelişmiş analitik\nAPI erişimi",
     status: "active",
     trialDays: 14,
@@ -38,14 +35,12 @@ const initialPlans: Plan[] = [
     id: "PLAN-002",
     name: "Standard Plan",
     description: "Orta ölçekli işletmeler için",
-    customerId: "CUS-002",
-    customerName: "XYZ Yazılım Ltd.",
     projectId: "PRJ-002",
     projectName: "Mobil Uygulama",
     productIds: ["PRD-003"],
     productNames: ["Mobil Uygulama Lisansı"],
-    monthlyPrice: "₺1.000",
-    yearlyPrice: "₺10.000",
+    monthlyPrice: 1000,
+    yearlyPrice: 10000,
     features: "50 kullanıcı\nStandart destek\nTemel analitik",
     status: "active",
     trialDays: 14,
@@ -108,9 +103,11 @@ export function PlanTable({
 
   const handleUpdatePlan = (data: PlanFormData) => {
     if (selectedPlan) {
-      const customer = customers.find((c) => c.id === data.customerId);
       const project = projects.find((p) => p.id === data.projectId);
       const selectedProducts = products.filter((prod) => data.productIds.includes(prod.id));
+
+      const monthlyPriceNum = parseFloat(data.monthlyPrice.replace(/[^\d.,]/g, "").replace(",", ".")) || 0;
+      const yearlyPriceNum = parseFloat(data.yearlyPrice.replace(/[^\d.,]/g, "").replace(",", ".")) || 0;
 
       setPlans((prev) =>
         prev.map((p) =>
@@ -119,14 +116,12 @@ export function PlanTable({
                 ...p,
                 name: data.name,
                 description: data.description,
-                customerId: data.customerId,
-                customerName: customer?.name,
                 projectId: data.projectId,
                 projectName: project?.name,
                 productIds: data.productIds,
                 productNames: selectedProducts.map((prod) => prod.name),
-                monthlyPrice: `₺${data.monthlyPrice}`,
-                yearlyPrice: `₺${data.yearlyPrice}`,
+                monthlyPrice: monthlyPriceNum,
+                yearlyPrice: yearlyPriceNum,
                 features: data.features,
                 status: data.status,
                 trialDays: data.trialDays,
@@ -160,7 +155,7 @@ export function PlanTable({
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-foreground truncate">{plan.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{plan.customerName || "-"}</p>
+                <p className="text-xs text-muted-foreground truncate">{plan.projectName || "-"}</p>
               </div>
               <Badge variant={statusConfig[plan.status].variant} className="text-xs">
                 {statusConfig[plan.status].label}
@@ -187,11 +182,11 @@ export function PlanTable({
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
               <div>
                 <p className="text-xs text-muted-foreground">Aylık</p>
-                <p className="text-sm font-semibold text-foreground">{plan.monthlyPrice}</p>
+                <p className="text-sm font-semibold text-foreground">{formatCurrency(plan.monthlyPrice)}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Yıllık</p>
-                <p className="text-sm font-semibold text-foreground">{plan.yearlyPrice}</p>
+                <p className="text-sm font-semibold text-foreground">{formatCurrency(plan.yearlyPrice)}</p>
               </div>
             </div>
             <div className="flex gap-2 pt-2">
@@ -272,7 +267,7 @@ export function PlanTable({
                     <p className="font-medium text-sm text-foreground">{plan.name}</p>
                   </td>
                   <td className="whitespace-nowrap px-4 xl:px-6 py-3 text-sm text-foreground">
-                    {plan.customerName || "-"}
+                    {plan.projectName || "-"}
                   </td>
                   <td className="whitespace-nowrap px-4 xl:px-6 py-3">
                     <Badge variant="outline" className="text-xs">{plan.projectName || "-"}</Badge>
@@ -291,10 +286,10 @@ export function PlanTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-4 xl:px-6 py-3 text-sm font-medium text-foreground">
-                    {plan.monthlyPrice}
+                    {formatCurrency(plan.monthlyPrice)}
                   </td>
                   <td className="whitespace-nowrap px-4 xl:px-6 py-3 text-sm font-medium text-foreground">
-                    {plan.yearlyPrice}
+                    {formatCurrency(plan.yearlyPrice)}
                   </td>
                   <td className="whitespace-nowrap px-4 xl:px-6 py-3">
                     <Badge variant={statusConfig[plan.status].variant} className="text-xs">

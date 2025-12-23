@@ -216,17 +216,20 @@ export interface Product {
   name: string;
   description?: string;
   projectId: string;
-  projectName: string;
+  projectName?: string;
   
   // Ürün fiyatı - İskontolar uygulanabilir
-  price: string; // Display price format (e.g., "₺5.000")
+  price?: string; // Display price format (e.g., "₺5.000")
   basePrice: number; // Base price (numeric, for calculations)
   currency?: string; // Default: "TRY"
   
   // Discount fields
   discountType?: DiscountType;
   discountValue?: number;
+  discountValidFrom?: string;
+  discountValidUntil?: string;
   finalPrice?: number; // Calculated price after discount
+  discountAmount?: number;
   
   status: "active" | "inactive" | "discontinued";
   

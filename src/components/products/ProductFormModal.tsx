@@ -31,7 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Project } from "@/types";
+import { Project, Product } from "@/types";
 import { calculateFinalPrice, formatCurrency, formatDiscountDisplay } from "@/lib/pricing";
 import { Percent, CircleDollarSign, Tag, Calculator } from "lucide-react";
 
@@ -52,26 +52,6 @@ const productSchema = z.object({
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
-
-export interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  projectId: string;
-  projectName?: string;
-  basePrice: number;
-  currency: string;
-  status: "active" | "inactive" | "discontinued";
-  discountType: "none" | "percentage" | "amount";
-  discountValue: number;
-  discountValidFrom?: string;
-  discountValidUntil?: string;
-  finalPrice: number;
-  discountAmount?: number;
-  billingType: "one_time" | "recurring";
-  recurringInterval?: "daily" | "weekly" | "monthly" | "yearly";
-  trialDays?: number;
-}
 
 interface ProductFormModalProps {
   open: boolean;
