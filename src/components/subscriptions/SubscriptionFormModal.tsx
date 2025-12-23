@@ -46,8 +46,8 @@ import { PlanPriceDisplay } from "@/components/plans/PlanPriceDisplay";
 const subscriptionSchema = z.object({
   customerId: z.string().min(1, "Müşteri seçiniz"),
   planId: z.string().min(1, "Abonelik planı seçiniz"),
-  billingCycle: z.enum(["monthly", "yearly", "trial"], { required_error: "Faturalama döngüsü seçiniz" }),
-  status: z.enum(["active", "cancelled", "expired", "trial", "pending"], { required_error: "Durum seçiniz" }),
+  billingCycle: z.enum(["monthly", "yearly"], { required_error: "Faturalama döngüsü seçiniz" }),
+  status: z.enum(["active", "cancelled", "expired", "trial", "pending", "paused"], { required_error: "Durum seçiniz" }),
   startDate: z.date({ required_error: "Başlangıç tarihi seçiniz" }),
   nextBillingDate: z.date().optional(),
   trialEndDate: z.date().optional(),
@@ -61,7 +61,7 @@ const subscriptionSchema = z.object({
 
   // iyzico/Paynet API fields
   name_surname: z.string().min(2, "İsim ve soyisim giriniz"),
-  amount: z.string().min(1, "Tutar giriniz").regex(/^[\d.,]+$/, "Geçerli bir tutar giriniz"),
+  finalAmount: z.string().min(1, "Tutar giriniz").regex(/^[\d.,]+$/, "Geçerli bir tutar giriniz"),
   interval: z.number().min(0).max(3, "Geçersiz interval").default(2),
   interval_count: z.number().min(1, "En az 1 olmalıdır"),
   begin_date: z.date({ required_error: "Başlangıç tarihi seçiniz" }),
@@ -119,7 +119,7 @@ export function SubscriptionFormModal({
     defaultValues: {
       customerId: subscription?.customerId || "",
       planId: subscription?.planId || "",
-      billingCycle: subscription?.billingCycle || undefined,
+      billingCycle: subscription?.billingCycle === "trial" ? "monthly" : (subscription?.billingCycle || undefined),
       status: subscription?.status || undefined,
       startDate: subscription?.startDate ? new Date(subscription.startDate) : undefined,
       nextBillingDate: subscription?.nextBillingDate ? new Date(subscription.nextBillingDate) : undefined,
@@ -132,7 +132,7 @@ export function SubscriptionFormModal({
 
       // iyzico/Paynet API defaults
       name_surname: subscription?.name_surname || "",
-      amount: subscription?.amount || "",
+      finalAmount: subscription?.finalAmount || "",
       interval: subscription?.interval ?? 2,
       interval_count: subscription?.interval_count || 12,
       begin_date: subscription?.begin_date ? new Date(subscription.begin_date) : undefined,
@@ -169,8 +169,8 @@ export function SubscriptionFormModal({
   const selectedCustomerId = form.watch("customerId");
   const paymentMethod = form.watch("paymentMethod");
   
-  // Filter plans by selected customer
-  const availablePlans = plans.filter((p) => p.customerId === selectedCustomerId);
+  // All plans available for selection
+  const availablePlans = plans;
   
   // Reset plan selection when customer changes
   React.useEffect(() => {
@@ -193,28 +193,20 @@ export function SubscriptionFormModal({
     return nextDate;
   };
 
-  const handleBillingCycleChange = (value: "monthly" | "yearly" | "trial") => {
+  const handleBillingCycleChange = (value: "monthly" | "yearly") => {
     form.setValue("billingCycle", value);
     const startDate = form.getValues("startDate");
-    if (startDate && value !== "trial") {
+    if (startDate) {
       const nextBilling = calculateNextBillingDate(startDate, value);
       form.setValue("nextBillingDate", nextBilling);
-    } else if (value === "trial") {
-      const trialEnd = startDate ? new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000) : undefined;
-      form.setValue("trialEndDate", trialEnd);
     }
   };
 
   const handleStartDateChange = (date: Date | undefined) => {
     form.setValue("startDate", date);
     if (date && selectedBillingCycle) {
-      if (selectedBillingCycle === "trial") {
-        const trialEnd = new Date(date.getTime() + 14 * 24 * 60 * 60 * 1000);
-        form.setValue("trialEndDate", trialEnd);
-      } else {
-        const nextBilling = calculateNextBillingDate(date, selectedBillingCycle);
-        form.setValue("nextBillingDate", nextBilling);
-      }
+      const nextBilling = calculateNextBillingDate(date, selectedBillingCycle);
+      form.setValue("nextBillingDate", nextBilling);
     }
   };
 
@@ -348,7 +340,7 @@ export function SubscriptionFormModal({
                         <Select 
                           onValueChange={(value) => {
                             field.onChange(value);
-                            handleBillingCycleChange(value as "monthly" | "yearly" | "trial");
+                            handleBillingCycleChange(value as "monthly" | "yearly");
                           }} 
                           defaultValue={field.value}
                         >
@@ -519,12 +511,12 @@ export function SubscriptionFormModal({
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="amount"
+                    name="finalAmount"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tutar</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="0.00" className="bg-background" />
+                          <Input {...field} value={String(field.value || "")} placeholder="0.00" className="bg-background" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

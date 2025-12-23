@@ -218,10 +218,15 @@ export interface Product {
   projectId: string;
   projectName: string;
   
-  // Ürün fiyatı SABIT - İskontolar plan seviyesinde uygulanır
+  // Ürün fiyatı - İskontolar uygulanabilir
   price: string; // Display price format (e.g., "₺5.000")
   basePrice: number; // Base price (numeric, for calculations)
   currency?: string; // Default: "TRY"
+  
+  // Discount fields
+  discountType?: DiscountType;
+  discountValue?: number;
+  finalPrice?: number; // Calculated price after discount
   
   status: "active" | "inactive" | "discontinued";
   

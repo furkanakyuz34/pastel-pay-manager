@@ -127,7 +127,8 @@ const SubscriptionsPage = () => {
         trialEndDate: data.trialEndDate?.toISOString().split('T')[0],
         customerName: customer.name,
         planName: plan.name,
-        amount: data.billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice,
+        planPrice: String(data.billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice),
+        finalAmount: String(data.billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice),
         autoRenew: true, // Default value
       };
 

@@ -30,7 +30,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Customer } from "@/components/customers/CustomerFormModal";
 import { Project } from "@/components/projects/ProjectFormModal";
-import { Product } from "@/components/products/ProductFormModal";
+import { Product } from "@/types";
 
 const planSchema = z.object({
   name: z.string().min(2, "Plan adı en az 2 karakter olmalıdır").max(100, "Plan adı en fazla 100 karakter olabilir"),
@@ -220,7 +220,7 @@ export function PlanFormModal({
                               htmlFor={product.id}
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
                             >
-                              {product.name} - {product.price}
+                              {product.name} - {product.price || `₺${product.basePrice?.toLocaleString("tr-TR")}`}
                             </label>
                           </div>
                         ))

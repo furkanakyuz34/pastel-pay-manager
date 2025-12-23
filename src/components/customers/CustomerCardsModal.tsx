@@ -46,16 +46,17 @@ const cardSchema = z.object({
 
 export type CardFormData = z.infer<typeof cardSchema>;
 
-interface CustomerCardsModalProps {
+export interface CustomerCardsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   customerId: string;
   customerName: string;
-  cards: CustomerCard[];
+  cards?: CustomerCard[];
   defaultCardId?: string;
-  onAddCard: (card: CustomerCard) => void;
-  onDeleteCard: (cardId: string) => void;
-  onSetDefault: (cardId: string) => void;
+  onAddCard?: (card: CustomerCard) => void;
+  onDeleteCard?: (cardId: string) => void;
+  onSetDefault?: (cardId: string) => void;
+  onCardAdded?: () => void;
 }
 
 export function CustomerCardsModal({
@@ -63,11 +64,12 @@ export function CustomerCardsModal({
   onOpenChange,
   customerId,
   customerName,
-  cards,
+  cards = [],
   defaultCardId,
   onAddCard,
   onDeleteCard,
   onSetDefault,
+  onCardAdded,
 }: CustomerCardsModalProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showCVV, setShowCVV] = useState<Record<string, boolean>>({});

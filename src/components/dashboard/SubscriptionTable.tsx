@@ -28,7 +28,8 @@ const initialSubscriptions: Subscription[] = [
     status: "active",
     startDate: "2024-01-15",
     nextBillingDate: "2025-01-15",
-    amount: "₺24.000",
+    planPrice: "₺24.000",
+    finalAmount: "₺24.000",
     autoRenew: true,
   },
   {
@@ -41,7 +42,8 @@ const initialSubscriptions: Subscription[] = [
     status: "active",
     startDate: "2024-12-01",
     nextBillingDate: "2025-01-01",
-    amount: "₺2.500",
+    planPrice: "₺2.500",
+    finalAmount: "₺2.500",
     autoRenew: true,
   },
   {
@@ -54,7 +56,8 @@ const initialSubscriptions: Subscription[] = [
     status: "trial",
     startDate: "2024-12-20",
     trialEndDate: "2025-01-03",
-    amount: "₺0",
+    planPrice: "₺0",
+    finalAmount: "₺0",
     autoRenew: false,
   },
   {
@@ -67,7 +70,8 @@ const initialSubscriptions: Subscription[] = [
     status: "expired",
     startDate: "2023-01-01",
     nextBillingDate: "2024-01-01",
-    amount: "₺18.000",
+    planPrice: "₺18.000",
+    finalAmount: "₺18.000",
     autoRenew: false,
   },
   {
@@ -77,10 +81,11 @@ const initialSubscriptions: Subscription[] = [
     planId: "PLAN-002",
     planName: "Standard Plan",
     billingCycle: "monthly",
-    status: "active",
+    status: "paused",
     startDate: "2024-11-15",
     nextBillingDate: "2024-12-15",
-    amount: "₺4.500",
+    planPrice: "₺4.500",
+    finalAmount: "₺4.500",
     autoRenew: true,
   },
 ];
@@ -109,7 +114,7 @@ interface SubscriptionTableProps {
   subscriptions?: Subscription[];
   loading?: boolean;
   searchQuery?: string;
-  statusFilter?: "all" | "active" | "trial" | "expired" | "cancelled" | "pending";
+  statusFilter?: "all" | "active" | "trial" | "expired" | "cancelled" | "pending" | "paused";
 }
 
 export function SubscriptionTable({
@@ -319,7 +324,7 @@ export function SubscriptionTable({
               </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Tutar</p>
-                <p className="text-sm font-semibold text-foreground">{subscription.amount}</p>
+                <p className="text-sm font-semibold text-foreground">{subscription.finalAmount}</p>
               </div>
             </div>
             <div className="flex gap-1 pt-2">
@@ -428,7 +433,7 @@ export function SubscriptionTable({
                       : "-"}
                   </td>
                   <td className="whitespace-nowrap px-3 xl:px-4 py-2 xl:py-3 text-xs xl:text-sm font-medium text-foreground">
-                    {subscription.amount}
+                    {subscription.finalAmount}
                   </td>
                   <td className="whitespace-nowrap px-3 xl:px-4 py-2 xl:py-3 text-right">
                     <DropdownMenu>

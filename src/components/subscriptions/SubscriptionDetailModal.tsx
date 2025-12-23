@@ -134,7 +134,7 @@ export function SubscriptionDetailModal({
             </div>
             <div className="p-4 rounded-lg border border-border bg-card text-center">
               <p className="text-sm text-muted-foreground mb-1">Abonelik Tutarı</p>
-              <p className="text-lg font-semibold text-foreground">{subscription.amount}</p>
+              <p className="text-lg font-semibold text-foreground">{subscription.finalAmount}</p>
             </div>
             <div className="p-4 rounded-lg border border-border bg-card text-center">
               <p className="text-sm text-muted-foreground mb-1">Toplam Ödeme</p>
