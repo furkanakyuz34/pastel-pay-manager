@@ -9,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ProductFormModal, Product, ProductFormData } from "@/components/products/ProductFormModal";
+import { ProductFormModal, ProductFormData } from "@/components/products/ProductFormModal";
 import { DeleteProductDialog } from "@/components/products/DeleteProductDialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/hooks/use-toast";
-import { Project } from "@/types";
+import { Project, Product } from "@/types";
 import { formatCurrency, calculateFinalPrice, formatDiscountDisplay } from "@/lib/pricing";
 
 const initialProducts: Product[] = [

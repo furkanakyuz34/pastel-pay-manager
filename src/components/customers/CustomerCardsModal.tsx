@@ -86,6 +86,15 @@ export function CustomerCardsModal({
   });
 
   const onSubmit = (data: CardFormData) => {
+    if (!onAddCard) {
+      toast({
+        title: "Hata",
+        description: "Kart ekleme işlevi tanımlı değil",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Maskelenmiş kart numarası (son 4 hane)
     const cardNumberLast4 = data.cardNumber
       .slice(-4)
@@ -120,6 +129,7 @@ export function CustomerCardsModal({
     };
 
     onAddCard(newCard);
+    onCardAdded?.();
     form.reset();
     setShowAddForm(false);
     toast({
@@ -129,6 +139,7 @@ export function CustomerCardsModal({
   };
 
   const handleDelete = (cardId: string) => {
+    if (!onDeleteCard) return;
     if (confirm("Bu kartı silmek istediğinizden emin misiniz?")) {
       onDeleteCard(cardId);
       toast({
@@ -139,6 +150,7 @@ export function CustomerCardsModal({
   };
 
   const handleSetDefault = (cardId: string) => {
+    if (!onSetDefault) return;
     onSetDefault(cardId);
     toast({
       title: "Başarılı",
