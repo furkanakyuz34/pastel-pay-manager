@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { subscriptionApi } from '../services/subscriptionApi';
 import { managementApi } from '../services/managementApi';
+import { authApi } from '../services/authApi';
 import subscriptionSlice from '../features/subscriptionSlice';
 import customerSlice from '../features/customerSlice';
 import projectSlice from '../features/projectSlice';
@@ -16,6 +17,7 @@ export const store = configureStore({
     // RTK Query APIs
     [subscriptionApi.reducerPath]: subscriptionApi.reducer,
     [managementApi.reducerPath]: managementApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
 
     // Slices
     subscriptions: subscriptionSlice,
@@ -31,7 +33,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       subscriptionApi.middleware,
-      managementApi.middleware
+      managementApi.middleware,
+      authApi.middleware
     ),
 });
 

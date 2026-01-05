@@ -3,7 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { Lock, Mail, Zap } from "lucide-react";
+import { Lock, User, Zap } from "lucide-react";
+import { useLoginMutation } from "@/services/authApi";
+import { useToast as useCustomToast } from "@/hooks/use-toast";
+import { getNameFromToken } from "@/lib/jwt";
 import {
   Form,
   FormControl,
@@ -14,19 +17,18 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
-  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
-  password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
+  kullaniciId: z.string().pipe(z.coerce.number().int("Kullanıcı ID sayı olmalıdır").positive("Geçerli bir kullanıcı ID giriniz")),
+  sifre: z.string().min(1, "Şifre gerekli"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useCustomToast();
+  const [login, { isLoading }] = useLoginMutation();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -39,31 +41,53 @@ const Login = () => {
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      kullaniciId: 0,
+      sifre: "",
     },
   });
 
   const handleSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // In a real app, this would be an API call
-      console.log("Login attempt:", data);
+    try {
+      const response = await login({
+        kullaniciId: data.kullaniciId,
+        sifre: data.sifre,
+      }).unwrap();
+
+      // Başarılı login - response.data içinde accessToken var
+      const token = response.data.accessToken;
       
-      // Mock successful login
+      // Token'dan kullanıcı bilgilerini al
+      const kullaniciAdi = getNameFromToken(token);
+      
+      // localStorage'a kaydet
+      localStorage.setItem("authToken", token);
       localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userEmail", data.email);
-      
+      localStorage.setItem("kullaniciId", data.kullaniciId.toString());
+      if (kullaniciAdi) {
+        localStorage.setItem("kullaniciAdi", kullaniciAdi);
+      }
+
       toast({
         title: "Giriş Başarılı",
-        description: "Hoş geldiniz!",
+        description: response.message,
       });
+
+      navigate("/", { replace: true });
+    } catch (error: any) {
+      let errorMessage = "Giriş başarısız";
       
-      setIsLoading(false);
-      navigate("/");
-    }, 1000);
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      toast({
+        title: "Hata",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -100,19 +124,19 @@ const Login = () => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              {/* Email */}
+              {/* Kullanıcı ID */}
               <FormField
                 control={form.control}
-                name="email"
+                name="kullaniciId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>E-posta</FormLabel>
+                    <FormLabel>Kullanıcı ID</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
-                          type="email"
-                          placeholder="ornek@email.com"
+                          type="number"
+                          placeholder="1"
                           className="pl-10 bg-background border-border"
                           {...field}
                         />
@@ -123,10 +147,10 @@ const Login = () => {
                 )}
               />
 
-              {/* Password */}
+              {/* Şifre */}
               <FormField
                 control={form.control}
-                name="password"
+                name="sifre"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Şifre</FormLabel>
@@ -184,7 +208,7 @@ const Login = () => {
           {/* Demo Credentials */}
           <div className="pt-4 border-t border-border">
             <p className="text-xs text-center text-muted-foreground">
-              Demo için herhangi bir e-posta ve şifre kullanabilirsiniz
+              Demo kullanıcı için kullanıcı ID'sini ve şifresini giriniz
             </p>
           </div>
         </div>
