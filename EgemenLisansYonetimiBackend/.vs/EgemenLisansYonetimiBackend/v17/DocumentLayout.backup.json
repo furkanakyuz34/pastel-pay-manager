@@ -1,0 +1,632 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CA3817F6-23EA-41FD-B3FE-341380277D4B}|EgemenLisansYonetimiBackend.Worker\\EgemenLisansYonetimiBackend.Worker.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.worker\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CA3817F6-23EA-41FD-B3FE-341380277D4B}|EgemenLisansYonetimiBackend.Worker\\EgemenLisansYonetimiBackend.Worker.csproj|solutionrelative:egemenlisansyonetimibackend.worker\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetwebhookcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetwebhookcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetwebhookparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetwebhookparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetwebhookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetwebhookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\common\\currentuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\common\\currentuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\auth\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\auth\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\subscription\\createsubscriptionresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\subscription\\createsubscriptionresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\subscription\\createsubscriptionrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\subscription\\createsubscriptionrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\common\\paynetbaseresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\common\\paynetbaseresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\transaction\\chargeresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\transaction\\chargeresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\transaction\\chargerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\dtos\\transaction\\chargerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\paynet\\paynetoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\paynet\\paynetoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\egemenlisansyonetimibackend.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\egemenlisansyonetimibackend.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\firma\\firmacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\firma\\firmacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\common\\apierror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\common\\apierror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\projemodul\\projemodulcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\projemodul\\projemodulcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\sample\\samplecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\sample\\samplecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\projemodul\\projemodulrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\projemodul\\projemodulrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\proje\\projerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\proje\\projerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\firma\\firmamodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\firma\\firmamodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\projemodul\\projemodulmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\projemodul\\projemodulmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\auth\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\auth\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\infrastructure\\security\\jwttokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\infrastructure\\security\\jwttokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\common\\exceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\common\\exceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\proje\\projecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\proje\\projecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\features\\proje\\projemodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\features\\proje\\projemodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\infrastructure\\logging\\correlationidmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\infrastructure\\logging\\correlationidmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\infrastructure\\logging\\requestloggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\infrastructure\\logging\\requestloggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\infrastructure\\db\\firebirdconnectionfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\infrastructure\\db\\firebirdconnectionfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|e:\\projeler\\egemenlisansyonetimi2\\egemenlisansyonetimibackend\\egemenlisansyonetimibackend.api\\infrastructure\\db\\idbconnectionfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB6872D-F73D-492A-9540-31F5DB28F5E2}|EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj|solutionrelative:egemenlisansyonetimibackend.api\\infrastructure\\db\\idbconnectionfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Worker\\Program.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Worker\\Program.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Worker\\Program.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Worker\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T13:23:02.982Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PaynetWebhookController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookController.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAADwvxQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:51:43.397Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PaynetWebhookParser.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookParser.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookParser.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookParser.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookParser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:51:09.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PaynetWebhookRepository.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookRepository.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookRepository.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookRepository.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetWebhookRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:50:42.766Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PaynetController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetController.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAmwEcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:42:55.778Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Program.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Program.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Program.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Program.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAqwIwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:10:15.474Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PaynetModels.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetModels.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetModels.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetModels.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetModels.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAA4wEgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:42:37.712Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PaynetRepository.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetRepository.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetRepository.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetRepository.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetRepository.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAowCgAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:36:43.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CreateSubscriptionResponse.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionResponse.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionResponse.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionResponse.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:27:37.56Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CreateSubscriptionRequest.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionRequest.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionRequest.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionRequest.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Subscription\\CreateSubscriptionRequest.cs",
+              "ViewState": "AgIAAD0AAAAAAAAAAAA4wGoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:27:13.419Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CurrentUser.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Common\\CurrentUser.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Common\\CurrentUser.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Common\\CurrentUser.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Common\\CurrentUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T12:07:48.192Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "PaynetBaseResponse.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Common\\PaynetBaseResponse.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Common\\PaynetBaseResponse.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Common\\PaynetBaseResponse.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Common\\PaynetBaseResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:26:42.848Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ChargeResponse.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeResponse.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeResponse.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeResponse.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:28:19.68Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "PaynetClient.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetClient.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetClient.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetClient.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetClient.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAowEQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:24:09.852Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Auth\\UserRepository.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Auth\\UserRepository.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Auth\\UserRepository.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Auth\\UserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:08:45.34Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ChargeRequest.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeRequest.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeRequest.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeRequest.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\Dtos\\Transaction\\ChargeRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:28:01.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "PaynetEndpoints.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetEndpoints.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetEndpoints.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetEndpoints.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetEndpoints.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:23:53.254Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "PaynetOptions.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetOptions.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetOptions.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetOptions.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Paynet\\PaynetOptions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T12:23:33.562Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ProjeModulRepository.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulRepository.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulRepository.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulRepository.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulRepository.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAmwCUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:54:27.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ProjeModulController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAADoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:55:04.948Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "SampleController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Sample\\SampleController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Sample\\SampleController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Sample\\SampleController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Sample\\SampleController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:09:48.136Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "ApiError.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Common\\ApiError.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Common\\ApiError.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Common\\ApiError.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Common\\ApiError.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T10:56:09.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "FirmaController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaController.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAgwDQAAABvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:22:27.957Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "EgemenLisansYonetimiBackend.Api.csproj",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\EgemenLisansYonetimiBackend.Api.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-26T07:02:25.979Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\appsettings.json",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\appsettings.json",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\appsettings.json",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\appsettings.json",
+              "ViewState": "AgIAADEAAAAAAAAAAAAowEgAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-26T07:16:50.737Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Auth\\AuthController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Auth\\AuthController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Auth\\AuthController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Auth\\AuthController.cs",
+              "ViewState": "AgIAADgAAAAAAAAAAAAiwEQAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:09:25.692Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "FirmaModels.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaModels.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaModels.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaModels.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Firma\\FirmaModels.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAgwBUAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:21:33.666Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "ProjeRepository.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeRepository.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeRepository.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeRepository.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeRepository.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAADwvyYAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:25:28.559Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "ProjeModulModels.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulModels.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulModels.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulModels.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\ProjeModul\\ProjeModulModels.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:54:44.902Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "JwtTokenService.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Security\\JwtTokenService.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Security\\JwtTokenService.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Security\\JwtTokenService.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Security\\JwtTokenService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwBoAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:07:24.423Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ExceptionMiddleware.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Common\\ExceptionMiddleware.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Common\\ExceptionMiddleware.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Common\\ExceptionMiddleware.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Common\\ExceptionMiddleware.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAcwBoAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T10:56:57.021Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "CorrelationIdMiddleware.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\CorrelationIdMiddleware.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\CorrelationIdMiddleware.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\CorrelationIdMiddleware.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\CorrelationIdMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T10:57:36.847Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "ProjeModels.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeModels.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeModels.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeModels.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeModels.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:25:06.609Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "ProjeController.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeController.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeController.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeController.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Features\\Proje\\ProjeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T11:25:46.8Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\appsettings.Development.json",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\appsettings.Development.json",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\appsettings.Development.json",
+              "ViewState": "AgIAABkAAAAAAAAAAAAmwEQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-26T07:17:27.022Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "RequestLoggingMiddleware.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\RequestLoggingMiddleware.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\RequestLoggingMiddleware.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\RequestLoggingMiddleware.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Logging\\RequestLoggingMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T10:57:59.457Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "FirebirdConnectionFactory.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\FirebirdConnectionFactory.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\FirebirdConnectionFactory.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\FirebirdConnectionFactory.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\FirebirdConnectionFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:06:36.494Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "IDbConnectionFactory.cs",
+              "DocumentMoniker": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\IDbConnectionFactory.cs",
+              "RelativeDocumentMoniker": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\IDbConnectionFactory.cs",
+              "ToolTip": "E:\\Projeler\\EgemenLisansYonetimi2\\EgemenLisansYonetimiBackend\\EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\IDbConnectionFactory.cs",
+              "RelativeToolTip": "EgemenLisansYonetimiBackend.Api\\Infrastructure\\Db\\IDbConnectionFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-26T07:05:38.344Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
