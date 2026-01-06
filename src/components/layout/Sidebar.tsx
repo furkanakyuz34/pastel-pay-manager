@@ -17,6 +17,7 @@ import {
   Receipt,
   Tag,
   X,
+  FileSignature,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ const menuItems = [
   { icon: Users, label: "Firmalar", path: "/firmalar" },
   { icon: FolderKanban, label: "Projeler", path: "/projeler" },
   { icon: ShoppingBag, label: "Proje Modülleri", path: "/proje-moduller" },
+  { icon: FileSignature, label: "Sözleşmeler", path: "/sozlesmeler" },
   { icon: Repeat, label: "Abonelikler", path: "/subscriptions" },
   { icon: CreditCard, label: "Ödemeler", path: "/payments" },
   { icon: FileText, label: "Faturalar", path: "/invoices" },

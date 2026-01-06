@@ -4,9 +4,10 @@ import { cn } from "@/lib/utils";
 interface LoadingStateProps {
   className?: string;
   size?: "sm" | "md" | "lg";
+  message?: string;
 }
 
-export function LoadingState({ className, size = "md" }: LoadingStateProps) {
+export function LoadingState({ className, size = "md", message }: LoadingStateProps) {
   const sizeClasses = {
     sm: "h-4 w-4",
     md: "h-6 w-6",
@@ -16,11 +17,12 @@ export function LoadingState({ className, size = "md" }: LoadingStateProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center py-12",
+        "flex flex-col items-center justify-center py-12 gap-3",
         className
       )}
     >
       <Loader2 className={cn("animate-spin text-primary", sizeClasses[size])} />
+      {message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>
   );
 }

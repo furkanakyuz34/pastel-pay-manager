@@ -10,6 +10,12 @@ import {
   ProjeModulDto,
   ProjeModulCreateRequest,
   ProjeModulUpdateRequest,
+  SozlesmeDto,
+  SozlesmeCreateRequest,
+  SozlesmeUpdateRequest,
+  SozlesmeModulDto,
+  SozlesmeModulCreateRequest,
+  SozlesmeModulUpdateRequest,
 } from '../types/backend';
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://localhost:7001';
@@ -35,7 +41,7 @@ export const backendApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Firma', 'Proje', 'ProjeModul'],
+  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul'],
   endpoints: (builder) => ({
     // ==================== Firma (Müşteri) Endpoints ====================
     getFirmalar: builder.query<FirmaDto[], void>({
@@ -159,6 +165,85 @@ export const backendApi = createApi({
       }),
       invalidatesTags: ['ProjeModul'],
     }),
+
+    // ==================== Sözleşme (Abonelik) Endpoints ====================
+    getSozlesmeler: builder.query<SozlesmeDto[], void>({
+      query: () => '/api/sozlesme',
+      transformResponse: (response: BackendApiResponse<SozlesmeDto[]>) => extractData(response),
+      providesTags: ['Sozlesme'],
+    }),
+    
+    getSozlesme: builder.query<SozlesmeDto, number>({
+      query: (sozlesmeId) => `/api/sozlesme/${sozlesmeId}`,
+      transformResponse: (response: BackendApiResponse<SozlesmeDto>) => extractData(response),
+      providesTags: (result, error, sozlesmeId) => [{ type: 'Sozlesme', id: sozlesmeId }],
+    }),
+    
+    createSozlesme: builder.mutation<number, SozlesmeCreateRequest>({
+      query: (sozlesme) => ({
+        url: '/api/sozlesme',
+        method: 'POST',
+        body: sozlesme,
+      }),
+      transformResponse: (response: BackendApiResponse<number>) => extractData(response),
+      invalidatesTags: ['Sozlesme'],
+    }),
+    
+    updateSozlesme: builder.mutation<void, { sozlesmeId: number; data: SozlesmeUpdateRequest }>({
+      query: ({ sozlesmeId, data }) => ({
+        url: `/api/sozlesme/${sozlesmeId}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { sozlesmeId }) => [{ type: 'Sozlesme', id: sozlesmeId }, 'Sozlesme'],
+    }),
+    
+    deleteSozlesme: builder.mutation<void, number>({
+      query: (sozlesmeId) => ({
+        url: `/api/sozlesme/${sozlesmeId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Sozlesme'],
+    }),
+
+    // ==================== Sözleşme Modül Endpoints ====================
+    getSozlesmeModuller: builder.query<SozlesmeModulDto[], number>({
+      query: (sozlesmeId) => `/api/sozlesme/${sozlesmeId}/modul`,
+      transformResponse: (response: BackendApiResponse<SozlesmeModulDto[]>) => extractData(response),
+      providesTags: (result, error, sozlesmeId) => [{ type: 'SozlesmeModul', id: sozlesmeId }],
+    }),
+    
+    getSozlesmeModul: builder.query<SozlesmeModulDto, { sozlesmeId: number; projeId: number; projeModulId: number }>({
+      query: ({ sozlesmeId, projeId, projeModulId }) => 
+        `/api/sozlesme/${sozlesmeId}/modul/${projeId}/${projeModulId}`,
+      transformResponse: (response: BackendApiResponse<SozlesmeModulDto>) => extractData(response),
+    }),
+    
+    createSozlesmeModul: builder.mutation<void, SozlesmeModulCreateRequest>({
+      query: (modul) => ({
+        url: `/api/sozlesme/${modul.sozlesmeId}/modul`,
+        method: 'POST',
+        body: modul,
+      }),
+      invalidatesTags: (result, error, modul) => [{ type: 'SozlesmeModul', id: modul.sozlesmeId }, 'SozlesmeModul'],
+    }),
+    
+    updateSozlesmeModul: builder.mutation<void, SozlesmeModulUpdateRequest>({
+      query: (modul) => ({
+        url: `/api/sozlesme/${modul.sozlesmeId}/modul/${modul.projeId}/${modul.projeModulId}`,
+        method: 'PUT',
+        body: modul,
+      }),
+      invalidatesTags: (result, error, modul) => [{ type: 'SozlesmeModul', id: modul.sozlesmeId }, 'SozlesmeModul'],
+    }),
+    
+    deleteSozlesmeModul: builder.mutation<void, { sozlesmeId: number; projeId: number; projeModulId: number }>({
+      query: ({ sozlesmeId, projeId, projeModulId }) => ({
+        url: `/api/sozlesme/${sozlesmeId}/modul/${projeId}/${projeModulId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { sozlesmeId }) => [{ type: 'SozlesmeModul', id: sozlesmeId }, 'SozlesmeModul'],
+    }),
   }),
 });
 
@@ -183,4 +268,18 @@ export const {
   useCreateProjeModulMutation,
   useUpdateProjeModulMutation,
   useDeleteProjeModulMutation,
+
+  // Sözleşme (Abonelik) hooks
+  useGetSozlesmelerQuery,
+  useGetSozlesmeQuery,
+  useCreateSozlesmeMutation,
+  useUpdateSozlesmeMutation,
+  useDeleteSozlesmeMutation,
+
+  // Sözleşme Modül hooks
+  useGetSozlesmeModullerQuery,
+  useGetSozlesmeModulQuery,
+  useCreateSozlesmeModulMutation,
+  useUpdateSozlesmeModulMutation,
+  useDeleteSozlesmeModulMutation,
 } = backendApi;
