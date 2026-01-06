@@ -189,9 +189,17 @@ const ProjeModullerPage = () => {
                             key={modul.projeModulId}
                             className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 border-b border-border last:border-b-0"
                           >
-                            <div className="flex items-center gap-3 pl-8">
+                            <div className="flex items-center gap-3 pl-8 flex-1">
                               <span className="text-sm text-muted-foreground">#{modul.projeModulId}</span>
-                              <span className="text-sm">{modul.adi}</span>
+                              <span className="text-sm flex-1">{modul.adi}</span>
+                              {modul.birimFiyat !== undefined && modul.birimFiyat !== null && (
+                                <span className="text-sm font-medium text-primary">
+                                  {new Intl.NumberFormat("tr-TR", {
+                                    style: "currency",
+                                    currency: "TRY",
+                                  }).format(modul.birimFiyat)}
+                                </span>
+                              )}
                             </div>
                             <div className="flex gap-1">
                               <Button

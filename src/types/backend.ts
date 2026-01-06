@@ -87,15 +87,18 @@ export interface ProjeModulDto {
   projeModulId: number;
   projeId: number;
   adi: string;
+  birimFiyat?: number;
 }
 
 export interface ProjeModulCreateRequest {
   projeId: number;
   adi: string;
+  birimFiyat?: number;
 }
 
 export interface ProjeModulUpdateRequest {
   adi: string;
+  birimFiyat?: number;
 }
 
 // ==================== Sözleşme (Abonelik) DTO ====================
@@ -130,51 +133,51 @@ export interface SozlesmeDto {
 }
 
 export interface SozlesmeCreateRequest {
-  firmaId: number;
-  projeId: number;
-  kullaniciSayisi: number;
-  satisTarihi?: string;
-  satisFiyati?: number;
-  dovizId?: string;
-  lisansVer: boolean;
-  otomatikInstall: boolean;
-  satisKullaniciId?: number;
-  dataServerIp?: string;
-  statikIp?: string;
-  klasor?: string;
-  notu?: string;
-  ilkSatisTarihi?: string;
-  ilkSatisFiyati?: number;
-  ilkDovizId?: string;
-  demo: boolean;
-  insertKullaniciId: number;
-  kullaniciId: number;
-  degisimTarihi?: string;
-  subeSayisi?: number;
-  iskonto?: number;
+  FirmaId: number;
+  ProjeId: number;
+  KullaniciSayisi: number;
+  SatisTarihi?: string;
+  SatisFiyati?: number;
+  DovizId?: string;
+  LisansVer: boolean;
+  OtomatikInstall: boolean;
+  SatisKullaniciId?: number;
+  DataServerIp?: string;
+  StatikIp?: string;
+  Klasor?: string;
+  Notu?: string;
+  IlkSatisTarihi?: string;
+  IlkSatisFiyati?: number;
+  IlkDovizId?: string;
+  Demo: boolean;
+  InsertKullaniciId: number;
+  KullaniciId: number;
+  DegisimTarihi?: string;
+  SubeSayisi?: number;
+  Iskonto?: number;
 }
 
 export interface SozlesmeUpdateRequest {
-  sozlesmeId: number;
-  firmaId: number;
-  projeId: number;
-  kullaniciSayisi: number;
-  satisTarihi?: string;
-  satisFiyati?: number;
-  dovizId?: string;
-  lisansVer: boolean;
-  otomatikInstall: boolean;
-  satisKullaniciId?: number;
-  dataServerIp?: string;
-  statikIp?: string;
-  klasor?: string;
-  notu?: string;
-  ilkSatisTarihi?: string;
-  ilkSatisFiyati?: number;
-  ilkDovizId?: string;
-  demo: boolean;
-  subeSayisi?: number;
-  iskonto?: number;
+  SozlesmeId: number;
+  FirmaId: number;
+  ProjeId: number;
+  KullaniciSayisi: number;
+  SatisTarihi?: string;
+  SatisFiyati?: number;
+  DovizId?: string;
+  LisansVer: boolean;
+  OtomatikInstall: boolean;
+  SatisKullaniciId?: number;
+  DataServerIp?: string;
+  StatikIp?: string;
+  Klasor?: string;
+  Notu?: string;
+  IlkSatisTarihi?: string;
+  IlkSatisFiyati?: number;
+  IlkDovizId?: string;
+  Demo: boolean;
+  SubeSayisi?: number;
+  Iskonto?: number;
 }
 
 // ==================== Sözleşme Modül DTO ====================
@@ -186,24 +189,25 @@ export interface SozlesmeModulDto {
   iskonto?: number;
   // UI için ekstra alanlar
   projeModulAdi?: string;
+  birimFiyat?: number;
 }
 
 export interface SozlesmeModulCreateRequest {
-  sozlesmeId: number;
-  projeId: number;
-  projeModulId: number;
-  adet: number;
-  iskonto?: number;
-  insertKullaniciId: number;
-  kullaniciId: number;
+  SozlesmeId: number;
+  ProjeId: number;
+  ProjeModulId: number;
+  Adet: number;
+  Iskonto?: number;
+  InsertKullaniciId: number;
+  KullaniciId: number;
 }
 
 export interface SozlesmeModulUpdateRequest {
-  sozlesmeId: number;
-  projeId: number;
-  projeModulId: number;
-  adet: number;
-  iskonto?: number;
+  SozlesmeId: number;
+  ProjeId: number;
+  ProjeModulId: number;
+  Adet: number;
+  Iskonto?: number;
 }
 
 // ==================== Form Data Types ====================
