@@ -3,7 +3,7 @@
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>E:\Projeler\EgemenLisansYonetimi2\EgemenLisansYonetimiBackend\EgemenLisansYonetimiBackend.Api\bin\Release\net9.0\publish\</_PublishTargetUrl>
-    <History>True|2025-12-30T13:46:09.4891933Z||;True|2025-12-30T16:36:58.4191297+03:00||;True|2025-12-30T16:24:38.8562245+03:00||;True|2025-12-30T16:05:49.3737892+03:00||;</History>
+    <History>True|2026-01-05T16:03:19.5446045Z||;True|2026-01-05T18:40:31.1980532+03:00||;False|2026-01-05T18:34:20.2128576+03:00||;True|2026-01-05T17:57:42.8282719+03:00||;True|2026-01-05T17:54:27.9269473+03:00||;False|2026-01-05T17:52:51.2950102+03:00||;True|2025-12-30T16:46:09.4891933+03:00||;True|2025-12-30T16:36:58.4191297+03:00||;True|2025-12-30T16:24:38.8562245+03:00||;True|2025-12-30T16:05:49.3737892+03:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

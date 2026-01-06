@@ -4,6 +4,8 @@ using EgemenLisansYonetimiBackend.Api.Features.Firma;
 using EgemenLisansYonetimiBackend.Api.Features.Paynet;
 using EgemenLisansYonetimiBackend.Api.Features.Proje;
 using EgemenLisansYonetimiBackend.Api.Features.ProjeModul;
+using EgemenLisansYonetimiBackend.Api.Features.Sozlesme;
+using EgemenLisansYonetimiBackend.Api.Features.SozlesmeModul;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Db;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Logging;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Security;
@@ -37,6 +39,9 @@ builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddScoped<FirmaRepository>();
 builder.Services.AddScoped<ProjeRepository>();
 builder.Services.AddScoped<ProjeModulRepository>();
+
+builder.Services.AddScoped<SozlesmeRepository>();
+builder.Services.AddScoped<SozlesmeModulRepository>();
 
 builder.Services.AddScoped<PaynetWebhookRepository>();
 builder.Services.AddScoped<PaynetRepository>();

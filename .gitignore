@@ -14,6 +14,7 @@ dist-ssr
 EgemenLisansYonetimiBackend/EgemenLisansYonetimiBackend.Api/bin
 EgemenLisansYonetimiBackend/EgemenLisansYonetimiBackend.Api/obj
 EgemenLisansYonetimiBackend/EgemenLisansYonetimiBackend.Api/Logs
+EgemenLisansYonetimiBackend/EgemenLisansYonetimiBackend.Api/.vs
 EgemenLisansYonetimiBackend/EgemenLisansYonetimiBackend.Worker/bin
 EgemenLisansYonetimiBackend/EgemenLisansYonetimiBackend.Worker/obj
 # Editor directories and files
