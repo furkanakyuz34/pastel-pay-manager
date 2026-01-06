@@ -21,6 +21,7 @@ import DiscountsPage from "./pages/Discounts";
 import FirmalarPage from "./pages/Firmalar";
 import ProjelerPage from "./pages/Projeler";
 import ProjeModullerPage from "./pages/ProjeModuller";
+import SozlesmelerPage from "./pages/Sozlesmeler";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
@@ -159,8 +160,15 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/sozlesmeler"
+              element={
+                <ProtectedRoute>
+                  <SozlesmelerPage />
+                </ProtectedRoute>
+              }
+            />
             
-            {/* Redirect root to login if not authenticated */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
