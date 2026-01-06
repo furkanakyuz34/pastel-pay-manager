@@ -72,9 +72,15 @@ export function SozlesmeTable({ searchQuery = "" }: SozlesmeTableProps) {
 
   const formatCurrency = (value?: number, currency?: string) => {
     if (value === undefined || value === null) return "-";
+    // Map possible non-ISO codes to valid ISO codes
+    let currencyCode = currency;
+    if (!currencyCode || currencyCode === "TL") currencyCode = "TRY";
+    if (currencyCode === "EURO") currencyCode = "EUR";
+    if (currencyCode === "USD") currencyCode = "USD";
+    // Add more mappings if needed
     return new Intl.NumberFormat("tr-TR", {
       style: "currency",
-      currency: currency || "TRY",
+      currency: currencyCode,
     }).format(value);
   };
 
