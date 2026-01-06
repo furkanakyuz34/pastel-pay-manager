@@ -20,6 +20,20 @@ public sealed class SozlesmeController : ControllerBase
         _logger = logger;
     }
 
+    // New: list all contracts when no id provided
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse<IEnumerable<SozlesmeRow>>>> List(CancellationToken ct)
+    {
+        var traceId = HttpContext.TraceIdentifier;
+        var corrId = CorrelationIdMiddleware.Get(HttpContext);
+
+        var rows = await _repo.ListSozlesmeAsync(ct);
+        _logger.LogInformation("Sozlesme.List called. Count={Count} TraceId={TraceId} CorrelationId={CorrelationId}",
+            rows.Count(), traceId, corrId);
+
+        return Ok(ApiResponse<IEnumerable<SozlesmeRow>>.Ok(rows, traceId: traceId));
+    }
+
     [HttpGet("{sozlesmeId:long}")]
     public async Task<ActionResult<ApiResponse<SozlesmeRow>>> Get(long sozlesmeId, CancellationToken ct)
     {

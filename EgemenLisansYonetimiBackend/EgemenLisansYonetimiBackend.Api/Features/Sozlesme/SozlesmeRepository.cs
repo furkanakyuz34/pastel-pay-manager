@@ -89,7 +89,6 @@ RETURNING SOZLESMEID;
             cmd.Iskonto
         };
 
-        // Use CommandDefinition to propagate CancellationToken to Dapper
         var def = new CommandDefinition(sql, parameters, cancellationToken: ct);
         return await conn.ExecuteScalarAsync<long>(def);
     }
@@ -194,6 +193,43 @@ WHERE SOZLESMEID = @sozlesmeId;
         await using var conn = _db.Create();
         var def = new CommandDefinition(sql, new { sozlesmeId }, cancellationToken: ct);
         return await conn.QuerySingleOrDefaultAsync<SozlesmeRow>(def);
+    }
+
+    // New: return all contracts (so controller can return all when no id provided)
+    public async Task<IEnumerable<SozlesmeRow>> ListSozlesmeAsync(CancellationToken ct = default)
+    {
+        const string sql = @"
+SELECT
+  SOZLESMEID AS SozlesmeId,
+  FIRMAID AS FirmaId,
+  PROJEID AS ProjeId,
+  KULLANICISAYISI AS KullaniciSayisi,
+  SATISTARIHI AS SatisTarihi,
+  SATISFIYATI AS SatisFiyati,
+  DOVIZID AS DovizId,
+  LISANSVER AS LisansVer,
+  OTOMATIKINSTALL AS OtomatikInstall,
+  SATISKULLANICIID AS SatisKullaniciId,
+  DATASERVERIP AS DataServerIp,
+  STATIKIP AS StatikIp,
+  KLASOR AS Klasor,
+  NOTU AS Notu,
+  ILKSATISTARIHI AS IlkSatisTarihi,
+  ILKSATISFIYATI AS IlkSatisFiyati,
+  ILKDOVIZID AS IlkDovizId,
+  DEMO AS Demo,
+  INSERTTARIHI AS InsertTarihi,
+  INSERTKULLANICIID AS InsertKullaniciId,
+  KULLANICIID AS KullaniciId,
+  DEGISIMTARIHI AS DegisimTarihi,
+  SUBESAYISI AS SubeSayisi,
+  ISKONTO AS Iskonto
+FROM SOZLESME
+ORDER BY INSERTTARIHI DESC;
+";
+        await using var conn = _db.Create();
+        var def = new CommandDefinition(sql, cancellationToken: ct);
+        return await conn.QueryAsync<SozlesmeRow>(def);
     }
 
     #endregion
