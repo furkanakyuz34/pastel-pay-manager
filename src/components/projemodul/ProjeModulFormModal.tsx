@@ -30,6 +30,7 @@ import { ProjeModulDto, ProjeDto, ProjeModulCreateRequest, ProjeModulUpdateReque
 const projeModulSchema = z.object({
   projeId: z.number().min(1, "Proje seçimi gerekli"),
   adi: z.string().min(1, "Modül adı gerekli").max(100, "Modül adı çok uzun"),
+  birimFiyat: z.number().min(0, "Birim fiyat negatif olamaz").optional(),
 });
 
 type ProjeModulFormData = z.infer<typeof projeModulSchema>;
@@ -58,6 +59,7 @@ export function ProjeModulFormModal({
     defaultValues: {
       projeId: 0,
       adi: "",
+      birimFiyat: undefined,
     },
   });
 
@@ -66,21 +68,23 @@ export function ProjeModulFormModal({
       form.reset({
         projeId: modul.projeId,
         adi: modul.adi || "",
+        birimFiyat: modul.birimFiyat,
       });
     } else {
       form.reset({
         projeId: projeler[0]?.projeId || 0,
         adi: "",
+        birimFiyat: undefined,
       });
     }
   }, [modul, projeler, form]);
 
   const handleSubmit = (data: ProjeModulFormData) => {
     if (isEditing) {
-      // Update sadece adi alır
-      onSubmit({ adi: data.adi } as ProjeModulUpdateRequest);
+      // Update sadece adi ve birimFiyat alır
+      onSubmit({ adi: data.adi, birimFiyat: data.birimFiyat } as ProjeModulUpdateRequest);
     } else {
-      onSubmit(data as ProjeModulCreateRequest);
+      onSubmit({ projeId: data.projeId, adi: data.adi, birimFiyat: data.birimFiyat } as ProjeModulCreateRequest);
     }
     onOpenChange(false);
   };
@@ -134,6 +138,28 @@ export function ProjeModulFormModal({
                   <FormLabel>Modül Adı *</FormLabel>
                   <FormControl>
                     <Input placeholder="Modül adını giriniz" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="birimFiyat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Birim Fiyat (₺)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      step="0.01"
+                      min={0}
+                      placeholder="0.00" 
+                      {...field} 
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

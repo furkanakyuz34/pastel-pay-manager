@@ -221,20 +221,20 @@ export const backendApi = createApi({
     
     createSozlesmeModul: builder.mutation<void, SozlesmeModulCreateRequest>({
       query: (modul) => ({
-        url: `/api/sozlesme/${modul.sozlesmeId}/modul`,
+        url: `/api/sozlesme/${modul.SozlesmeId}/modul`,
         method: 'POST',
         body: modul,
       }),
-      invalidatesTags: (result, error, modul) => [{ type: 'SozlesmeModul', id: modul.sozlesmeId }, 'SozlesmeModul'],
+      invalidatesTags: (result, error, modul) => [{ type: 'SozlesmeModul', id: modul.SozlesmeId }, 'SozlesmeModul'],
     }),
     
     updateSozlesmeModul: builder.mutation<void, SozlesmeModulUpdateRequest>({
       query: (modul) => ({
-        url: `/api/sozlesme/${modul.sozlesmeId}/modul/${modul.projeId}/${modul.projeModulId}`,
+        url: `/api/sozlesme/${modul.SozlesmeId}/modul/${modul.ProjeId}/${modul.ProjeModulId}`,
         method: 'PUT',
         body: modul,
       }),
-      invalidatesTags: (result, error, modul) => [{ type: 'SozlesmeModul', id: modul.sozlesmeId }, 'SozlesmeModul'],
+      invalidatesTags: (result, error, modul) => [{ type: 'SozlesmeModul', id: modul.SozlesmeId }, 'SozlesmeModul'],
     }),
     
     deleteSozlesmeModul: builder.mutation<void, { sozlesmeId: number; projeId: number; projeModulId: number }>({
