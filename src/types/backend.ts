@@ -88,30 +88,36 @@ export interface ProjeModulDto {
   projeId: number;
   adi: string;
   birimFiyat?: number;
+  dovizId?: string;
+  modulTipi?: number;
 }
 
 export interface ProjeModulCreateRequest {
   projeId: number;
   adi: string;
   birimFiyat?: number;
+  dovizId?: string;
+  modulTipi?: number;
 }
 
 export interface ProjeModulUpdateRequest {
   adi: string;
-  birimFiyat?: number;
+  BirimFiyat?: number;
+  DovizId?: string;
+  ModulTipi?: number;
 }
 
 // ==================== Sözleşme (Abonelik) DTO ====================
 export interface SozlesmeDto {
   sozlesmeId: number;
-  firmaId: number;
-  projeId: number;
-  kullaniciSayisi: number;
+  firmaId?: number;
+  projeId?: number;
+  kullaniciSayisi?: number;
   satisTarihi?: string;
   satisFiyati?: number;
   dovizId?: string;
-  lisansVer: boolean;
-  otomatikInstall: boolean;
+  lisansVer?: boolean;
+  otomatikInstall?: boolean;
   satisKullaniciId?: number;
   dataServerIp?: string;
   statikIp?: string;
@@ -133,14 +139,14 @@ export interface SozlesmeDto {
 }
 
 export interface SozlesmeCreateRequest {
-  FirmaId: number;
-  ProjeId: number;
-  KullaniciSayisi: number;
+  FirmaId?: number;
+  ProjeId?: number;
+  KullaniciSayisi?: number;
   SatisTarihi?: string;
   SatisFiyati?: number;
   DovizId?: string;
-  LisansVer: boolean;
-  OtomatikInstall: boolean;
+  LisansVer?: boolean;
+  OtomatikInstall?: boolean;
   SatisKullaniciId?: number;
   DataServerIp?: string;
   StatikIp?: string;
@@ -149,9 +155,9 @@ export interface SozlesmeCreateRequest {
   IlkSatisTarihi?: string;
   IlkSatisFiyati?: number;
   IlkDovizId?: string;
-  Demo: boolean;
-  InsertKullaniciId: number;
-  KullaniciId: number;
+  Demo?: boolean;
+  InsertKullaniciId?: number;
+  KullaniciId?: number;
   DegisimTarihi?: string;
   SubeSayisi?: number;
   Iskonto?: number;
@@ -159,14 +165,14 @@ export interface SozlesmeCreateRequest {
 
 export interface SozlesmeUpdateRequest {
   SozlesmeId: number;
-  FirmaId: number;
-  ProjeId: number;
-  KullaniciSayisi: number;
+  FirmaId?: number;
+  ProjeId?: number;
+  KullaniciSayisi?: number;
   SatisTarihi?: string;
   SatisFiyati?: number;
   DovizId?: string;
-  LisansVer: boolean;
-  OtomatikInstall: boolean;
+  LisansVer?: boolean;
+  OtomatikInstall?: boolean;
   SatisKullaniciId?: number;
   DataServerIp?: string;
   StatikIp?: string;
@@ -175,7 +181,7 @@ export interface SozlesmeUpdateRequest {
   IlkSatisTarihi?: string;
   IlkSatisFiyati?: number;
   IlkDovizId?: string;
-  Demo: boolean;
+  Demo?: boolean;
   SubeSayisi?: number;
   Iskonto?: number;
 }

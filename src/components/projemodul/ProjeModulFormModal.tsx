@@ -31,6 +31,8 @@ const projeModulSchema = z.object({
   projeId: z.number().min(1, "Proje seçimi gerekli"),
   adi: z.string().min(1, "Modül adı gerekli").max(100, "Modül adı çok uzun"),
   birimFiyat: z.number().min(0, "Birim fiyat negatif olamaz").optional(),
+  dovizId: z.string().optional(),
+  modulTipi: z.number().min(0, "Modül tipi seçimi gerekli").max(3, "Geçersiz modül tipi"),
 });
 
 type ProjeModulFormData = z.infer<typeof projeModulSchema>;
@@ -43,6 +45,20 @@ interface ProjeModulFormModalProps {
   onSubmit: (data: ProjeModulUpdateRequest | ProjeModulCreateRequest) => void;
   isLoading?: boolean;
 }
+
+const dovizOptions = [
+  { value: "TRY", label: "Türk Lirası (TRY)" },
+  { value: "USD", label: "Amerikan Doları (USD)" },
+  { value: "EUR", label: "Euro (EUR)" },
+  { value: "GBP", label: "İngiliz Sterlini (GBP)" },
+];
+
+const modulTipiOptions = [
+  { value: 0, label: "Yazılım" },
+  { value: 1, label: "Kullanıcı" },
+  { value: 2, label: "Mobil Kullanıcı" },
+  { value: 3, label: "Bakım" },
+];
 
 export function ProjeModulFormModal({
   open,
@@ -60,31 +76,43 @@ export function ProjeModulFormModal({
       projeId: 0,
       adi: "",
       birimFiyat: undefined,
+      dovizId: "TRY",
+      modulTipi: 0,
     },
   });
 
   useEffect(() => {
     if (modul) {
+      // Map legacy currency codes to valid ISO codes
+      const currencyMap: Record<string, string> = {
+        "TL": "TRY",
+        "EURO": "EUR",
+      };
+      const validDovizId = modul.dovizId ? (currencyMap[modul.dovizId] || modul.dovizId) : "TRY";
+
       form.reset({
         projeId: modul.projeId,
         adi: modul.adi || "",
         birimFiyat: modul.birimFiyat,
+        dovizId: validDovizId,
+        modulTipi: modul.modulTipi || 0,
       });
     } else {
       form.reset({
         projeId: projeler[0]?.projeId || 0,
         adi: "",
         birimFiyat: undefined,
+        dovizId: "TRY",
+        modulTipi: 0,
       });
     }
   }, [modul, projeler, form]);
 
   const handleSubmit = (data: ProjeModulFormData) => {
     if (isEditing) {
-      // Update sadece adi ve birimFiyat alır
-      onSubmit({ adi: data.adi, birimFiyat: data.birimFiyat } as ProjeModulUpdateRequest);
+      onSubmit({ adi: data.adi, BirimFiyat: data.birimFiyat, DovizId: data.dovizId, ModulTipi: data.modulTipi } as ProjeModulUpdateRequest);
     } else {
-      onSubmit({ projeId: data.projeId, adi: data.adi, birimFiyat: data.birimFiyat } as ProjeModulCreateRequest);
+      onSubmit({ projeId: data.projeId, adi: data.adi, birimFiyat: data.birimFiyat, dovizId: data.dovizId, modulTipi: data.modulTipi } as ProjeModulCreateRequest);
     }
     onOpenChange(false);
   };
@@ -97,7 +125,6 @@ export function ProjeModulFormModal({
             {isEditing ? "Modül Düzenle" : "Yeni Modül Ekle"}
           </DialogTitle>
         </DialogHeader>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             {!isEditing && (
@@ -129,7 +156,6 @@ export function ProjeModulFormModal({
                 )}
               />
             )}
-
             <FormField
               control={form.control}
               name="adi"
@@ -143,7 +169,6 @@ export function ProjeModulFormModal({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="birimFiyat"
@@ -165,7 +190,60 @@ export function ProjeModulFormModal({
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="dovizId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Döviz *</FormLabel>
+                  <Select
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Döviz seçiniz" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {dovizOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="modulTipi"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Modül Tipi *</FormLabel>
+                  <Select
+                    value={field.value?.toString() || ""}
+                    onValueChange={(val) => field.onChange(parseInt(val))}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Modül tipi seçiniz" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {modulTipiOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value.toString()}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="flex justify-end gap-2 pt-4">
               <Button
                 type="button"

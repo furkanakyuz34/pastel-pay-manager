@@ -75,7 +75,13 @@ export function ProjeModulTable({ searchQuery = "", projeIdFilter }: ProjeModulT
   const handleUpdateModul = async (data: ProjeModulUpdateRequest) => {
     if (selectedModul) {
       try {
-        await updateModul({ projeModulId: selectedModul.projeModulId, data }).unwrap();
+        // Anahtarları backend'in beklediği şekilde dönüştür
+        const apiData: any = { ...data };
+        if (Object.prototype.hasOwnProperty.call(apiData, "birimFiyat")) {
+          apiData.BirimFiyat = apiData.birimFiyat;
+          delete apiData.birimFiyat;
+        }
+        await updateModul({ projeModulId: selectedModul.projeModulId, data: apiData }).unwrap();
         toast({
           title: "Modül Güncellendi",
           description: `${data.adi} modülü başarıyla güncellendi.`,

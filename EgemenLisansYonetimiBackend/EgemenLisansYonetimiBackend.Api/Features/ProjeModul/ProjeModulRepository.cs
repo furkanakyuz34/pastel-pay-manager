@@ -11,7 +11,7 @@ public sealed class ProjeModulRepository
     public async Task<IReadOnlyList<ProjeModulDto>> ListAsync(int? projeId = null)
     {
         var sql = @"
-SELECT PROJEMODULID as ProjeModulId, PROJEID as ProjeId, ADI as Adi
+SELECT PROJEMODULID as ProjeModulId, PROJEID as ProjeId, ADI as Adi, BIRIMFIYAT as BirimFiyat , DovizId, ModulTipi
 FROM PROJEMODUL
 /**where**/
 ORDER BY ADI";
@@ -35,7 +35,7 @@ ORDER BY ADI";
     public async Task<ProjeModulDto?> GetAsync(int projeModulId)
     {
         const string sql = @"
-        SELECT  FIRST 1 PROJEMODULID as ProjeModulId, PROJEID as ProjeId, ADI as Adi
+        SELECT FIRST 1 PROJEMODULID as ProjeModulId, PROJEID as ProjeId, ADI as Adi, BIRIMFIYAT as BirimFiyat, DovizId, ModulTipi
         FROM PROJEMODUL
         WHERE PROJEMODULID = @projeModulId";
 
@@ -46,8 +46,8 @@ ORDER BY ADI";
     public async Task<int> CreateAsync(ProjeModulCreateRequest req)
     {
         const string sql = @"
-        INSERT INTO PROJEMODUL (PROJEID, ADI)
-        VALUES (@ProjeId, @Adi)
+        INSERT INTO PROJEMODUL (PROJEID, ADI, BIRIMFIYAT, DovizId, ModulTipi)
+        VALUES (@ProjeId, @Adi, @BirimFiyat, @DovizId, @ModulTipi)
         RETURNING PROJEMODULID;";
 
         await using var conn = _db.Create();
@@ -58,11 +58,14 @@ ORDER BY ADI";
     {
         const string sql = @"
         UPDATE PROJEMODUL SET
-          ADI = @Adi
+          ADI = @Adi,
+          BIRIMFIYAT = @BirimFiyat,
+          DovizId = @DovizId,
+          ModulTipi = @ModulTipi
         WHERE PROJEMODULID = @projeModulId";
 
         await using var conn = _db.Create();
-        var affected = await conn.ExecuteAsync(sql, new { projeModulId, req.Adi });
+        var affected = await conn.ExecuteAsync(sql, new { projeModulId, req.Adi, req.BirimFiyat, req.DovizId, req.ModulTipi });
         return affected == 1;
     }
 

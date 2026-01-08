@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Download, Filter, Search, Pencil, Trash2, ChevronDown, ChevronRight, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { ProjeModulCreateRequest, ProjeModulDto, ProjeDto } from "@/types/backend";
+import { ProjeModulCreateRequest, ProjeModulUpdateRequest, ProjeModulDto, ProjeDto } from "@/types/backend";
 import {
   useCreateProjeModulMutation,
   useGetProjelerQuery,
   useGetProjeModullerQuery,
   useDeleteProjeModulMutation,
+  useUpdateProjeModulMutation,
 } from "@/services/backendApi";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -37,9 +38,35 @@ const ProjeModullerPage = () => {
   const { toast } = useToast();
 
   const [createModul, { isLoading: isCreating }] = useCreateProjeModulMutation();
+  const [updateModul, { isLoading: isUpdating }] = useUpdateProjeModulMutation();
   const [deleteModul] = useDeleteProjeModulMutation();
   const { data: projeler = [], isLoading: projelerLoading } = useGetProjelerQuery();
   const { data: moduller = [], isLoading: modullerLoading } = useGetProjeModullerQuery(undefined);
+
+  const getModulTipiLabel = (tipi?: number) => {
+    const options = [
+      { value: 0, label: "Yazılım" },
+      { value: 1, label: "Kullanıcı" },
+      { value: 2, label: "Mobil Kullanıcı" },
+      { value: 3, label: "Bakım" },
+    ];
+    return options.find(option => option.value === tipi)?.label || "Bilinmiyor";
+  };
+
+  const formatCurrency = (amount: number, currencyCode?: string) => {
+    // Map invalid currency codes to valid ISO codes
+    const currencyMap: Record<string, string> = {
+      "TL": "TRY",
+      "EURO": "EUR",
+    };
+
+    const validCurrency = currencyMap[currencyCode || ""] || currencyCode || "TRY";
+
+    return new Intl.NumberFormat("tr-TR", {
+      style: "currency",
+      currency: validCurrency,
+    }).format(amount);
+  };
 
   // Group modules by project
   const groupedModuller = useMemo(() => {
@@ -99,6 +126,24 @@ const ProjeModullerPage = () => {
       toast({
         title: "Hata",
         description: "Modül eklenirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateModul = async (data: ProjeModulUpdateRequest) => {
+    if (!editModal.modul) return;
+    try {
+      await updateModul({ projeModulId: editModal.modul.projeModulId, data }).unwrap();
+      toast({
+        title: "Modül Güncellendi",
+        description: `${editModal.modul.adi} modülü başarıyla güncellendi.`,
+      });
+      setEditModal({ open: false, modul: null });
+    } catch (err) {
+      toast({
+        title: "Hata",
+        description: "Modül güncellenirken bir hata oluştu.",
         variant: "destructive",
       });
     }
@@ -191,13 +236,16 @@ const ProjeModullerPage = () => {
                           >
                             <div className="flex items-center gap-3 pl-8 flex-1">
                               <span className="text-sm text-muted-foreground">#{modul.projeModulId}</span>
-                              <span className="text-sm flex-1">{modul.adi}</span>
+                              <div className="flex-1">
+                                <div className="text-sm font-medium">{modul.adi}</div>
+                                <div className="text-xs text-muted-foreground flex gap-2 mt-1">
+                                  <span>{getModulTipiLabel(modul.modulTipi)}</span>
+                                  {modul.dovizId && <span>• {modul.dovizId}</span>}
+                                </div>
+                              </div>
                               {modul.birimFiyat !== undefined && modul.birimFiyat !== null && (
                                 <span className="text-sm font-medium text-primary">
-                                  {new Intl.NumberFormat("tr-TR", {
-                                    style: "currency",
-                                    currency: "TRY",
-                                  }).format(modul.birimFiyat)}
+                                  {formatCurrency(modul.birimFiyat, modul.dovizId)}
                                 </span>
                               )}
                             </div>
@@ -246,8 +294,8 @@ const ProjeModullerPage = () => {
         onOpenChange={(open) => setEditModal({ open, modul: open ? editModal.modul : null })}
         projeler={projeler}
         modul={editModal.modul}
-        onSubmit={handleAddModul}
-        isLoading={isCreating}
+        onSubmit={handleUpdateModul}
+        isLoading={isUpdating}
       />
 
       {/* Delete Dialog */}

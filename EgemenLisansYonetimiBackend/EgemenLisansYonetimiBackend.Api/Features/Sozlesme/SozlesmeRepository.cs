@@ -32,7 +32,7 @@ INSERT INTO SOZLESME (
   ILKSATISFIYATI,
   ILKDOVIZID,
   DEMO,
-  INSERTTARIHI, INSERTKULLANICIID, KULLANICIID,
+  INSERTTARIHI, INSERTKULLANICIID, KULLANICIID,SATISKULLANICIID,
   DEGISIMTARIHI,
   SUBESAYISI,
   ISKONTO
@@ -55,7 +55,7 @@ VALUES (
   @IlkSatisFiyati,
   @IlkDovizId,
   @Demo,
-  CURRENT_TIMESTAMP, @InsertKullaniciId, @KullaniciId,
+  CURRENT_TIMESTAMP, @InsertKullaniciId, @KullaniciId, @KullaniciId,
   CURRENT_TIMESTAMP,
   @SubeSayisi,
   @Iskonto
@@ -72,8 +72,9 @@ RETURNING SOZLESMEID;
             cmd.SatisTarihi,
             cmd.SatisFiyati,
             cmd.DovizId,
-            LisansVer = cmd.LisansVer ? 1 : 0,
-            OtomatikInstall = cmd.OtomatikInstall ? 1 : 0,
+            // pattern-match so works for bool and bool? and yields short? consistently
+            LisansVer = cmd.LisansVer is true ? (short)1 : cmd.LisansVer is false ? (short)0 : (short?)null,
+            OtomatikInstall = cmd.OtomatikInstall is true ? (short)1 : cmd.OtomatikInstall is false ? (short)0 : (short?)null,
             cmd.SatisKullaniciId,
             cmd.DataServerIp,
             cmd.StatikIp,
@@ -82,7 +83,7 @@ RETURNING SOZLESMEID;
             cmd.IlkSatisTarihi,
             cmd.IlkSatisFiyati,
             cmd.IlkDovizId,
-            Demo = cmd.Demo ? 1 : 0,
+            Demo = cmd.Demo is true ? (short)1 : cmd.Demo is false ? (short)0 : (short?)null,
             cmd.InsertKullaniciId,
             cmd.KullaniciId,
             cmd.SubeSayisi,
@@ -131,8 +132,8 @@ WHERE SOZLESMEID = @SozlesmeId;
             cmd.SatisTarihi,
             cmd.SatisFiyati,
             cmd.DovizId,
-            LisansVer = cmd.LisansVer ? 1 : 0,
-            OtomatikInstall = cmd.OtomatikInstall ? 1 : 0,
+            LisansVer = cmd.LisansVer is true ? (short)1 : cmd.LisansVer is false ? (short)0 : (short?)null,
+            OtomatikInstall = cmd.OtomatikInstall is true ? (short)1 : cmd.OtomatikInstall is false ? (short)0 : (short?)null,
             cmd.SatisKullaniciId,
             cmd.DataServerIp,
             cmd.StatikIp,
@@ -141,10 +142,10 @@ WHERE SOZLESMEID = @SozlesmeId;
             cmd.IlkSatisTarihi,
             cmd.IlkSatisFiyati,
             cmd.IlkDovizId,
-            Demo = cmd.Demo ? 1 : 0,
+            Demo = cmd.Demo is true ? (short)1 : cmd.Demo is false ? (short)0 : (short?)null,
             cmd.SubeSayisi,
             cmd.Iskonto
-        };
+        };  
 
         var def = new CommandDefinition(sql, parameters, cancellationToken: ct);
         var affected = await conn.ExecuteAsync(def);

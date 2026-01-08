@@ -32,15 +32,15 @@ import { useCreateSozlesmeMutation, useUpdateSozlesmeMutation } from "@/services
 import { useToast } from "@/hooks/use-toast";
 
 const sozlesmeSchema = z.object({
-  firmaId: z.number().min(1, "Firma seçiniz"),
-  projeId: z.number().min(1, "Proje seçiniz"),
-  kullaniciSayisi: z.number().min(1, "Kullanıcı sayısı en az 1 olmalı"),
+  firmaId: z.number().optional(),
+  projeId: z.number().optional(),
+  kullaniciSayisi: z.number().optional(),
   satisTarihi: z.string().optional(),
   satisFiyati: z.number().optional(),
   dovizId: z.string().optional(),
-  lisansVer: z.boolean(),
-  otomatikInstall: z.boolean(),
-  demo: z.boolean(),
+  lisansVer: z.boolean().optional(),
+  otomatikInstall: z.boolean().optional(),
+  demo: z.boolean().optional(),
   subeSayisi: z.number().optional(),
   iskonto: z.number().optional(),
   notu: z.string().optional(),
@@ -74,10 +74,11 @@ export function SozlesmeFormModal({
 
   const form = useForm<SozlesmeFormData>({
     resolver: zodResolver(sozlesmeSchema),
+    mode: "onSubmit",
     defaultValues: {
-      firmaId: 0,
-      projeId: 0,
-      kullaniciSayisi: 1,
+      firmaId: undefined,
+      projeId: undefined,
+      kullaniciSayisi: undefined,
       lisansVer: false,
       otomatikInstall: false,
       demo: false,
@@ -103,17 +104,17 @@ export function SozlesmeFormModal({
         dataServerIp: sozlesme.dataServerIp || "",
         statikIp: sozlesme.statikIp || "",
         klasor: sozlesme.klasor || "",
-      });
+      }, { keepErrors: false });
     } else {
       form.reset({
-        firmaId: 0,
-        projeId: 0,
-        kullaniciSayisi: 1,
+        firmaId: undefined,
+        projeId: undefined,
+        kullaniciSayisi: undefined,
         lisansVer: false,
         otomatikInstall: false,
         demo: false,
         dovizId: "TRY",
-      });
+      }, { keepErrors: false });
     }
   }, [sozlesme, form]);
 
@@ -137,6 +138,8 @@ export function SozlesmeFormModal({
           DataServerIp: data.dataServerIp,
           StatikIp: data.statikIp,
           Klasor: data.klasor,
+          SatisKullaniciId: sozlesme.satisKullaniciId
+          
         };
         await updateSozlesme({ sozlesmeId: sozlesme.sozlesmeId, data: updateData }).unwrap();
         toast({ title: "Başarılı", description: "Sözleşme güncellendi." });
@@ -160,8 +163,9 @@ export function SozlesmeFormModal({
           IlkSatisTarihi: data.satisTarihi ? `${data.satisTarihi}T00:00:00` : undefined,
           IlkSatisFiyati: data.satisFiyati,
           IlkDovizId: data.dovizId === "TRY" ? "TL" : data.dovizId,
-          InsertKullaniciId: 1, // TODO: Get from auth context
-          KullaniciId: 1,
+          InsertKullaniciId: 20, // TODO: Get from auth context
+          KullaniciId: 20,
+          SatisKullaniciId: 20,
         };
         await createSozlesme(createData).unwrap();
         toast({ title: "Başarılı", description: "Sözleşme oluşturuldu." });
@@ -186,7 +190,7 @@ export function SozlesmeFormModal({
                 name="firmaId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Firma *</FormLabel>
+                    <FormLabel>Firma</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(Number(value))}
                       value={field.value?.toString()}
@@ -214,7 +218,7 @@ export function SozlesmeFormModal({
                 name="projeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Proje *</FormLabel>
+                    <FormLabel>Proje</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(Number(value))}
                       value={field.value?.toString()}
@@ -242,13 +246,14 @@ export function SozlesmeFormModal({
                 name="kullaniciSayisi"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Kullanıcı Sayısı *</FormLabel>
+                    <FormLabel>Kullanıcı Sayısı</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min={1}
                         {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -362,9 +367,9 @@ export function SozlesmeFormModal({
                 name="lisansVer"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                    <FormLabel className="cursor-pointer">Lisans Ver</FormLabel>
+                    <FormLabel htmlFor="lisansVer-switch" className="cursor-pointer">Lisans Ver</FormLabel>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch id="lisansVer-switch" checked={field.value ?? false} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -375,9 +380,9 @@ export function SozlesmeFormModal({
                 name="otomatikInstall"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                    <FormLabel className="cursor-pointer">Otomatik Install</FormLabel>
+                    <FormLabel htmlFor="otomatikInstall-switch" className="cursor-pointer">Otomatik Install</FormLabel>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch id="otomatikInstall-switch" checked={field.value ?? false} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -388,9 +393,9 @@ export function SozlesmeFormModal({
                 name="demo"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                    <FormLabel className="cursor-pointer">Demo</FormLabel>
+                    <FormLabel htmlFor="demo-switch" className="cursor-pointer">Demo</FormLabel>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch id="demo-switch" checked={field.value ?? false} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
