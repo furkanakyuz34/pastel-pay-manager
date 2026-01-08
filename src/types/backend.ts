@@ -217,6 +217,97 @@ export interface SozlesmeModulUpdateRequest {
 }
 
 // ==================== Form Data Types ====================
+// ==================== Döviz Kuru DTO ====================
+export interface DovizKuruResponse {
+  kur: number;
+}
+
+// ==================== Sözleşme Ödeme Planı DTO ====================
+export interface SozlesmePlanDto {
+  sozlesmePlanId: number;
+  sozlesmeId: number;
+  subscriptionId?: string;
+  nameSurname?: string;
+  amount: number;
+  usePaynet: boolean;
+  status: number; // 0: Beklemede, 1: Onaylandı, 10: Confirmation, 11: Ödendi, 12: Hata
+  insertTarihi?: string;
+}
+
+export interface SozlesmePlanDetayDto {
+  sozlesmePlanDetayId?: number;
+  sozlesmePlanId: number;
+  sira: number;
+  invoiceId?: string;
+  valDate?: string;
+  amount: number;
+  status: number; // 0: Beklemede, 10: Confirmation, 11: Ödendi, 12: Hata/Gecikmiş
+  insertTarihi?: string;
+}
+
+export interface SozlesmePlanCreateRequest {
+  SozlesmeId: number;
+  UsePaynet: boolean;
+  NameSurname: string;
+  TotalAmount: number;
+  Interval?: number;
+  IntervalCount?: number;
+  BeginDate?: string;
+  ReferenceNo?: string;
+  EndUserEmail?: string;
+  EndUserGsm?: string;
+  EndUserDesc?: string;
+  AgentId?: string;
+  AgentAmount?: number;
+  CompanyAmount?: number;
+  AddComissionToAmount?: boolean;
+  Currency?: string;
+  Period?: number;
+  UserName?: string;
+  AgentNote?: string;
+  ConfirmationWebhook?: string;
+  SuceedWebhook?: string;
+  ErrorWebhook?: string;
+  ConfirmationRedirectUrl?: string;
+  SendMail?: boolean;
+  SendSms?: boolean;
+  IsFixedPrice?: boolean;
+  AutoRenew?: boolean;
+  AgentLogo?: string;
+  AttemptDayCount?: number;
+  DailyAttemptCount?: number;
+  IsChargeOnCardConfirmation?: boolean;
+  GroupReferenceNo?: string;
+  OtpControl?: boolean;
+  Items: SozlesmePlanItemRequest[];
+}
+
+export interface SozlesmePlanItemRequest {
+  Sira: number;
+  ValDate?: string;
+  Amount: number;
+  InvoiceId?: string;
+}
+
+export interface SozlesmePlanCreateResponse {
+  sozlesmePlanId: number;
+  usePaynet: boolean;
+  paynetCode?: number;
+  paynetMessage?: string;
+  subscriptionId?: string;
+  url?: string;
+}
+
+// Plan status helper
+export const PLAN_STATUS = {
+  0: { label: 'Beklemede', color: 'bg-yellow-500/10 text-yellow-500' },
+  1: { label: 'Onaylandı', color: 'bg-blue-500/10 text-blue-500' },
+  10: { label: 'Onay Bekleniyor', color: 'bg-orange-500/10 text-orange-500' },
+  11: { label: 'Ödendi', color: 'bg-green-500/10 text-green-500' },
+  12: { label: 'Hata/Gecikmiş', color: 'bg-red-500/10 text-red-500' },
+} as const;
+
+// ==================== Form Data Types ====================
 export type FirmaFormData = Omit<FirmaCreateRequest, 'firmaId'>;
 export type ProjeFormData = ProjeCreateRequest;
 export type ProjeModulFormData = ProjeModulCreateRequest;

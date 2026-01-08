@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, CreditCard } from "lucide-react";
 import { SozlesmeDto, SozlesmeModulDto, ProjeModulDto, SozlesmeModulCreateRequest } from "@/types/backend";
 import {
   useGetSozlesmeModullerQuery,
@@ -33,6 +33,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useDovizKuru, formatDoviz, convertToTL } from "@/hooks/useDovizKuru";
+import { SozlesmePlanModal } from "./SozlesmePlanModal";
 
 interface SozlesmeModulModalProps {
   open: boolean;
@@ -48,7 +50,9 @@ interface NewModul {
 
 export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeModulModalProps) {
   const { toast } = useToast();
+  const kurlar = useDovizKuru();
   const [newModul, setNewModul] = useState<NewModul>({ projeModulId: 0, adet: 1 });
+  const [planModalOpen, setPlanModalOpen] = useState(false);
 
   const { data: moduller = [], isLoading: modullerLoading } = useGetSozlesmeModullerQuery(
     sozlesme?.sozlesmeId || 0,
@@ -150,10 +154,19 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
       toplamFiyat += pricing.toplamFiyat;
       iskontoluFiyat += pricing.iskontoluFiyat;
     });
-    return { toplamFiyat, iskontoluFiyat };
-  }, [moduller, modulMap]);
+    
+    // TL karşılığı hesapla
+    const dovizId = sozlesme?.dovizId || 'TL';
+    const iskontoluTL = convertToTL(iskontoluFiyat, dovizId, kurlar);
+    
+    return { toplamFiyat, iskontoluFiyat, iskontoluTL, dovizId };
+  }, [moduller, modulMap, sozlesme?.dovizId, kurlar]);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number, doviz?: string) => {
+    return formatDoviz(value, doviz || sozlesme?.dovizId || 'TL');
+  };
+
+  const formatTL = (value: number) => {
     return new Intl.NumberFormat("tr-TR", {
       style: "currency",
       currency: "TRY",
@@ -296,15 +309,27 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
 
               {/* Grand Totals */}
               <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex justify-end gap-8 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Genel Toplam:</span>{" "}
-                    <span className="font-semibold">{formatCurrency(grandTotals.toplamFiyat)}</span>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div className="flex flex-wrap gap-6 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Genel Toplam:</span>{" "}
+                      <span className="font-semibold">{formatCurrency(grandTotals.toplamFiyat)}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">İskontolu Toplam:</span>{" "}
+                      <span className="font-bold text-primary text-base">{formatCurrency(grandTotals.iskontoluFiyat)}</span>
+                    </div>
+                    {grandTotals.dovizId !== 'TL' && grandTotals.dovizId !== 'TRY' && (
+                      <div>
+                        <span className="text-muted-foreground">TL Karşılığı:</span>{" "}
+                        <span className="font-bold text-green-600">{formatTL(grandTotals.iskontoluTL)}</span>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <span className="text-muted-foreground">İskontolu Toplam:</span>{" "}
-                    <span className="font-bold text-primary text-base">{formatCurrency(grandTotals.iskontoluFiyat)}</span>
-                  </div>
+                  <Button onClick={() => setPlanModalOpen(true)} variant="default" size="sm">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Ödeme Planı
+                  </Button>
                 </div>
               </div>
             </>
@@ -316,6 +341,14 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
             Kapat
           </Button>
         </div>
+
+        {/* Ödeme Planı Modal */}
+        <SozlesmePlanModal
+          open={planModalOpen}
+          onOpenChange={setPlanModalOpen}
+          sozlesme={sozlesme}
+          toplamTutar={grandTotals.iskontoluFiyat}
+        />
       </DialogContent>
     </Dialog>
   );
