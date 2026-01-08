@@ -79,15 +79,18 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
   // Selected module for new entry
   const selectedModul = newModul.projeModulId ? modulMap[newModul.projeModulId] : null;
 
-  // Calculate prices for new module
+  // Calculate prices for new module (keep original currency)
   const newModulPricing = useMemo(() => {
     if (!selectedModul) return null;
     const birimFiyat = selectedModul.birimFiyat || 0;
+    const dovizId = selectedModul.dovizId || 'TL';
     const toplamFiyat = birimFiyat * newModul.adet;
     const iskontoOrani = newModul.iskonto || 0;
     const iskontoluFiyat = toplamFiyat - (toplamFiyat * iskontoOrani / 100);
-    return { birimFiyat, toplamFiyat, iskontoluFiyat };
-  }, [selectedModul, newModul.adet, newModul.iskonto]);
+    // TL karşılığı
+    const toplamTL = convertToTL(iskontoluFiyat, dovizId, kurlar);
+    return { birimFiyat, toplamFiyat, iskontoluFiyat, dovizId, toplamTL };
+  }, [selectedModul, newModul.adet, newModul.iskonto, kurlar]);
 
   const handleAddModul = async () => {
     if (!sozlesme || !newModul.projeModulId) {
@@ -135,32 +138,44 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
     }
   };
 
-  // Calculate pricing for existing modules
+  // Calculate pricing for existing modules (keep original currency)
   const getModulPricing = (modul: SozlesmeModulDto) => {
     const projeModul = modulMap[modul.projeModulId];
     const birimFiyat = modul.birimFiyat || projeModul?.birimFiyat || 0;
+    const dovizId = projeModul?.dovizId || 'TL';
     const toplamFiyat = birimFiyat * modul.adet;
     const iskontoOrani = modul.iskonto || 0;
     const iskontoluFiyat = toplamFiyat - (toplamFiyat * iskontoOrani / 100);
-    return { birimFiyat, toplamFiyat, iskontoluFiyat };
+    // TL karşılığı
+    const iskontoluTL = convertToTL(iskontoluFiyat, dovizId, kurlar);
+    return { birimFiyat, toplamFiyat, iskontoluFiyat, dovizId, iskontoluTL };
   };
 
-  // Calculate grand totals
+  // Calculate grand totals (all converted to TL for total)
   const grandTotals = useMemo(() => {
-    let toplamFiyat = 0;
-    let iskontoluFiyat = 0;
+    let toplamTL = 0;
+    const details: { dovizId: string; toplam: number; iskontolu: number }[] = [];
+    
     moduller.forEach((modul) => {
       const pricing = getModulPricing(modul);
-      toplamFiyat += pricing.toplamFiyat;
-      iskontoluFiyat += pricing.iskontoluFiyat;
+      toplamTL += pricing.iskontoluTL;
+      
+      // Group by currency
+      const existing = details.find(d => d.dovizId === pricing.dovizId);
+      if (existing) {
+        existing.toplam += pricing.toplamFiyat;
+        existing.iskontolu += pricing.iskontoluFiyat;
+      } else {
+        details.push({
+          dovizId: pricing.dovizId,
+          toplam: pricing.toplamFiyat,
+          iskontolu: pricing.iskontoluFiyat,
+        });
+      }
     });
     
-    // TL karşılığı hesapla
-    const dovizId = sozlesme?.dovizId || 'TL';
-    const iskontoluTL = convertToTL(iskontoluFiyat, dovizId, kurlar);
-    
-    return { toplamFiyat, iskontoluFiyat, iskontoluTL, dovizId };
-  }, [moduller, modulMap, sozlesme?.dovizId, kurlar]);
+    return { toplamTL, details };
+  }, [moduller, modulMap, kurlar]);
 
   const formatCurrency = (value: number, doviz?: string) => {
     return formatDoviz(value, doviz || sozlesme?.dovizId || 'TL');
@@ -200,7 +215,7 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
                 <SelectContent>
                   {availableModuller.map((modul) => (
                     <SelectItem key={modul.projeModulId} value={modul.projeModulId.toString()}>
-                      {modul.adi} {modul.birimFiyat ? `(${formatCurrency(modul.birimFiyat)})` : ""}
+                      {modul.adi} {modul.birimFiyat ? `(${formatDoviz(modul.birimFiyat, modul.dovizId || 'TL')})` : ""}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -238,18 +253,22 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
           
           {/* Price Preview */}
           {newModulPricing && (
-            <div className="mt-3 pt-3 border-t border-border/50 grid grid-cols-3 gap-4 text-sm">
+            <div className="mt-3 pt-3 border-t border-border/50 grid grid-cols-4 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Birim Fiyat:</span>{" "}
-                <span className="font-medium">{formatCurrency(newModulPricing.birimFiyat)}</span>
+                <span className="font-medium">{formatDoviz(newModulPricing.birimFiyat, newModulPricing.dovizId)}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">Toplam:</span>{" "}
-                <span className="font-medium">{formatCurrency(newModulPricing.toplamFiyat)}</span>
+                <span className="font-medium">{formatDoviz(newModulPricing.toplamFiyat, newModulPricing.dovizId)}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">İskontolu:</span>{" "}
-                <span className="font-medium text-primary">{formatCurrency(newModulPricing.iskontoluFiyat)}</span>
+                <span className="font-medium text-primary">{formatDoviz(newModulPricing.iskontoluFiyat, newModulPricing.dovizId)}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">TL Karşılığı:</span>{" "}
+                <span className="font-bold text-green-600">{formatTL(newModulPricing.toplamTL)}</span>
               </div>
             </div>
           )}
@@ -274,6 +293,7 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
                       <TableHead className="text-right">Toplam</TableHead>
                       <TableHead className="text-center">İskonto</TableHead>
                       <TableHead className="text-right">İskontolu Fiyat</TableHead>
+                      <TableHead className="text-right">TL Karşılığı</TableHead>
                       <TableHead className="text-right">İşlem</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -283,12 +303,15 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
                       return (
                         <TableRow key={`${modul.sozlesmeId}-${modul.projeModulId}`}>
                           <TableCell>{modulMap[modul.projeModulId]?.adi || `Modül #${modul.projeModulId}`}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(pricing.birimFiyat)}</TableCell>
+                          <TableCell className="text-right">{formatDoviz(pricing.birimFiyat, pricing.dovizId)}</TableCell>
                           <TableCell className="text-center">{modul.adet}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(pricing.toplamFiyat)}</TableCell>
+                          <TableCell className="text-right">{formatDoviz(pricing.toplamFiyat, pricing.dovizId)}</TableCell>
                           <TableCell className="text-center">{modul.iskonto ? `%${modul.iskonto}` : "-"}</TableCell>
                           <TableCell className="text-right font-medium text-primary">
-                            {formatCurrency(pricing.iskontoluFiyat)}
+                            {formatDoviz(pricing.iskontoluFiyat, pricing.dovizId)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-green-600">
+                            {pricing.dovizId !== 'TL' && pricing.dovizId !== 'TRY' ? formatTL(pricing.iskontoluTL) : '-'}
                           </TableCell>
                           <TableCell className="text-right">
                             <Button
@@ -311,20 +334,18 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
               <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="flex flex-wrap gap-6 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Genel Toplam:</span>{" "}
-                      <span className="font-semibold">{formatCurrency(grandTotals.toplamFiyat)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">İskontolu Toplam:</span>{" "}
-                      <span className="font-bold text-primary text-base">{formatCurrency(grandTotals.iskontoluFiyat)}</span>
-                    </div>
-                    {grandTotals.dovizId !== 'TL' && grandTotals.dovizId !== 'TRY' && (
-                      <div>
-                        <span className="text-muted-foreground">TL Karşılığı:</span>{" "}
-                        <span className="font-bold text-green-600">{formatTL(grandTotals.iskontoluTL)}</span>
+                    {/* Döviz bazlı toplamlar */}
+                    {grandTotals.details.map((d, idx) => (
+                      <div key={idx}>
+                        <span className="text-muted-foreground">{d.dovizId} Toplam:</span>{" "}
+                        <span className="font-semibold">{formatDoviz(d.iskontolu, d.dovizId)}</span>
                       </div>
-                    )}
+                    ))}
+                    {/* TL Genel Toplam */}
+                    <div>
+                      <span className="text-muted-foreground">TL Toplam:</span>{" "}
+                      <span className="font-bold text-primary text-base">{formatTL(grandTotals.toplamTL)}</span>
+                    </div>
                   </div>
                   <Button onClick={() => setPlanModalOpen(true)} variant="default" size="sm">
                     <CreditCard className="h-4 w-4 mr-2" />
@@ -347,7 +368,7 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
           open={planModalOpen}
           onOpenChange={setPlanModalOpen}
           sozlesme={sozlesme}
-          toplamTutar={grandTotals.iskontoluFiyat}
+          toplamTutar={grandTotals.toplamTL}
         />
       </DialogContent>
     </Dialog>
