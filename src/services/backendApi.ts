@@ -16,6 +16,10 @@ import {
   SozlesmeModulDto,
   SozlesmeModulCreateRequest,
   SozlesmeModulUpdateRequest,
+  SozlesmePlanDto,
+  SozlesmePlanDetayDto,
+  SozlesmePlanCreateRequest,
+  SozlesmePlanCreateResponse,
 } from '../types/backend';
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://localhost:7001';
@@ -41,8 +45,15 @@ export const backendApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul'],
+  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul', 'DovizKuru', 'SozlesmePlan'],
   endpoints: (builder) => ({
+    // ==================== Döviz Kuru Endpoints ====================
+    getDovizKuru: builder.query<number, string>({
+      query: (dovizId) => `/api/dovizkuru/${dovizId}`,
+      transformResponse: (response: BackendApiResponse<number>) => extractData(response),
+      providesTags: (result, error, dovizId) => [{ type: 'DovizKuru', id: dovizId }],
+    }),
+
     // ==================== Firma (Müşteri) Endpoints ====================
     getFirmalar: builder.query<FirmaDto[], void>({
       query: () => '/api/firma',
@@ -244,10 +255,51 @@ export const backendApi = createApi({
       }),
       invalidatesTags: (result, error, { sozlesmeId }) => [{ type: 'SozlesmeModul', id: sozlesmeId }, 'SozlesmeModul'],
     }),
+
+    // ==================== Sözleşme Ödeme Planı Endpoints ====================
+    getSozlesmePlanlar: builder.query<SozlesmePlanDto[], number>({
+      query: (sozlesmeId) => `/api/paynet/sozlesme/${sozlesmeId}/plan`,
+      transformResponse: (response: BackendApiResponse<SozlesmePlanDto[]>) => extractData(response),
+      providesTags: (result, error, sozlesmeId) => [{ type: 'SozlesmePlan', id: sozlesmeId }],
+    }),
+
+    getSozlesmePlan: builder.query<SozlesmePlanDto, number>({
+      query: (sozlesmePlanId) => `/api/paynet/plan/${sozlesmePlanId}`,
+      transformResponse: (response: BackendApiResponse<SozlesmePlanDto>) => extractData(response),
+      providesTags: (result, error, sozlesmePlanId) => [{ type: 'SozlesmePlan', id: sozlesmePlanId }],
+    }),
+
+    getSozlesmePlanDetaylar: builder.query<SozlesmePlanDetayDto[], number>({
+      query: (sozlesmePlanId) => `/api/paynet/plan/${sozlesmePlanId}/detay`,
+      transformResponse: (response: BackendApiResponse<SozlesmePlanDetayDto[]>) => extractData(response),
+      providesTags: (result, error, sozlesmePlanId) => [{ type: 'SozlesmePlan', id: sozlesmePlanId }],
+    }),
+
+    createSozlesmePlan: builder.mutation<SozlesmePlanCreateResponse, SozlesmePlanCreateRequest>({
+      query: (plan) => ({
+        url: '/api/paynet/plan',
+        method: 'POST',
+        body: plan,
+      }),
+      transformResponse: (response: BackendApiResponse<SozlesmePlanCreateResponse>) => extractData(response),
+      invalidatesTags: (result, error, plan) => [{ type: 'SozlesmePlan', id: plan.SozlesmeId }, 'SozlesmePlan'],
+    }),
+
+    updateSozlesmePlanDetayStatus: builder.mutation<void, { sozlesmePlanDetayId: number; status: number }>({
+      query: ({ sozlesmePlanDetayId, status }) => ({
+        url: `/api/paynet/plandetay/${sozlesmePlanDetayId}/status`,
+        method: 'PUT',
+        body: { Status: status },
+      }),
+      invalidatesTags: ['SozlesmePlan'],
+    }),
   }),
 });
 
 export const {
+  // Döviz Kuru hooks
+  useGetDovizKuruQuery,
+
   // Firma (Müşteri) hooks
   useGetFirmalarQuery,
   useGetFirmaQuery,
@@ -282,4 +334,11 @@ export const {
   useCreateSozlesmeModulMutation,
   useUpdateSozlesmeModulMutation,
   useDeleteSozlesmeModulMutation,
+
+  // Sözleşme Ödeme Planı hooks
+  useGetSozlesmePlanlarQuery,
+  useGetSozlesmePlanQuery,
+  useGetSozlesmePlanDetaylarQuery,
+  useCreateSozlesmePlanMutation,
+  useUpdateSozlesmePlanDetayStatusMutation,
 } = backendApi;
