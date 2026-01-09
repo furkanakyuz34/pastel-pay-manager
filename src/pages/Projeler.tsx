@@ -20,7 +20,7 @@ const ProjelerPage = () => {
       await createProje(data).unwrap();
       toast({
         title: "Proje Eklendi",
-        description: `${data.adi} projesi başarıyla oluşturuldu.`,
+        description: `${data.Adi} projesi başarıyla oluşturuldu.`,
       });
       setAddModalOpen(false);
     } catch (err) {

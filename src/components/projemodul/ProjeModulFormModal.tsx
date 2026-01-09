@@ -30,8 +30,8 @@ import { ProjeModulDto, ProjeDto, ProjeModulCreateRequest, ProjeModulUpdateReque
 const projeModulSchema = z.object({
   projeId: z.number().min(1, "Proje seçimi gerekli"),
   adi: z.string().min(1, "Modül adı gerekli").max(100, "Modül adı çok uzun"),
-  birimFiyat: z.number().min(0, "Birim fiyat negatif olamaz").optional(),
-  dovizId: z.string().optional(),
+  birimFiyat: z.number().min(0, "Birim fiyat negatif olamaz"),
+  dovizId: z.string().min(1, "Döviz seçimi gerekli"),
   modulTipi: z.number().min(0, "Modül tipi seçimi gerekli").max(3, "Geçersiz modül tipi"),
 });
 
@@ -75,7 +75,7 @@ export function ProjeModulFormModal({
     defaultValues: {
       projeId: 0,
       adi: "",
-      birimFiyat: undefined,
+      birimFiyat: 0,
       dovizId: "TRY",
       modulTipi: 0,
     },
@@ -93,7 +93,7 @@ export function ProjeModulFormModal({
       form.reset({
         projeId: modul.projeId,
         adi: modul.adi || "",
-        birimFiyat: modul.birimFiyat,
+        birimFiyat: modul.birimFiyat || 0,
         dovizId: validDovizId,
         modulTipi: modul.modulTipi || 0,
       });
@@ -101,7 +101,7 @@ export function ProjeModulFormModal({
       form.reset({
         projeId: projeler[0]?.projeId || 0,
         adi: "",
-        birimFiyat: undefined,
+        birimFiyat: 0,
         dovizId: "TRY",
         modulTipi: 0,
       });
@@ -110,9 +110,24 @@ export function ProjeModulFormModal({
 
   const handleSubmit = (data: ProjeModulFormData) => {
     if (isEditing) {
-      onSubmit({ adi: data.adi, BirimFiyat: data.birimFiyat, DovizId: data.dovizId, ModulTipi: data.modulTipi } as ProjeModulUpdateRequest);
+      // PascalCase for update request
+      const updateRequest: ProjeModulUpdateRequest = {
+        Adi: data.adi,
+        BirimFiyat: data.birimFiyat,
+        DovizId: data.dovizId,
+        ModulTipi: data.modulTipi,
+      };
+      onSubmit(updateRequest);
     } else {
-      onSubmit({ projeId: data.projeId, adi: data.adi, birimFiyat: data.birimFiyat, dovizId: data.dovizId, modulTipi: data.modulTipi } as ProjeModulCreateRequest);
+      // PascalCase for create request
+      const createRequest: ProjeModulCreateRequest = {
+        ProjeId: data.projeId,
+        Adi: data.adi,
+        BirimFiyat: data.birimFiyat,
+        DovizId: data.dovizId,
+        ModulTipi: data.modulTipi,
+      };
+      onSubmit(createRequest);
     }
     onOpenChange(false);
   };
@@ -174,7 +189,7 @@ export function ProjeModulFormModal({
               name="birimFiyat"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Birim Fiyat (₺)</FormLabel>
+                  <FormLabel>Birim Fiyat</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -183,7 +198,7 @@ export function ProjeModulFormModal({
                       placeholder="0.00" 
                       {...field} 
                       value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                     />
                   </FormControl>
                   <FormMessage />

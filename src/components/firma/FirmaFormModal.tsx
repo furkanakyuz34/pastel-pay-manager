@@ -104,22 +104,30 @@ export function FirmaFormModal({
   }, [firma, form]);
 
   const handleSubmit = (data: FirmaFormData) => {
-    onSubmit({
-      adi: data.adi,
-      yetkiliAdi: data.yetkiliAdi,
-      adres1: data.adres1,
-      adres2: data.adres2,
-      adres3: data.adres3,
-      semt: data.semt,
-      sehir: data.sehir,
-      vergiDairesi: data.vergiDairesi,
-      vergiHesapNo: data.vergiHesapNo,
-      telefon1: data.telefon1,
-      telefon2: data.telefon2,
-      fax: data.fax,
-      email: data.email || undefined,
-      notu: data.notu,
-    });
+    // Convert to PascalCase for backend
+    const request: FirmaUpdateRequest | FirmaCreateRequest = {
+      Adi: data.adi,
+      YetkiliAdi: data.yetkiliAdi,
+      Adres1: data.adres1,
+      Adres2: data.adres2,
+      Adres3: data.adres3,
+      Semt: data.semt,
+      Sehir: data.sehir,
+      VergiDairesi: data.vergiDairesi,
+      VergiHesapNo: data.vergiHesapNo,
+      Telefon1: data.telefon1,
+      Telefon2: data.telefon2,
+      Fax: data.fax,
+      Email: data.email || undefined,
+      Notu: data.notu,
+    };
+    
+    // Add FirmaId for create request
+    if (!isEditing) {
+      (request as FirmaCreateRequest).FirmaId = 0;
+    }
+    
+    onSubmit(request);
     onOpenChange(false);
   };
 
