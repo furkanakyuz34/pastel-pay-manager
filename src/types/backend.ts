@@ -33,39 +33,40 @@ export interface FirmaDto {
   notu?: string;
 }
 
+// Backend beklediği PascalCase formatı
 export interface FirmaCreateRequest {
-  firmaId: number;
-  adi: string;
-  yetkiliAdi?: string;
-  adres1?: string;
-  adres2?: string;
-  adres3?: string;
-  semt?: string;
-  sehir?: string;
-  vergiDairesi?: string;
-  vergiHesapNo?: string;
-  telefon1?: string;
-  telefon2?: string;
-  fax?: string;
-  email?: string;
-  notu?: string;
+  FirmaId: number;
+  Adi: string;
+  YetkiliAdi?: string;
+  Adres1?: string;
+  Adres2?: string;
+  Adres3?: string;
+  Semt?: string;
+  Sehir?: string;
+  VergiDairesi?: string;
+  VergiHesapNo?: string;
+  Telefon1?: string;
+  Telefon2?: string;
+  Fax?: string;
+  Email?: string;
+  Notu?: string;
 }
 
 export interface FirmaUpdateRequest {
-  adi: string;
-  yetkiliAdi?: string;
-  adres1?: string;
-  adres2?: string;
-  adres3?: string;
-  semt?: string;
-  sehir?: string;
-  vergiDairesi?: string;
-  vergiHesapNo?: string;
-  telefon1?: string;
-  telefon2?: string;
-  fax?: string;
-  email?: string;
-  notu?: string;
+  Adi: string;
+  YetkiliAdi?: string;
+  Adres1?: string;
+  Adres2?: string;
+  Adres3?: string;
+  Semt?: string;
+  Sehir?: string;
+  VergiDairesi?: string;
+  VergiHesapNo?: string;
+  Telefon1?: string;
+  Telefon2?: string;
+  Fax?: string;
+  Email?: string;
+  Notu?: string;
 }
 
 // ==================== Proje DTO ====================
@@ -74,12 +75,13 @@ export interface ProjeDto {
   adi: string;
 }
 
+// Backend beklediği PascalCase formatı
 export interface ProjeCreateRequest {
-  adi: string;
+  Adi: string;
 }
 
 export interface ProjeUpdateRequest {
-  adi: string;
+  Adi: string;
 }
 
 // ==================== Proje Modül (Ürün) DTO ====================
@@ -92,19 +94,20 @@ export interface ProjeModulDto {
   modulTipi?: number;
 }
 
+// Backend beklediği PascalCase formatı
 export interface ProjeModulCreateRequest {
-  projeId: number;
-  adi: string;
-  birimFiyat?: number;
-  dovizId?: string;
-  modulTipi?: number;
+  ProjeId: number;
+  Adi: string;
+  BirimFiyat: number;
+  DovizId: string;
+  ModulTipi: number;
 }
 
 export interface ProjeModulUpdateRequest {
-  adi: string;
-  BirimFiyat?: number;
-  DovizId?: string;
-  ModulTipi?: number;
+  Adi: string;
+  BirimFiyat: number;
+  DovizId: string;
+  ModulTipi: number;
 }
 
 // ==================== Sözleşme (Abonelik) DTO ====================
@@ -216,7 +219,6 @@ export interface SozlesmeModulUpdateRequest {
   Iskonto?: number;
 }
 
-// ==================== Form Data Types ====================
 // ==================== Döviz Kuru DTO ====================
 export interface DovizKuruResponse {
   kur: number;
@@ -305,6 +307,63 @@ export interface SozlesmePlanCreateResponse {
   url?: string;
 }
 
+// ==================== Sözleşme Plan Ücret Hesaplama DTO ====================
+// Backend SOZLESMEPLANUCRETHESAPLA procedure sonucu
+export interface SozlesmePlanHesaplaRequest {
+  sozlesmeId: number;
+  planId: number;
+  genelIskonto?: number;
+  abonelikIskonto?: number;
+  dovizId?: string;
+}
+
+export interface SozlesmePlanHesaplaResponse {
+  toplamTutar?: number;
+  pesinatTutari?: number;
+  abonelikUcreti?: number;
+}
+
+// ==================== Sözleşme Planı CRUD DTO (Backend SozlesmePlani) ====================
+export interface SozlesmePlaniDto {
+  sozlesmePlanId: number;
+  sozlesmeId: number;
+  planId: number;
+  genelIskonto?: number;
+  abonelikIskonto?: number;
+  abonelikBaslangicTarihi?: string;
+  pesinatTutari?: number;
+  abonelikUcreti?: number;
+  dovizId: string;
+  insertTarihi?: string;
+  insertKullaniciId?: number;
+  kullaniciId?: number;
+  degisimTarihi?: string;
+}
+
+export interface SozlesmePlaniCreateRequest {
+  SozlesmeId: number;
+  PlanId: number;
+  GenelIskonto?: number;
+  AbonelikIskonto?: number;
+  AbonelikBaslangicTarihi?: string;
+  PesinatTutari?: number;
+  AbonelikUcreti?: number;
+  DovizId?: string;
+  InsertKullaniciId?: number;
+  KullaniciId?: number;
+}
+
+export interface SozlesmePlaniUpdateRequest {
+  SozlesmePlanId: number;
+  PlanId?: number;
+  GenelIskonto?: number;
+  AbonelikIskonto?: number;
+  AbonelikBaslangicTarihi?: string;
+  PesinatTutari?: number;
+  AbonelikUcreti?: number;
+  DovizId?: string;
+}
+
 // ==================== Sözleşme Ödeme Planı Şablon DTO ====================
 export interface SozlesmeSablonPlanDto {
   planId: number;
@@ -336,8 +395,34 @@ export const PLAN_STATUS = {
 } as const;
 
 // ==================== Form Data Types ====================
-export type FirmaFormData = Omit<FirmaCreateRequest, 'firmaId'>;
-export type ProjeFormData = ProjeCreateRequest;
-export type ProjeModulFormData = ProjeModulCreateRequest;
-export type SozlesmeFormData = Omit<SozlesmeCreateRequest, 'insertKullaniciId' | 'kullaniciId'>;
-export type SozlesmeModulFormData = Omit<SozlesmeModulCreateRequest, 'insertKullaniciId' | 'kullaniciId' | 'sozlesmeId'>;
+export type FirmaFormData = {
+  adi: string;
+  yetkiliAdi?: string;
+  adres1?: string;
+  adres2?: string;
+  adres3?: string;
+  semt?: string;
+  sehir?: string;
+  vergiDairesi?: string;
+  vergiHesapNo?: string;
+  telefon1?: string;
+  telefon2?: string;
+  fax?: string;
+  email?: string;
+  notu?: string;
+};
+
+export type ProjeFormData = {
+  adi: string;
+};
+
+export type ProjeModulFormData = {
+  projeId: number;
+  adi: string;
+  birimFiyat: number;
+  dovizId: string;
+  modulTipi: number;
+};
+
+export type SozlesmeFormData = Omit<SozlesmeCreateRequest, 'InsertKullaniciId' | 'KullaniciId'>;
+export type SozlesmeModulFormData = Omit<SozlesmeModulCreateRequest, 'InsertKullaniciId' | 'KullaniciId' | 'SozlesmeId'>;

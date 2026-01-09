@@ -69,7 +69,7 @@ export function ProjeTable({ searchQuery = "" }: ProjeTableProps) {
         await updateProje({ projeId: selectedProje.projeId, data }).unwrap();
         toast({
           title: "Proje Güncellendi",
-          description: `${data.adi} projesi başarıyla güncellendi.`,
+          description: `${data.Adi} projesi başarıyla güncellendi.`,
         });
         setEditModalOpen(false);
         setSelectedProje(null);

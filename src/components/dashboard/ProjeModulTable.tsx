@@ -84,7 +84,7 @@ export function ProjeModulTable({ searchQuery = "", projeIdFilter }: ProjeModulT
         await updateModul({ projeModulId: selectedModul.projeModulId, data: apiData }).unwrap();
         toast({
           title: "Modül Güncellendi",
-          description: `${data.adi} modülü başarıyla güncellendi.`,
+          description: `${data.Adi} modülü başarıyla güncellendi.`,
         });
         setEditModalOpen(false);
         setSelectedModul(null);

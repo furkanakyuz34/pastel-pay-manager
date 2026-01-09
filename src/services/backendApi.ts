@@ -23,6 +23,11 @@ import {
   SozlesmeSablonPlanDto,
   PlanTemplateCreateRequest,
   PlanTemplateUpdateRequest,
+  SozlesmePlanHesaplaRequest,
+  SozlesmePlanHesaplaResponse,
+  SozlesmePlaniDto,
+  SozlesmePlaniCreateRequest,
+  SozlesmePlaniUpdateRequest,
 } from '../types/backend';
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://localhost:7001';
@@ -48,7 +53,7 @@ export const backendApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul', 'DovizKuru', 'SozlesmePlan', 'PaymentPlanTemplate'],
+  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul', 'DovizKuru', 'SozlesmePlan', 'SozlesmePlani', 'PaymentPlanTemplate'],
   endpoints: (builder) => ({
     // ==================== Döviz Kuru Endpoints ====================
     getDovizKuru: builder.query<number, string>({
@@ -259,7 +264,7 @@ export const backendApi = createApi({
       invalidatesTags: (result, error, { sozlesmeId }) => [{ type: 'SozlesmeModul', id: sozlesmeId }, 'SozlesmeModul'],
     }),
 
-    // ==================== Sözleşme Ödeme Planı Endpoints ====================
+    // ==================== Sözleşme Ödeme Planı (Paynet) Endpoints ====================
     getSozlesmePlanlar: builder.query<SozlesmePlanDto[], number>({
       query: (sozlesmeId) => `/api/paynet/sozlesme/${sozlesmeId}/plan`,
       transformResponse: (response: BackendApiResponse<SozlesmePlanDto[]>) => extractData(response),
@@ -295,6 +300,41 @@ export const backendApi = createApi({
         body: { Status: status },
       }),
       invalidatesTags: ['SozlesmePlan'],
+    }),
+
+    // ==================== Sözleşme Planı (Backend SozlesmePlani) Endpoints ====================
+    // Ücret hesaplama - Backend stored procedure
+    getSozlesmePlaniHesapla: builder.query<SozlesmePlanHesaplaResponse, SozlesmePlanHesaplaRequest>({
+      query: ({ sozlesmeId, planId, genelIskonto, abonelikIskonto, dovizId }) => ({
+        url: '/api/sozlesmeplani/hesapla',
+        params: {
+          sozlesmeId,
+          planId,
+          genelIskonto,
+          abonelikIskonto,
+          dovizId,
+        },
+      }),
+      transformResponse: (response: BackendApiResponse<SozlesmePlanHesaplaResponse>) => extractData(response),
+    }),
+
+    createSozlesmePlani: builder.mutation<number, SozlesmePlaniCreateRequest>({
+      query: (plan) => ({
+        url: '/api/sozlesmeplani',
+        method: 'POST',
+        body: plan,
+      }),
+      transformResponse: (response: BackendApiResponse<number>) => extractData(response),
+      invalidatesTags: ['SozlesmePlani'],
+    }),
+
+    updateSozlesmePlani: builder.mutation<void, SozlesmePlaniUpdateRequest>({
+      query: (plan) => ({
+        url: `/api/sozlesmeplani/${plan.SozlesmePlanId}`,
+        method: 'PUT',
+        body: plan,
+      }),
+      invalidatesTags: ['SozlesmePlani'],
     }),
 
     // ==================== Ödeme Planı Şablon Endpoints ====================
@@ -372,12 +412,18 @@ export const {
   useUpdateSozlesmeModulMutation,
   useDeleteSozlesmeModulMutation,
 
-  // Sözleşme Ödeme Planı hooks
+  // Sözleşme Ödeme Planı (Paynet) hooks
   useGetSozlesmePlanlarQuery,
   useGetSozlesmePlanQuery,
   useGetSozlesmePlanDetaylarQuery,
   useCreateSozlesmePlanMutation,
   useUpdateSozlesmePlanDetayStatusMutation,
+
+  // Sözleşme Planı (Backend) hooks
+  useGetSozlesmePlaniHesaplaQuery,
+  useLazyGetSozlesmePlaniHesaplaQuery,
+  useCreateSozlesmePlaniMutation,
+  useUpdateSozlesmePlaniMutation,
   
   // Ödeme Planı Şablon hooks
   useGetPaymentPlansQuery,

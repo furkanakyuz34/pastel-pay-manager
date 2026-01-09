@@ -119,7 +119,7 @@ const ProjeModullerPage = () => {
       await createModul(data).unwrap();
       toast({
         title: "Modül Eklendi",
-        description: `${data.adi} modülü başarıyla oluşturuldu.`,
+        description: `${data.Adi} modülü başarıyla oluşturuldu.`,
       });
       setAddModalOpen(false);
     } catch (err) {
@@ -137,7 +137,7 @@ const ProjeModullerPage = () => {
       await updateModul({ projeModulId: editModal.modul.projeModulId, data }).unwrap();
       toast({
         title: "Modül Güncellendi",
-        description: `${editModal.modul.adi} modülü başarıyla güncellendi.`,
+        description: `${data.Adi} modülü başarıyla güncellendi.`,
       });
       setEditModal({ open: false, modul: null });
     } catch (err) {

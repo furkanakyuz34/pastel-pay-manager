@@ -17,15 +17,10 @@ const FirmalarPage = () => {
 
   const handleAddFirma = async (data: FirmaCreateRequest) => {
     try {
-      // Generate a temporary firmaId (backend should handle this)
-      const createData: FirmaCreateRequest = {
-        ...data,
-        firmaId: 0, // Backend will assign the actual ID
-      };
-      await createFirma(createData).unwrap();
+      await createFirma(data).unwrap();
       toast({
         title: "Firma Eklendi",
-        description: `${data.adi} firması başarıyla oluşturuldu.`,
+        description: `${data.Adi} firması başarıyla oluşturuldu.`,
       });
       setAddModalOpen(false);
     } catch (err) {

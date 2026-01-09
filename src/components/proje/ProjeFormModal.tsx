@@ -63,7 +63,8 @@ export function ProjeFormModal({
   }, [proje, form]);
 
   const handleSubmit = (data: ProjeFormData) => {
-    onSubmit({ adi: data.adi });
+    // Convert to PascalCase for backend
+    onSubmit({ Adi: data.adi });
     onOpenChange(false);
   };
 

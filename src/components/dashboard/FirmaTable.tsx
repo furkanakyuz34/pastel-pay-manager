@@ -76,7 +76,7 @@ export function FirmaTable({ searchQuery = "" }: FirmaTableProps) {
         await updateFirma({ firmaId: selectedFirma.firmaId, data }).unwrap();
         toast({
           title: "Firma Güncellendi",
-          description: `${data.adi} firması başarıyla güncellendi.`,
+          description: `${data.Adi} firması başarıyla güncellendi.`,
         });
         setEditModalOpen(false);
         setSelectedFirma(null);
