@@ -49,7 +49,7 @@ interface ProjeModulFormModalProps {
 const dovizOptions = [
   { value: "TRY", label: "Türk Lirası (TRY)" },
   { value: "USD", label: "Amerikan Doları (USD)" },
-  { value: "EUR", label: "Euro (EUR)" },
+  { value: "EURO", label: "Euro (EUR)" },
   { value: "GBP", label: "İngiliz Sterlini (GBP)" },
 ];
 
@@ -86,7 +86,7 @@ export function ProjeModulFormModal({
       // Map legacy currency codes to valid ISO codes
       const currencyMap: Record<string, string> = {
         "TL": "TRY",
-        "EURO": "EUR",
+        "EURO": "EURO",
       };
       const validDovizId = modul.dovizId ? (currencyMap[modul.dovizId] || modul.dovizId) : "TRY";
 

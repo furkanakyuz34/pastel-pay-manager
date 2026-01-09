@@ -20,6 +20,9 @@ import {
   SozlesmePlanDetayDto,
   SozlesmePlanCreateRequest,
   SozlesmePlanCreateResponse,
+  SozlesmeSablonPlanDto,
+  PlanTemplateCreateRequest,
+  PlanTemplateUpdateRequest,
 } from '../types/backend';
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://localhost:7001';
@@ -45,7 +48,7 @@ export const backendApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul', 'DovizKuru', 'SozlesmePlan'],
+  tagTypes: ['Firma', 'Proje', 'ProjeModul', 'Sozlesme', 'SozlesmeModul', 'DovizKuru', 'SozlesmePlan', 'PaymentPlanTemplate'],
   endpoints: (builder) => ({
     // ==================== Döviz Kuru Endpoints ====================
     getDovizKuru: builder.query<number, string>({
@@ -293,6 +296,40 @@ export const backendApi = createApi({
       }),
       invalidatesTags: ['SozlesmePlan'],
     }),
+
+    // ==================== Ödeme Planı Şablon Endpoints ====================
+    getPaymentPlans: builder.query<SozlesmeSablonPlanDto[], void>({
+      query: () => '/api/futures/plan',
+      transformResponse: (response: BackendApiResponse<SozlesmeSablonPlanDto[]>) => extractData(response),
+      providesTags: ['PaymentPlanTemplate'],
+    }),
+
+    createPlanTemplate: builder.mutation<number, PlanTemplateCreateRequest>({
+      query: (plan) => ({
+        url: '/api/futures/plan',
+        method: 'POST',
+        body: plan,
+      }),
+      transformResponse: (response: BackendApiResponse<number>) => extractData(response),
+      invalidatesTags: ['PaymentPlanTemplate'],
+    }),
+
+    updatePlanTemplate: builder.mutation<void, PlanTemplateUpdateRequest>({
+      query: (plan) => ({
+        url: `/api/futures/plan/${plan.PlanId}`,
+        method: 'PUT',
+        body: plan,
+      }),
+      invalidatesTags: ['PaymentPlanTemplate'],
+    }),
+
+    deletePlanTemplate: builder.mutation<void, number>({
+      query: (planId) => ({
+        url: `/api/futures/plan/${planId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['PaymentPlanTemplate'],
+    }),
   }),
 });
 
@@ -341,4 +378,10 @@ export const {
   useGetSozlesmePlanDetaylarQuery,
   useCreateSozlesmePlanMutation,
   useUpdateSozlesmePlanDetayStatusMutation,
+  
+  // Ödeme Planı Şablon hooks
+  useGetPaymentPlansQuery,
+  useCreatePlanTemplateMutation,
+  useUpdatePlanTemplateMutation,
+  useDeletePlanTemplateMutation,
 } = backendApi;

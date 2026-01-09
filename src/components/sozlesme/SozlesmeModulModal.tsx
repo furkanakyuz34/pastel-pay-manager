@@ -33,7 +33,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
-import { useDovizKuru, formatDoviz, convertToTL } from "@/hooks/useDovizKuru";
+import { useDovizKuru, formatDoviz, convertToTL, convertFromTL } from "@/hooks/useDovizKuru";
 import { SozlesmePlanModal } from "./SozlesmePlanModal";
 
 interface SozlesmeModulModalProps {
@@ -125,7 +125,7 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
     try {
       await deleteModul({
         sozlesmeId: sozlesme.sozlesmeId,
-        projeId: modul.projeId,
+        projeId: sozlesme.projeId,
         projeModulId: modul.projeModulId,
       }).unwrap();
       toast({ title: "Başarılı", description: "Modül silindi." });
@@ -176,6 +176,14 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
     
     return { toplamTL, details };
   }, [moduller, modulMap, kurlar]);
+
+  const toplamSozlesmeDovizi = useMemo(() => {
+    if (!sozlesme?.dovizId || kurlar.isLoading || kurlar.error) {
+        return grandTotals.toplamTL; // Fallback to TL if currency info is missing
+    }
+    return convertFromTL(grandTotals.toplamTL, sozlesme.dovizId, kurlar);
+  }, [grandTotals.toplamTL, sozlesme?.dovizId, kurlar]);
+
 
   const formatCurrency = (value: number, doviz?: string) => {
     return formatDoviz(value, doviz || sozlesme?.dovizId || 'TL');
@@ -368,7 +376,7 @@ export function SozlesmeModulModal({ open, onOpenChange, sozlesme }: SozlesmeMod
           open={planModalOpen}
           onOpenChange={setPlanModalOpen}
           sozlesme={sozlesme}
-          toplamTutar={grandTotals.toplamTL}
+          toplamTutar={toplamSozlesmeDovizi}
         />
       </DialogContent>
     </Dialog>

@@ -1,149 +1,144 @@
-import { useState } from "react";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Header } from "@/components/layout/Header";
-import { PlanTable } from "@/components/dashboard/PlanTable";
-import { PlanFormModal, PlanFormData } from "@/components/plans/PlanFormModal";
-import { Customer, Project, Product } from "@/types";
-import { Button } from "@/components/ui/button";
-import { Plus, Download, Filter, Search } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from 'react';
+import { useGetPaymentPlansQuery, useDeletePlanTemplateMutation } from '@/services/backendApi';
+import { SozlesmeSablonPlanDto } from '@/types/backend';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { LoadingState } from '@/components/ui/loading-state';
+import { EmptyState } from '@/components/ui/empty-state';
+import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { Header } from '@/components/layout/Header';
+import { PlanFormModal } from '@/components/plans/PlanFormModal';
+import { DeletePlanDialog } from '@/components/plans/DeletePlanDialog';
 
-// Mock data - In a real app, this would come from an API or context
-const mockCustomers: Customer[] = [
-  {
-    id: "CUS-001",
-    name: "ABC Teknoloji A.Ş.",
-    email: "info@abcteknoloji.com",
-    phone: "+90 212 555 1234",
-    company: "ABC Teknoloji",
-    address: "İstanbul, Türkiye",
-    status: "active",
-  },
-  {
-    id: "CUS-002",
-    name: "XYZ Yazılım Ltd.",
-    email: "iletisim@xyzyazilim.com",
-    phone: "+90 312 555 5678",
-    company: "XYZ Yazılım",
-    address: "Ankara, Türkiye",
-    status: "active",
-  },
-];
-
-const mockProjects: Project[] = [
-  {
-    id: "PRJ-001",
-    name: "E-Ticaret Platformu",
-    description: "Modern e-ticaret çözümü",
-    status: "active",
-    startDate: "2024-01-15",
-    endDate: "2024-12-31",
-  },
-  {
-    id: "PRJ-002",
-    name: "Mobil Uygulama",
-    description: "iOS ve Android mobil uygulama geliştirme",
-    status: "active",
-    startDate: "2024-03-01",
-  },
-];
-
-const mockProducts: Product[] = [
-  {
-    id: "PRD-001",
-    name: "Premium Paket",
-    description: "Tüm özellikler dahil",
-    projectId: "PRJ-001",
-    projectName: "E-Ticaret Platformu",
-    price: "₺5.000",
-    basePrice: 5000,
-    status: "active",
-  },
-  {
-    id: "PRD-002",
-    name: "Standart Paket",
-    description: "Temel özellikler",
-    projectId: "PRJ-001",
-    projectName: "E-Ticaret Platformu",
-    price: "₺2.500",
-    basePrice: 2500,
-    status: "active",
-  },
-  {
-    id: "PRD-003",
-    name: "Mobil Uygulama Lisansı",
-    description: "iOS ve Android lisansı",
-    projectId: "PRJ-002",
-    projectName: "Mobil Uygulama",
-    price: "₺3.000",
-    basePrice: 3000,
-    status: "active",
-  },
-];
-
-const PlansPage = () => {
-  const [addModalOpen, setAddModalOpen] = useState(false);
+export default function PlansPage() {
   const { toast } = useToast();
+  const { data: plans = [], isLoading, isError, error } = useGetPaymentPlansQuery();
+  const [deletePlanTemplate, { isLoading: isDeleting }] = useDeletePlanTemplateMutation();
 
-  const handleAddPlan = (data: PlanFormData) => {
-    console.log("New plan:", data);
-    toast({
-      title: "Plan Oluşturuldu",
-      description: `${data.name} planı başarıyla oluşturuldu.`,
-    });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<SozlesmeSablonPlanDto | null>(null);
+
+  const handleAddNew = () => {
+    setSelectedPlan(null);
+    setIsModalOpen(true);
   };
+
+  const handleEdit = (plan: SozlesmeSablonPlanDto) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (plan: SozlesmeSablonPlanDto) => {
+    setSelectedPlan(plan);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedPlan) return;
+    try {
+      await deletePlanTemplate(selectedPlan.planId).unwrap();
+      toast({ title: 'Başarılı', description: 'Plan şablonu silindi.' });
+      setIsDeleteDialogOpen(false);
+      setSelectedPlan(null);
+    } catch (err) {
+      toast({ title: 'Hata', description: 'Plan silinirken bir hata oluştu.', variant: 'destructive' });
+    }
+  };
+  
+  const renderContent = () => {
+    if (isLoading) {
+      return <LoadingState message="Plan şablonları yükleniyor..." />;
+    }
+  
+    if (isError) {
+      return <div className="text-red-500">Hata: {JSON.stringify(error)}</div>;
+    }
+
+    return (
+      <>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold sr-only">Ödeme Planı Şablonları</h1>
+          <div />
+          <Button onClick={handleAddNew}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Yeni Şablon Ekle
+          </Button>
+        </div>
+  
+        {plans.length === 0 ? (
+          <EmptyState
+            title="Hiç şablon bulunamadı."
+            description="Başlamak için yeni bir ödeme planı şablonu ekleyin."
+            action={<Button onClick={handleAddNew}><PlusCircle className="mr-2 h-4 w-4" /> Yeni Şablon Ekle</Button>}
+          />
+        ) : (
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Plan ID</TableHead>
+                  <TableHead>Adı</TableHead>
+                  <TableHead>Peşinat Oranı (%)</TableHead>
+                  <TableHead>Abonelik Katsayısı</TableHead>
+                  <TableHead className="text-right">İşlemler</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {plans.map((plan) => (
+                  <TableRow key={plan.planId}>
+                    <TableCell>{plan.planId}</TableCell>
+                    <TableCell className="font-medium">{plan.adi}</TableCell>
+                    <TableCell>{plan.pesinatOrani}%</TableCell>
+                    <TableCell>{plan.abonelikHesaplamaKatsayisi}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(plan)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(plan)}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </>
+    )
+  }
 
   return (
     <MainLayout>
-      <Header title="Abonelik Planları" subtitle="Tüm abonelik planlarınızı görüntüleyin ve yönetin" />
-      
-      <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
-        {/* Actions Bar */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Plan ara..."
-              className="h-10 w-full sm:w-80 rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filtrele
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Dışa Aktar
-            </Button>
-            <Button size="sm" onClick={() => setAddModalOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Yeni Plan
-            </Button>
-          </div>
-        </div>
-
-        {/* Plan Table */}
-        <PlanTable 
-          customers={mockCustomers}
-          projects={mockProjects}
-          products={mockProducts}
-        />
+      <Header title="Ödeme Planı Şablonları" subtitle="Otomatik ödeme planları için şablonları yönetin." />
+      <div className="p-4">
+        {renderContent()}
       </div>
 
-      {/* Add Plan Modal */}
       <PlanFormModal
-        open={addModalOpen}
-        onOpenChange={setAddModalOpen}
-        customers={mockCustomers}
-        projects={mockProjects}
-        products={mockProducts}
-        onSubmit={handleAddPlan}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        plan={selectedPlan}
+      />
+
+      <DeletePlanDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+        title="Şablonu Sil"
+        description={`'${selectedPlan?.adi}' adlı şablonu kalıcı olarak silmek istediğinizden emin misiniz?`}
       />
     </MainLayout>
   );
-};
-
-export default PlansPage;
-
+}

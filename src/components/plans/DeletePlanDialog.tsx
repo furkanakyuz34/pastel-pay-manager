@@ -8,42 +8,45 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 interface DeletePlanDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  planName: string;
+  isOpen: boolean;
+  onClose: () => void;
   onConfirm: () => void;
+  isLoading: boolean;
+  title: string;
+  description: string;
 }
 
 export function DeletePlanDialog({
-  open,
-  onOpenChange,
-  planName,
+  isOpen,
+  onClose,
   onConfirm,
+  isLoading,
+  title,
+  description,
 }: DeletePlanDialogProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-card border-border">
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-foreground">
-            Planı Silmek İstediğinize Emin Misiniz?
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-muted-foreground">
-            <span className="font-semibold text-foreground">{planName}</span> planı kalıcı olarak silinecektir. Bu işlem geri alınamaz.
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="border-border">İptal</AlertDialogCancel>
+          <AlertDialogCancel onClick={onClose}>İptal</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
+            disabled={isLoading}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            Sil
+            {isLoading ? "Siliniyor..." : "Sil"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
-

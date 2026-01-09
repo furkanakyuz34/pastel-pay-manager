@@ -58,11 +58,4 @@ public class PaynetClient
         return parsed;
     }
 
-    // ✅ Typed wrapper (abonelik oluşturma)
-    public Task<CreateSubscriptionResponse> CreateSubscriptionAsync(
-        CreateSubscriptionRequest req,
-        string? correlationId,
-        CancellationToken ct)
-        => PostAsync<CreateSubscriptionRequest, CreateSubscriptionResponse>(
-            PaynetEndpoints.SubscriptionCreate, req, correlationId, ct);
 }

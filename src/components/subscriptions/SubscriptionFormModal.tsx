@@ -537,7 +537,7 @@ export function SubscriptionFormModal({
                           <SelectContent>
                             <SelectItem value="TRY">TRY</SelectItem>
                             <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="EUR">EUR</SelectItem>
+                            <SelectItem value="EURO">EUR</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

@@ -20,7 +20,7 @@ export function useDovizKuru(): DovizKurlari {
 }
 
 export function formatDoviz(amount: number, dovizId?: string): string {
-  const currency = dovizId === 'USD' ? 'USD' : dovizId === 'EURO' ? 'EUR' : 'TRY';
+  const currency = dovizId === 'USD' ? 'USD' : (dovizId === 'EURO' || dovizId === 'EUR') ? 'EUR' : 'TRY';
   return new Intl.NumberFormat('tr-TR', {
     style: 'currency',
     currency,

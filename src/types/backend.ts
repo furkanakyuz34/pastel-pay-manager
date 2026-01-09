@@ -232,6 +232,9 @@ export interface SozlesmePlanDto {
   usePaynet: boolean;
   status: number; // 0: Beklemede, 1: Onaylandı, 10: Confirmation, 11: Ödendi, 12: Hata
   insertTarihi?: string;
+  pesinatDovizId?: string;
+  pesinatDovizTutar?: number;
+  pesinatDovizKur?: number;
 }
 
 export interface SozlesmePlanDetayDto {
@@ -280,6 +283,10 @@ export interface SozlesmePlanCreateRequest {
   GroupReferenceNo?: string;
   OtpControl?: boolean;
   Items: SozlesmePlanItemRequest[];
+  // Peşinat için doviz bilgileri
+  PesinatDovizId?: string;
+  PesinatDovizTutar?: number;
+  PesinatDovizKur?: number;
 }
 
 export interface SozlesmePlanItemRequest {
@@ -296,6 +303,27 @@ export interface SozlesmePlanCreateResponse {
   paynetMessage?: string;
   subscriptionId?: string;
   url?: string;
+}
+
+// ==================== Sözleşme Ödeme Planı Şablon DTO ====================
+export interface SozlesmeSablonPlanDto {
+  planId: number;
+  adi: string;
+  pesinatOrani: number;
+  abonelikHesaplamaKatsayisi: number;
+}
+
+export interface PlanTemplateCreateRequest {
+  Adi: string;
+  PesinatOrani: number;
+  AbonelikHesaplamaKatsayisi: number;
+}
+
+export interface PlanTemplateUpdateRequest {
+  PlanId: number;
+  Adi: string;
+  PesinatOrani: number;
+  AbonelikHesaplamaKatsayisi: number;
 }
 
 // Plan status helper

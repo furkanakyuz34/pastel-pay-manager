@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,12 +19,20 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Plus, Trash2, CreditCard, FileText } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar, Plus, Trash2, CreditCard, FileText, TrendingDown } from "lucide-react";
 import {
   SozlesmeDto,
   SozlesmePlanDto,
   SozlesmePlanDetayDto,
   SozlesmePlanItemRequest,
+  SozlesmeSablonPlanDto,
   PLAN_STATUS,
 } from "@/types/backend";
 import {
@@ -32,6 +40,7 @@ import {
   useGetSozlesmePlanDetaylarQuery,
   useCreateSozlesmePlanMutation,
   useUpdateSozlesmePlanDetayStatusMutation,
+  useGetPaymentPlansQuery,
 } from "@/services/backendApi";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingState } from "@/components/ui/loading-state";
@@ -47,6 +56,12 @@ interface SozlesmePlanModalProps {
   toplamTutar: number; // İskontolu toplam tutar
 }
 
+// Taksit tablosu için genişletilmiş tip
+interface TaksitUIState extends SozlesmePlanItemRequest {
+  originalAmount: number;
+  iskontoOrani: number;
+}
+
 export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }: SozlesmePlanModalProps) {
   const { toast } = useToast();
   const kurlar = useDovizKuru();
@@ -56,9 +71,44 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
   // Form state
   const [usePaynet, setUsePaynet] = useState(false);
   const [nameSurname, setNameSurname] = useState("");
-  const [taksitSayisi, setTaksitSayisi] = useState(1);
-  const [baslangicTarihi, setBaslangicTarihi] = useState(format(new Date(), "yyyy-MM-dd"));
-  const [taksitler, setTaksitler] = useState<SozlesmePlanItemRequest[]>([]);
+  const [pesinatTarihi, setPesinatTarihi] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [abonelikBaslangicTarihi, setAbonelikBaslangicTarihi] = useState(format(addMonths(new Date(), 1), "yyyy-MM-dd"));
+  const [taksitler, setTaksitler] = useState<TaksitUIState[]>([]);
+  const [planIskontoOrani, setPlanIskontoOrani] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState<SozlesmeSablonPlanDto | null>(null);
+  const [pesinatDovizId, setPesinatDovizId] = useState('TL');
+  const [aylikUcretIskontoOrani, setAylikUcretIskontoOrani] = useState(0);
+
+  // API Verileri
+  const { data: sablonPlanlar = [], isLoading: sablonPlanlarLoading, isError, error } = useGetPaymentPlansQuery();
+  
+  // Döviz ve İskonto Hesaplamaları
+  const dovizId = sozlesme?.dovizId || 'TL';
+  const toplamTL = useMemo(() => convertToTL(toplamTutar, dovizId, kurlar), [toplamTutar, dovizId, kurlar]);
+  
+  const planIskontoTutari = useMemo(() => (toplamTL * planIskontoOrani) / 100, [toplamTL, planIskontoOrani]);
+  const iskontoluToplamTL = useMemo(() => toplamTL - planIskontoTutari, [toplamTL, planIskontoTutari]);
+
+  const { pesinatTutarTL, pesinatDovizTutar } = useMemo(() => {
+    if (!selectedPlan) return { pesinatTutarTL: 0, pesinatDovizTutar: 0 };
+    const downPaymentPercentage = selectedPlan.pesinatOrani / 100;
+    const pesinatTL = iskontoluToplamTL * downPaymentPercentage;
+    const pesinatDoviz = convertFromTL(pesinatTL, pesinatDovizId, kurlar);
+    return { pesinatTutarTL: pesinatTL, pesinatDovizTutar: pesinatDoviz };
+  }, [selectedPlan, iskontoluToplamTL, pesinatDovizId, kurlar]);
+
+  const aylikUcretIskontoTutari = useMemo(() => {
+    const aylikUcretItem = taksitler.find(t => t.Sira === 2);
+    if (!aylikUcretItem) return 0;
+    const fark = aylikUcretItem.originalAmount - aylikUcretItem.Amount;
+    return fark > 0.01 ? fark : 0;
+  }, [taksitler]);
+
+  const netToplamTL = useMemo(() => iskontoluToplamTL - (aylikUcretIskontoTutari * (selectedPlan?.abonelikHesaplamaKatsayisi || 0)), [iskontoluToplamTL, aylikUcretIskontoTutari, selectedPlan]);
+  const netToplamDoviz = useMemo(() => convertFromTL(netToplamTL, dovizId, kurlar), [netToplamTL, dovizId, kurlar]);
+
+  const planToplami = useMemo(() => taksitler.reduce((sum, t) => sum + t.Amount, 0), [taksitler]);
+
 
   const { data: planlar = [], isLoading: planlarLoading } = useGetSozlesmePlanlarQuery(
     sozlesme?.sozlesmeId || 0,
@@ -73,42 +123,81 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
   const [createPlan, { isLoading: isCreating }] = useCreateSozlesmePlanMutation();
   const [updateStatus] = useUpdateSozlesmePlanDetayStatusMutation();
 
-  // Döviz hesaplamaları
-  const dovizId = sozlesme?.dovizId || 'TL';
-  const toplamTL = useMemo(() => convertToTL(toplamTutar, dovizId, kurlar), [toplamTutar, dovizId, kurlar]);
-  const toplamDoviz = useMemo(() => {
-    if (dovizId === 'TL' || dovizId === 'TRY') {
-      return { USD: convertFromTL(toplamTL, 'USD', kurlar), EUR: convertFromTL(toplamTL, 'EURO', kurlar) };
-    }
-    return null;
-  }, [toplamTL, dovizId, kurlar]);
-
-  // Taksit oluştur
-  const generateTaksitler = () => {
-    if (taksitSayisi < 1 || !toplamTL) return;
+  const generatePlan = (plan: SozlesmeSablonPlanDto) => {
+    const downPaymentPercentage = plan.pesinatOrani / 100;
     
-    const taksitTutari = Math.round((toplamTL / taksitSayisi) * 100) / 100;
-    const yeniTaksitler: SozlesmePlanItemRequest[] = [];
-    let kalanTutar = toplamTL;
+    const pesinatTutar = iskontoluToplamTL * downPaymentPercentage;
+    const kalanTutar = iskontoluToplamTL - pesinatTutar;
+    const aylikUcret = kalanTutar / (plan.abonelikHesaplamaKatsayisi || 36); // Fallback to 36
 
-    for (let i = 0; i < taksitSayisi; i++) {
-      const tutar = i === taksitSayisi - 1 ? kalanTutar : taksitTutari;
-      kalanTutar -= tutar;
-      
+    const yeniTaksitler: TaksitUIState[] = [];
+    let sira = 1;
+
+    // 1. Peşinatı ekle
+    if (pesinatTutar > 0) {
+      const roundedPesinat = Math.round(pesinatTutar * 100) / 100;
       yeniTaksitler.push({
-        Sira: i + 1,
-        ValDate: format(addMonths(new Date(baslangicTarihi), i), "yyyy-MM-dd"),
-        Amount: tutar,
-        InvoiceId: `INV-${sozlesme?.sozlesmeId}-${i + 1}`,
+        Sira: sira++,
+        ValDate: pesinatTarihi,
+        Amount: roundedPesinat,
+        originalAmount: roundedPesinat,
+        iskontoOrani: 0,
+        InvoiceId: `INV-${sozlesme?.sozlesmeId}-PESINAT`,
+      });
+    }
+
+    // 2. Aylık abonelik ücretini ekle
+    if (aylikUcret > 0) {
+      const roundedAylik = Math.round(aylikUcret * 100) / 100;
+      yeniTaksitler.push({
+        Sira: sira++,
+        ValDate: abonelikBaslangicTarihi,
+        Amount: roundedAylik,
+        originalAmount: roundedAylik,
+        iskontoOrani: 0,
+        InvoiceId: `INV-${sozlesme?.sozlesmeId}-AYLIK`,
       });
     }
     
     setTaksitler(yeniTaksitler);
+    setAylikUcretIskontoOrani(0); // İskonto oranını sıfırla
+    toast({ title: "Başarılı", description: `${plan.adi} şablonu uygulandı.`});
+  };
+
+  useEffect(() => {
+    if (selectedPlan) {
+      generatePlan(selectedPlan);
+    } else {
+      setTaksitler([]);
+    }
+  }, [selectedPlan, iskontoluToplamTL, pesinatTarihi, abonelikBaslangicTarihi]);
+
+  const applyAylikUcretIskonto = () => {
+    if (aylikUcretIskontoOrani <= 0 || aylikUcretIskontoOrani > 100) {
+      toast({ title: "Hata", description: "Geçerli bir iskonto oranı girin (%0-%100).", variant: "destructive" });
+      return;
+    }
+    
+    setTaksitler(prevTaksitler => {
+      const aylikUcretIndex = prevTaksitler.findIndex(t => t.Sira === 2);
+      if (aylikUcretIndex === -1) return prevTaksitler;
+
+      const updatedTaksitler = [...prevTaksitler];
+      const taksit = updatedTaksitler[aylikUcretIndex];
+      
+      taksit.iskontoOrani = aylikUcretIskontoOrani;
+      const discountedAmount = taksit.originalAmount * (1 - aylikUcretIskontoOrani / 100);
+      taksit.Amount = Math.round(discountedAmount * 100) / 100;
+      
+      return updatedTaksitler;
+    });
+
+    toast({ title: "Başarılı", description: `Abonelik ücretine %${aylikUcretIskontoOrani} iskonto uygulandı.`});
   };
 
   const handleCreatePlan = async () => {
     if (!sozlesme || taksitler.length === 0) {
-      toast({ title: "Hata", description: "Lütfen taksitleri oluşturun.", variant: "destructive" });
+      toast({ title: "Hata", description: "Lütfen bir plan seçerek taksitleri oluşturun.", variant: "destructive" });
       return;
     }
 
@@ -118,22 +207,40 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
     }
 
     try {
+      const itemsForApi: SozlesmePlanItemRequest[] = taksitler.map(t => ({
+        Sira: t.Sira,
+        ValDate: t.ValDate,
+        Amount: t.Amount,
+        InvoiceId: t.InvoiceId,
+      }));
+      
+      let kur = 1;
+      if (pesinatDovizId === 'USD' && kurlar.USD) kur = kurlar.USD;
+      if (pesinatDovizId === 'EUR' && kurlar.EUR) kur = kurlar.EUR;
+
       await createPlan({
         SozlesmeId: sozlesme.sozlesmeId,
         UsePaynet: usePaynet,
         NameSurname: nameSurname || `Müşteri ${sozlesme.firmaId}`,
-        TotalAmount: toplamTL,
-        BeginDate: baslangicTarihi,
+        TotalAmount: iskontoluToplamTL,
+        BeginDate: abonelikBaslangicTarihi,
         ReferenceNo: `REF-${sozlesme.sozlesmeId}-${Date.now()}`,
         EndUserEmail: "",
         EndUserGsm: "",
         EndUserDesc: `Sözleşme #${sozlesme.sozlesmeId} Ödeme Planı`,
-        Items: taksitler,
+        Items: itemsForApi,
+        PesinatDovizId: pesinatDovizId,
+        PesinatDovizTutar: pesinatDovizTutar,
+        PesinatDovizKur: kur,
       }).unwrap();
 
       toast({ title: "Başarılı", description: "Ödeme planı oluşturuldu." });
       setActiveTab("planlar");
       setTaksitler([]);
+      setPlanIskontoOrani(0);
+      setSelectedPlan(null);
+      setAylikUcretIskontoOrani(0);
+      setPesinatDovizId('TL');
     } catch (err: any) {
       toast({
         title: "Hata",
@@ -173,7 +280,7 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
 
         {/* Toplam Tutar Özeti */}
         <div className="rounded-lg border border-border p-4 bg-muted/30">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">Sözleşme Tutarı ({dovizId}):</span>
               <p className="font-semibold text-lg">{formatDoviz(toplamTutar, dovizId)}</p>
@@ -182,21 +289,33 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
               <span className="text-muted-foreground">TL Karşılığı:</span>
               <p className="font-semibold text-lg">{formatCurrency(toplamTL)}</p>
             </div>
-            {toplamDoviz && (
-              <>
-                <div>
-                  <span className="text-muted-foreground">USD Karşılığı:</span>
-                  <p className="font-medium">{formatDoviz(toplamDoviz.USD, 'USD')}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">EUR Karşılığı:</span>
-                  <p className="font-medium">{formatDoviz(toplamDoviz.EUR, 'EURO')}</p>
-                </div>
-              </>
+            {planIskontoTutari > 0 && (
+              <div>
+                <span className="text-muted-foreground">Genel İskonto ({planIskontoOrani}%):</span>
+                <p className="font-semibold text-lg text-destructive">-{formatCurrency(planIskontoTutari)}</p>
+              </div>
             )}
+            {aylikUcretIskontoTutari > 0 && (
+               <div>
+                <span className="text-muted-foreground">Aylık Ücret İskontosu:</span>
+                <p className="font-semibold text-lg text-destructive">
+                  -{formatCurrency(aylikUcretIskontoTutari * (selectedPlan?.abonelikHesaplamaKatsayisi || 36))} 
+                  <span className="text-xs">({selectedPlan?.abonelikHesaplamaKatsayisi || 36} Ay)</span>
+                </p>
+              </div>
+            )}
+             <div>
+              <span className="text-muted-foreground">Net Toplam:</span>
+              <p className="font-semibold text-lg text-primary">{formatCurrency(netToplamTL)}</p>
+              {dovizId !== 'TL' && <p className="text-sm text-muted-foreground">({formatDoviz(netToplamDoviz, dovizId)})</p>}
+            </div>
           </div>
+          {pesinatDovizId !== 'TL' && pesinatDovizTutar > 0 && (
+             <p className="text-sm text-muted-foreground mt-2">
+                Peşinat: <span className="font-semibold">{formatDoviz(pesinatDovizTutar, pesinatDovizId)}</span> ({formatCurrency(pesinatTutarTL)} karşılığı)
+            </p>
+          )}
           {kurlar.isLoading && <p className="text-xs text-muted-foreground mt-2">Döviz kurları yükleniyor...</p>}
-          {kurlar.error && <p className="text-xs text-destructive mt-2">Döviz kurları alınamadı</p>}
           {!kurlar.isLoading && !kurlar.error && (
             <p className="text-xs text-muted-foreground mt-2">
               Kurlar: 1 USD = {kurlar.USD.toFixed(4)} TL | 1 EUR = {kurlar.EUR.toFixed(4)} TL
@@ -247,7 +366,14 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
                         >
                           <TableCell>#{plan.sozlesmePlanId}</TableCell>
                           <TableCell>{plan.nameSurname || "-"}</TableCell>
-                          <TableCell className="text-right font-medium">{formatCurrency(plan.amount)}</TableCell>
+                          <TableCell className="text-right font-medium">
+                            {formatCurrency(plan.amount)}
+                            {plan.pesinatDovizId && plan.pesinatDovizId !== 'TL' && plan.pesinatDovizTutar && (
+                              <p className="text-xs text-muted-foreground">
+                                Peşinat: {formatDoviz(plan.pesinatDovizTutar, plan.pesinatDovizId)}
+                              </p>
+                            )}
+                          </TableCell>
                           <TableCell className="text-center">
                             {plan.usePaynet ? (
                               <Badge variant="outline" className="bg-blue-500/10 text-blue-500">Paynet</Badge>
@@ -334,51 +460,93 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
             {/* Plan Ayarları */}
             <div className="rounded-lg border border-border p-4 bg-muted/30">
               <h4 className="text-sm font-medium mb-4">Plan Ayarları</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                 <div className="space-y-2">
-                  <Label>Taksit Sayısı</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={36}
-                    value={taksitSayisi}
-                    onChange={(e) => setTaksitSayisi(Number(e.target.value))}
-                  />
+                    <Label htmlFor="planIskonto">Genel İskonto (%)</Label>
+                    <Input
+                      id="planIskonto"
+                      type="number" min={0} max={100}
+                      value={planIskontoOrani}
+                      onChange={(e) => setPlanIskontoOrani(Number(e.target.value))}
+                    />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="pesinatDoviz">Peşinat Döviz</Label>
+                  <Select value={pesinatDovizId} onValueChange={setPesinatDovizId}>
+                    <SelectTrigger id="pesinatDoviz">
+                      <SelectValue placeholder="Döviz" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="TL">TL</SelectItem>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EURO">EUR</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Başlangıç Tarihi</Label>
+                  <Label htmlFor="pesinatTarihi">Peşinat Tarihi</Label>
                   <Input
+                    id="pesinatTarihi"
                     type="date"
-                    value={baslangicTarihi}
-                    onChange={(e) => setBaslangicTarihi(e.target.value)}
+                    value={pesinatTarihi}
+                    onChange={(e) => setPesinatTarihi(e.target.value)}
                   />
                 </div>
-                <div className="flex items-end">
-                  <div className="flex items-center space-x-2">
-                    <Switch checked={usePaynet} onCheckedChange={setUsePaynet} />
-                    <Label>Paynet Kullan</Label>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="abonelikTarihi">Abonelik Başlangıç</Label>
+                  <Input
+                    id="abonelikTarihi"
+                    type="date"
+                    value={abonelikBaslangicTarihi}
+                    onChange={(e) => setAbonelikBaslangicTarihi(e.target.value)}
+                  />
                 </div>
-                <div className="flex items-end">
-                  <Button onClick={generateTaksitler} variant="outline" className="w-full">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Taksitleri Oluştur
-                  </Button>
+                <div className="space-y-2 col-span-2">
+                    <Label>Plan Tipi Seçin</Label>
+                    {sablonPlanlarLoading ? (
+                      <p className="text-sm text-muted-foreground">Planlar yükleniyor...</p>
+                    ) : isError ? (
+                      <p className="text-sm text-destructive">Planlar yüklenemedi. Hata: {JSON.stringify(error)}</p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                          {sablonPlanlar.map((plan) => (
+                            <Button 
+                                key={plan.planId}
+                                onClick={() => setSelectedPlan(plan)}
+                                variant={selectedPlan?.planId === plan.planId ? 'default' : 'outline'}
+                                className="w-full"
+                            >
+                                {plan.adi} (%{plan.pesinatOrani} Peşinat)
+                            </Button>
+                          ))}
+                      </div>
+                    )}
                 </div>
               </div>
-
-              {usePaynet && (
-                <div className="mt-4 pt-4 border-t border-border/50">
-                  <Label>Müşteri Adı Soyadı (Paynet için)</Label>
-                  <Input
-                    value={nameSurname}
-                    onChange={(e) => setNameSurname(e.target.value)}
-                    placeholder="Örn: Ahmet Yılmaz"
-                    className="mt-2 max-w-md"
-                  />
-                </div>
-              )}
             </div>
+
+            {/* Aylık Ücret İskonto */}
+            {taksitler.length > 1 && (
+               <div className="rounded-lg border border-border p-4 bg-muted/30">
+                 <h4 className="text-sm font-medium mb-4">Abonelik Ücreti İskontosu</h4>
+                 <div className="flex items-end gap-4">
+                   <div className="space-y-2 flex-grow">
+                     <Label htmlFor="aylikUcretIskonto">İskonto Oranı (%)</Label>
+                     <Input
+                       id="aylikUcretIskonto"
+                       type="number" min={0} max={100}
+                       value={aylikUcretIskontoOrani}
+                       onChange={(e) => setAylikUcretIskontoOrani(Number(e.target.value))}
+                       placeholder="Örn: 10"
+                     />
+                   </div>
+                   <Button onClick={applyAylikUcretIskonto} variant="secondary">
+                      <TrendingDown className="h-4 w-4 mr-2" />
+                      Ücrete Uygula
+                   </Button>
+                 </div>
+              </div>
+            )}
 
             {/* Taksit Tablosu */}
             {taksitler.length > 0 && (
@@ -387,10 +555,10 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
                   <TableHeader>
                     <TableRow className="bg-muted/50">
                       <TableHead>Sıra</TableHead>
+                      <TableHead>Açıklama</TableHead>
                       <TableHead>Vade Tarihi</TableHead>
                       <TableHead className="text-right">Tutar (TL)</TableHead>
                       <TableHead>Fatura No</TableHead>
-                      <TableHead className="text-right">Sil</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -398,62 +566,23 @@ export function SozlesmePlanModal({ open, onOpenChange, sozlesme, toplamTutar }:
                       <TableRow key={idx}>
                         <TableCell>{taksit.Sira}</TableCell>
                         <TableCell>
-                          <Input
-                            type="date"
-                            value={taksit.ValDate || ""}
-                            onChange={(e) => {
-                              const updated = [...taksitler];
-                              updated[idx].ValDate = e.target.value;
-                              setTaksitler(updated);
-                            }}
-                            className="w-40"
-                          />
+                            {idx === 0 ? <Badge variant="secondary">Peşinat</Badge> : <Badge variant="outline">Aylık Ücret</Badge>}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={taksit.Amount}
-                            onChange={(e) => {
-                              const updated = [...taksitler];
-                              updated[idx].Amount = Number(e.target.value);
-                              setTaksitler(updated);
-                            }}
-                            className="w-32 text-right"
-                          />
+                        <TableCell>{format(new Date(taksit.ValDate!), "dd MMM yyyy", { locale: tr })}</TableCell>
+                        <TableCell className="text-right font-medium">
+                          {formatCurrency(taksit.Amount)}
+                          {pesinatDovizId !== 'TL' && (
+                            <p className="text-xs text-muted-foreground">
+                              ({formatDoviz(convertFromTL(taksit.Amount, pesinatDovizId, kurlar), pesinatDovizId)})
+                            </p>
+                          )}
                         </TableCell>
-                        <TableCell>
-                          <Input
-                            value={taksit.InvoiceId || ""}
-                            onChange={(e) => {
-                              const updated = [...taksitler];
-                              updated[idx].InvoiceId = e.target.value;
-                              setTaksitler(updated);
-                            }}
-                            className="w-40"
-                          />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setTaksitler(taksitler.filter((_, i) => i !== idx))}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </TableCell>
+                        <TableCell>{taksit.InvoiceId}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-
-                <div className="p-4 bg-muted/30 border-t border-border flex justify-between items-center">
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Toplam:</span>{" "}
-                    <span className="font-bold text-lg">
-                      {formatCurrency(taksitler.reduce((sum, t) => sum + t.Amount, 0))}
-                    </span>
-                  </div>
+                <div className="p-4 bg-muted/30 border-t border-border flex justify-end items-center">
                   <Button onClick={handleCreatePlan} disabled={isCreating}>
                     <Plus className="h-4 w-4 mr-2" />
                     Planı Kaydet

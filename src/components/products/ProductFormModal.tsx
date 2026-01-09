@@ -379,7 +379,7 @@ export function ProductFormModal({
                         <SelectContent>
                           <SelectItem value="TRY">₺ TRY</SelectItem>
                           <SelectItem value="USD">$ USD</SelectItem>
-                          <SelectItem value="EUR">€ EUR</SelectItem>
+                          <SelectItem value="EURO">€ EUR</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
