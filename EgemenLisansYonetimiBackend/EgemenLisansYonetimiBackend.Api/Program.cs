@@ -6,6 +6,7 @@ using EgemenLisansYonetimiBackend.Api.Features.Proje;
 using EgemenLisansYonetimiBackend.Api.Features.ProjeModul;
 using EgemenLisansYonetimiBackend.Api.Features.Sozlesme;
 using EgemenLisansYonetimiBackend.Api.Features.SozlesmeModul;
+using EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Db;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Logging;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Security;
@@ -42,9 +43,7 @@ builder.Services.AddScoped<ProjeModulRepository>();
 
 builder.Services.AddScoped<SozlesmeRepository>();
 builder.Services.AddScoped<SozlesmeModulRepository>();
-
-builder.Services.AddScoped<PaynetWebhookRepository>();
-builder.Services.AddScoped<PaynetRepository>();
+builder.Services.AddScoped<SozlesmePlaniRepository>();
 
 // -------------------- Options --------------------
 builder.Services.Configure<PaynetOptions>(builder.Configuration.GetSection("Paynet"));

@@ -32,7 +32,9 @@ INSERT INTO SOZLESME (
   ILKSATISFIYATI,
   ILKDOVIZID,
   DEMO,
-  INSERTTARIHI, INSERTKULLANICIID, KULLANICIID,SATISKULLANICIID,
+  INSERTTARIHI,
+  INSERTKULLANICIID,
+  KULLANICIID,
   DEGISIMTARIHI,
   SUBESAYISI,
   ISKONTO
@@ -55,7 +57,9 @@ VALUES (
   @IlkSatisFiyati,
   @IlkDovizId,
   @Demo,
-  CURRENT_TIMESTAMP, @InsertKullaniciId, @KullaniciId, @KullaniciId,
+  CURRENT_TIMESTAMP,
+  @InsertKullaniciId,
+  @KullaniciId,
   CURRENT_TIMESTAMP,
   @SubeSayisi,
   @Iskonto
@@ -75,7 +79,8 @@ RETURNING SOZLESMEID;
             // pattern-match so works for bool and bool? and yields short? consistently
             LisansVer = cmd.LisansVer is true ? (short)1 : cmd.LisansVer is false ? (short)0 : (short?)null,
             OtomatikInstall = cmd.OtomatikInstall is true ? (short)1 : cmd.OtomatikInstall is false ? (short)0 : (short?)null,
-            cmd.SatisKullaniciId,
+            // default SATISKULLANICIID to 1 when not provided
+            SatisKullaniciId = cmd.SatisKullaniciId ?? 1L,
             cmd.DataServerIp,
             cmd.StatikIp,
             cmd.Klasor,
@@ -84,8 +89,9 @@ RETURNING SOZLESMEID;
             cmd.IlkSatisFiyati,
             cmd.IlkDovizId,
             Demo = cmd.Demo is true ? (short)1 : cmd.Demo is false ? (short)0 : (short?)null,
-            cmd.InsertKullaniciId,
-            cmd.KullaniciId,
+            // keep InsertKullaniciId / KullaniciId as provided (they may be null)
+            InsertKullaniciId = cmd.InsertKullaniciId,
+            KullaniciId = cmd.KullaniciId,
             cmd.SubeSayisi,
             cmd.Iskonto
         };
@@ -134,7 +140,8 @@ WHERE SOZLESMEID = @SozlesmeId;
             cmd.DovizId,
             LisansVer = cmd.LisansVer is true ? (short)1 : cmd.LisansVer is false ? (short)0 : (short?)null,
             OtomatikInstall = cmd.OtomatikInstall is true ? (short)1 : cmd.OtomatikInstall is false ? (short)0 : (short?)null,
-            cmd.SatisKullaniciId,
+            // ensure SATISKULLANICIID is always sent (default = 1)
+            SatisKullaniciId = cmd.SatisKullaniciId ?? 1L,
             cmd.DataServerIp,
             cmd.StatikIp,
             cmd.Klasor,

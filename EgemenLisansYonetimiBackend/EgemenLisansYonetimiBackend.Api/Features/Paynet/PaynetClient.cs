@@ -1,7 +1,6 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using EgemenLisansYonetimiBackend.Api.Features.Paynet.Dtos.Subscription;
 
 namespace EgemenLisansYonetimiBackend.Api.Features.Paynet;
 

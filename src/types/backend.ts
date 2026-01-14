@@ -318,9 +318,9 @@ export interface SozlesmePlanHesaplaRequest {
 }
 
 export interface SozlesmePlanHesaplaResponse {
-  toplamTutar?: number;
-  pesinatTutari?: number;
-  abonelikUcreti?: number;
+  ToplamTutar?: number;
+  PesinatTutari?: number;
+  AbonelikUcreti?: number;
 }
 
 // ==================== Sözleşme Planı CRUD DTO (Backend SozlesmePlani) ====================
@@ -355,6 +355,7 @@ export interface SozlesmePlaniCreateRequest {
 
 export interface SozlesmePlaniUpdateRequest {
   SozlesmePlanId: number;
+  SozlesmeId?: number;
   PlanId?: number;
   GenelIskonto?: number;
   AbonelikIskonto?: number;
