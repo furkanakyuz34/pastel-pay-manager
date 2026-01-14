@@ -317,10 +317,11 @@ export interface SozlesmePlanHesaplaRequest {
   dovizId?: string;
 }
 
+// Backend camelCase döner (Dapper default mapping)
 export interface SozlesmePlanHesaplaResponse {
-  ToplamTutar?: number;
-  PesinatTutari?: number;
-  AbonelikUcreti?: number;
+  toplamTutar?: number;
+  pesinatTutari?: number;
+  abonelikUcreti?: number;
 }
 
 // ==================== Sözleşme Planı CRUD DTO (Backend SozlesmePlani) ====================

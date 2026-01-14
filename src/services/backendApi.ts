@@ -265,9 +265,16 @@ export const backendApi = createApi({
     }),
 
     // ==================== Sözleşme Planı Endpoints ====================
-    getSozlesmePlanlari: builder.query<SozlesmePlaniDto[], number>({
+    // Backend'de GET /api/sozlesmeplani/sozlesme/{sozlesmeId} yok, tüm planları çekip filtreliyoruz
+    // veya backend endpoint eklenmeli. Şimdilik tek plan varsayıyoruz ve sozlesmeId ile sorguluyoruz
+    getSozlesmePlanlari: builder.query<SozlesmePlaniDto | null, number>({
       query: (sozlesmeId) => `/api/sozlesmeplani/sozlesme/${sozlesmeId}`,
-      transformResponse: (response: BackendApiResponse<SozlesmePlaniDto[]>) => extractData(response),
+      transformResponse: (response: BackendApiResponse<SozlesmePlaniDto>) => {
+        // Backend tek plan dönebilir veya null
+        if (!response.success) return null;
+        return response.data || null;
+      },
+      transformErrorResponse: () => null, // 404 durumunda null dön
       providesTags: (result, error, sozlesmeId) => [{ type: 'SozlesmePlani', id: sozlesmeId }],
     }),
 
@@ -283,9 +290,9 @@ export const backendApi = createApi({
         params: {
           sozlesmeId,
           planId,
-          genelIskonto,
-          abonelikIskonto,
-          dovizId,
+          genelIskonto: genelIskonto ?? 0,
+          abonelikIskonto: abonelikIskonto ?? 0,
+          dovizId: dovizId || 'EURO',
         },
       }),
       transformResponse: (response: BackendApiResponse<SozlesmePlanHesaplaResponse>) => extractData(response),
