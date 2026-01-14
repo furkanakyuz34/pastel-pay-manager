@@ -23,10 +23,15 @@ const FirmalarPage = () => {
         description: `${data.Adi} firması başarıyla oluşturuldu.`,
       });
       setAddModalOpen(false);
-    } catch (err) {
+    } catch (err: any) {
+      console.error("Firma ekleme hatası:", err);
+      const errorMessage = err?.data?.error?.detail 
+        || err?.data?.message 
+        || err?.message 
+        || "Firma eklenirken bir hata oluştu.";
       toast({
         title: "Hata",
-        description: "Firma eklenirken bir hata oluştu.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
