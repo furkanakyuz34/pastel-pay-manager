@@ -2,12 +2,9 @@ import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Header } from "@/components/layout/Header";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { SubscriptionTable } from "@/components/dashboard/SubscriptionTable";
 import { PaymentList } from "@/components/dashboard/PaymentList";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { Button } from "@/components/ui/button";
-import { SubscriptionFormModal } from "@/components/subscriptions/SubscriptionFormModal";
-import type { SubscriptionFormData } from "@/components/subscriptions/SubscriptionFormModal";
 import { Customer, Plan } from "@/types";
 import { CreditCard, TrendingUp, Users, Plus, Download, Repeat } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -69,13 +66,6 @@ const Index = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleAddSubscription = (data: SubscriptionFormData) => {
-    console.log("New subscription:", data);
-    toast({
-      title: "Abonelik Oluşturuldu",
-      description: `Abonelik başarıyla oluşturuldu.`,
-    });
-  };
 
   return (
     <MainLayout>
@@ -149,7 +139,6 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <SubscriptionTable customers={mockCustomers} plans={mockPlans} payments={[]} />
           </div>
 
           {/* Payments Section */}
@@ -169,14 +158,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Add Subscription Modal */}
-      <SubscriptionFormModal
-        open={addModalOpen}
-        onOpenChange={setAddModalOpen}
-        customers={mockCustomers}
-        plans={mockPlans}
-        onSubmit={handleAddSubscription}
-      />
+
     </MainLayout>
   );
 };

@@ -63,13 +63,25 @@ public sealed class SozlesmePlaniController : ControllerBase
         return Ok(ApiResponse<object>.Ok(new { }, "Sözleşme planı güncellendi", traceId));
     }
 
+    [HttpGet("sozlesme/{sozlesmeId:long}")]
+    public async Task<ActionResult<ApiResponse<SozlesmePlaniRow>>> GetBySozlesme(long sozlesmeId, CancellationToken ct)
+    {
+        var traceId = HttpContext.TraceIdentifier;
+        var result = await _repo.GetBySozlesmeIdAsync(sozlesmeId, ct);
+
+        if (result is null)
+            return NotFound(ApiResponse<SozlesmePlaniRow>.Fail("NOT_FOUND", "Plan bulunamadı.", "Plan bulunamadı", traceId));
+
+        return Ok(ApiResponse<SozlesmePlaniRow>.Ok(result, traceId: traceId));
+    }
+
     // GET /api/sozlesmeplani/hesapla?sozlesmeId=...&planId=...&genelIskonto=...&abonelikIskonto=...&dovizId=...
     [HttpGet("hesapla")]
     public async Task<ActionResult<ApiResponse<SozlesmePlaniUcretRow>>> Hesapla(
         [FromQuery] long sozlesmeId,
         [FromQuery] int planId,
-        [FromQuery] int? genelIskonto,
-        [FromQuery] int? abonelikIskonto,
+        [FromQuery] decimal? genelIskonto,
+        [FromQuery] decimal? abonelikIskonto,
         [FromQuery(Name = "dovizId")] string? hedefDovizId,
         CancellationToken ct)
     {

@@ -339,6 +339,7 @@ export interface SozlesmePlaniDto {
   insertKullaniciId?: number;
   kullaniciId?: number;
   degisimTarihi?: string;
+  status: number;
 }
 
 export interface SozlesmePlaniCreateRequest {

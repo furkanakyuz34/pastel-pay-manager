@@ -6,7 +6,6 @@ import {
   useGetProductsQuery,
   useCreateCustomerMutation,
 } from "@/services/managementApi";
-import { useCreateSubscriptionMutation } from "@/services/subscriptionApi";
 import { Customer, Plan, Project, Product, Subscription } from "@/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -41,7 +40,6 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
   const { data: projects = [] } = useGetProjectsQuery();
   const { data: products = [] } = useGetProductsQuery();
 
-  const [createSubscription, { isLoading: createLoading }] = useCreateSubscriptionMutation();
   const [createCustomer, { isLoading: createCustomerLoading }] = useCreateCustomerMutation();
 
   // Wizard state
@@ -240,21 +238,6 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
       autoRenew,
       end_user_desc: notes || `Müşteri satış sihirbazı ile oluşturulan abonelik`,
     };
-
-    try {
-      await createSubscription(subscriptionData).unwrap();
-      toast({
-        title: "Satış tamamlandı",
-        description: "Müşteri için abonelik başarıyla oluşturuldu.",
-      });
-      handleClose(false);
-    } catch (error) {
-      toast({
-        title: "Hata",
-        description: "Abonelik oluşturulurken bir hata oluştu.",
-        variant: "destructive",
-      });
-    }
   };
 
   return (
@@ -727,15 +710,6 @@ export function CustomerSalesWizard({ open, onOpenChange }: CustomerSalesWizardP
                 disabled={!canGoNext()}
               >
                 Devam
-              </Button>
-            )}
-            {step === 4 && (
-              <Button
-                type="button"
-                onClick={handleFinish}
-                disabled={createLoading || createCustomerLoading || !canGoNext()}
-              >
-                Satışı Tamamla
               </Button>
             )}
           </div>

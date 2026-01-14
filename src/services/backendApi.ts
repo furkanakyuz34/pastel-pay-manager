@@ -31,7 +31,11 @@ import {
 } from '../types/backend';
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://localhost:7001';
-
+   const toTrDecimalParam = (value: number | undefined | null) => {
+  if (value === null || value === undefined || Number.isNaN(value)) return "0";
+  // 5.3 -> "5,3"
+  return String(value).replace(".", ",");
+};
 // Response'dan data çıkarma helper
 const extractData = <T>(response: BackendApiResponse<T>): T => {
   if (!response.success || !response.data) {
@@ -267,6 +271,8 @@ export const backendApi = createApi({
     // ==================== Sözleşme Planı Endpoints ====================
     // Backend'de GET /api/sozlesmeplani/sozlesme/{sozlesmeId} yok, tüm planları çekip filtreliyoruz
     // veya backend endpoint eklenmeli. Şimdilik tek plan varsayıyoruz ve sozlesmeId ile sorguluyoruz
+
+   
     getSozlesmePlanlari: builder.query<SozlesmePlaniDto | null, number>({
       query: (sozlesmeId) => `/api/sozlesmeplani/sozlesme/${sozlesmeId}`,
       transformResponse: (response: BackendApiResponse<SozlesmePlaniDto>) => {
@@ -284,19 +290,25 @@ export const backendApi = createApi({
         providesTags: (result, error, sozlesmePlanId) => [{ type: 'SozlesmePlani', id: sozlesmePlanId }],
     }),
     
-    getSozlesmePlaniHesapla: builder.query<SozlesmePlanHesaplaResponse, SozlesmePlanHesaplaRequest>({
-      query: ({ sozlesmeId, planId, genelIskonto, abonelikIskonto, dovizId }) => ({
-        url: '/api/sozlesmeplani/hesapla',
-        params: {
-          sozlesmeId,
-          planId,
-          genelIskonto: genelIskonto ?? 0,
-          abonelikIskonto: abonelikIskonto ?? 0,
-          dovizId: dovizId || 'EURO',
-        },
-      }),
-      transformResponse: (response: BackendApiResponse<SozlesmePlanHesaplaResponse>) => extractData(response),
-    }),
+    getSozlesmePlaniHesapla: builder.query<
+  SozlesmePlanHesaplaResponse,
+  SozlesmePlanHesaplaRequest
+>({
+  query: ({ sozlesmeId, planId, genelIskonto, abonelikIskonto, dovizId }) => (console.log("ss",abonelikIskonto),{
+    url: "/api/sozlesmeplani/hesapla",
+    params: {
+      sozlesmeId,
+      planId,
+      // ✅ kritik kısım: decimal'ı TR format string gönder
+      genelIskonto: genelIskonto,
+      abonelikIskonto: abonelikIskonto,
+      dovizId: dovizId || "EURO",
+    },
+  }),
+  transformResponse: (response: BackendApiResponse<SozlesmePlanHesaplaResponse>) =>
+    extractData(response),
+}),
+
 
     createSozlesmePlani: builder.mutation<number, SozlesmePlaniCreateRequest>({
       query: (plan) => ({

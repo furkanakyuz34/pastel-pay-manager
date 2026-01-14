@@ -98,8 +98,8 @@ WHERE SOZLESMEPLANID = @SozlesmePlanId;
     public async Task<SozlesmePlaniUcretRow?> CalculateUcretAsync(
         long sozlesmeId,
         int planId,
-        int? genelIskonto,
-        int? abonelikIskonto,
+        decimal? genelIskonto,
+        decimal? abonelikIskonto,
         string? hedefDovizId,
         CancellationToken ct = default)
     {
@@ -127,5 +127,31 @@ FROM SOZLESMEPLANUCRETHESAPLA(
         }, cancellationToken: ct);
 
         return await conn.QuerySingleOrDefaultAsync<SozlesmePlaniUcretRow>(def);
+    }
+
+    public async Task<SozlesmePlaniRow?> GetBySozlesmeIdAsync(long sozlesmeId, CancellationToken ct = default)
+    {
+        const string sql = @"
+SELECT FIRST 1
+  SOZLESMEPLANID,
+  SOZLESMEID,
+  PLANID,
+  GENELISKONTO,
+  ABONELIKISKONTO,
+  ABONELIKBASLANGICTARIHI,
+  PESINATTUTARI,
+  ABONELIKUCRETI,
+  DOVIZID,
+  INSERTTARIHI,
+  INSERTKULLANICIID,
+  KULLANICIID,
+  DEGISIMTARIHI
+FROM SOZLESMEPLANI
+WHERE SOZLESMEID = @SozlesmeId
+ORDER BY SOZLESMEPLANID DESC;";
+
+        await using var conn = _db.Create();
+        var def = new CommandDefinition(sql, new { SozlesmeId = sozlesmeId }, cancellationToken: ct);
+        return await conn.QuerySingleOrDefaultAsync<SozlesmePlaniRow>(def);
     }
 }

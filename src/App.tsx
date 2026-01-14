@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
-import SubscriptionsPage from "./pages/Subscriptions";
 import PaymentsPage from "./pages/Payments";
 import CustomersPage from "./pages/Customers";
 import PlansPage from "./pages/Plans";
@@ -44,14 +43,6 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Index />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/subscriptions"
-              element={
-                <ProtectedRoute>
-                  <SubscriptionsPage />
                 </ProtectedRoute>
               }
             />

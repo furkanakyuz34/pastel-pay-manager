@@ -28,7 +28,6 @@ const menuItems = [
   { icon: FolderKanban, label: "Projeler", path: "/projeler" },
   { icon: ShoppingBag, label: "Proje Modülleri", path: "/proje-moduller" },
   { icon: FileSignature, label: "Sözleşmeler", path: "/sozlesmeler" },
-  { icon: Repeat, label: "Abonelikler", path: "/subscriptions" },
   { icon: CreditCard, label: "Ödemeler", path: "/payments" },
   { icon: FileText, label: "Faturalar", path: "/invoices" },
   { icon: BarChart3, label: "Kullanım Takibi", path: "/usage" },

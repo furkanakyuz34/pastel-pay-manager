@@ -7,8 +7,8 @@ namespace EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani
     {
         public long SozlesmeId { get; init; }
         public int PlanId { get; init; }
-        public int? GenelIskonto { get; init; }
-        public int? AbonelikIskonto { get; init; }
+        public decimal? GenelIskonto { get; init; }
+        public decimal? AbonelikIskonto { get; init; }
         public DateTime? AbonelikBaslangicTarihi { get; init; }
         public decimal? PesinatTutari { get; init; }
         public decimal? AbonelikUcreti { get; init; }
@@ -21,8 +21,8 @@ namespace EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani
     {
         public long SozlesmePlanId { get; init; }
         public int? PlanId { get; init; }
-        public int? GenelIskonto { get; init; }
-        public int? AbonelikIskonto { get; init; }
+        public decimal? GenelIskonto { get; init; }
+        public decimal? AbonelikIskonto { get; init; }
         public DateTime? AbonelikBaslangicTarihi { get; init; }
         public decimal? PesinatTutari { get; init; }
         public decimal? AbonelikUcreti { get; init; }
@@ -34,8 +34,8 @@ namespace EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani
         public long SozlesmePlanId { get; init; }
         public long SozlesmeId { get; init; }
         public int PlanId { get; init; }
-        public int? GenelIskonto { get; init; }
-        public int? AbonelikIskonto { get; init; }
+        public decimal? GenelIskonto { get; init; }
+        public decimal? AbonelikIskonto { get; init; }
         public DateTime? AbonelikBaslangicTarihi { get; init; }
         public decimal? PesinatTutari { get; init; }
         public decimal? AbonelikUcreti { get; init; }
