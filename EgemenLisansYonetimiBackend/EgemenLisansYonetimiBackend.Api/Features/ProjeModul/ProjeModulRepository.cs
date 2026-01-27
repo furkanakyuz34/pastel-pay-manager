@@ -11,10 +11,10 @@ public sealed class ProjeModulRepository
     public async Task<IReadOnlyList<ProjeModulDto>> ListAsync(int? projeId = null)
     {
         var sql = @"
-SELECT PROJEMODULID as ProjeModulId, PROJEID as ProjeId, ADI as Adi, BIRIMFIYAT as BirimFiyat , DovizId, ModulTipi
-FROM PROJEMODUL
-/**where**/
-ORDER BY ADI";
+            SELECT PROJEMODULID as ProjeModulId, PROJEID as ProjeId, ADI as Adi, BIRIMFIYAT as BirimFiyat , DovizId, ModulTipi
+            FROM PROJEMODUL
+            /**where**/
+            ORDER BY ADI";
 
         var where = "";
         object param = new { };

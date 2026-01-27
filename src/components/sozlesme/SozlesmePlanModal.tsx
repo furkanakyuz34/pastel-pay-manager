@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CreditCard, FileText, Plus, RefreshCw } from "lucide-react";
+import { CreditCard, FileText, Plus, RefreshCw, Trash2 } from "lucide-react";
 
 import {
   SozlesmeDto,
@@ -28,6 +28,7 @@ import {
 } from "@/types/backend";
 import {
   useCreateSozlesmePlaniMutation,
+  useDeleteSozlesmePlaniMutation,
   useGetPaymentPlansQuery,
   useGetSozlesmePlanlariQuery,
   useLazyGetSozlesmePlaniHesaplaQuery,
@@ -39,6 +40,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { formatDoviz } from "@/hooks/useDovizKuru";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
+import { DeletePlanDialog } from "./DeletePlanDialog";
 
 // A custom hook to debounce any fast-changing value
 function useDebounce<T>(value: T, delay: number): T {
@@ -63,6 +65,7 @@ interface SozlesmePlanModalProps {
   onOpenChange: (open: boolean) => void;
   sozlesme: SozlesmeDto | null;
   toplamTutar: number;
+  genelIskonto: number;
 }
 
 export function SozlesmePlanModal({
@@ -70,13 +73,16 @@ export function SozlesmePlanModal({
   onOpenChange,
   sozlesme,
   toplamTutar,
+  genelIskonto: genelIskontoProp,
 }: SozlesmePlanModalProps) {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"plan" | "yeni">("plan");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
 
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | undefined>();
   const [dovizId, setDovizId] = useState(sozlesme?.dovizId || "EURO");
-  const [genelIskonto, setGenelIskonto] = useState(0);
+  const [genelIskonto, setGenelIskonto] = useState(genelIskontoProp || 0);
   const [abonelikIskonto, setAbonelikIskonto] = useState(0);
   const [abonelikBaslangicTarihi, setAbonelikBaslangicTarihi] = useState(
     format(new Date(), "yyyy-MM-dd")
@@ -111,9 +117,31 @@ export function SozlesmePlanModal({
 
   const [createPlan, { isLoading: isCreating }] = useCreateSozlesmePlaniMutation();
   const [updatePlan, { isLoading: isUpdating }] = useUpdateSozlesmePlaniMutation();
+  const [deletePlan, { isLoading: isDeleting }] = useDeleteSozlesmePlaniMutation();
+
 
   const hasPlan = !!mevcutPlan;
-  const isLoading = isCreating || isUpdating;
+  const isLoading = isCreating || isUpdating || isDeleting;
+
+  const handleDeleteConfirm = async () => {
+    if (!mevcutPlan) return;
+    try {
+      await deletePlan(mevcutPlan.sozlesmePlanId).unwrap();
+      toast({
+        title: "Başarılı",
+        description: "Ödeme planı başarıyla silindi.",
+      });
+      setIsDeleteDialogOpen(false);
+      setActiveTab("yeni"); // Switch to the create tab
+    } catch (err) {
+      toast({
+        title: "Hata",
+        description: "Plan silinirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  };
+
 
   const formatCurrency = (value: number | undefined | null, currency: string) => {
     if (value === undefined || value === null || Number.isNaN(value)) return "—";
@@ -124,6 +152,11 @@ export function SozlesmePlanModal({
   useEffect(() => {
     if (open) {
       refetchPlan();
+    }
+  }, [open, refetchPlan]);
+
+  useEffect(() => {
+    if (open) {
       if (mevcutPlan) {
         setSelectedTemplateId(mevcutPlan.planId);
         setDovizId(mevcutPlan.dovizId || "EURO");
@@ -142,7 +175,7 @@ export function SozlesmePlanModal({
       } else {
         setSelectedTemplateId(undefined);
         setDovizId(sozlesme?.dovizId || "EURO");
-        setGenelIskonto(0);
+        setGenelIskonto(genelIskontoProp || 0);
         setAbonelikIskonto(0);
         setAbonelikBaslangicTarihi(format(new Date(), "yyyy-MM-dd"));
         setActiveTab("yeni");
@@ -154,7 +187,7 @@ export function SozlesmePlanModal({
       setCalc(null);
       lastCalcKeyRef.current = "";
     }
-  }, [open, mevcutPlan, sozlesme?.dovizId, refetchPlan]);
+  }, [open, mevcutPlan, sozlesme?.dovizId, genelIskontoProp]);
 
   useEffect(() => {
     if (!calc) {
@@ -162,6 +195,9 @@ export function SozlesmePlanModal({
       return;
     }
     
+    // Manuel düzenleme sırasında orijinal fiyatı güncelleme (bounce önleme)
+    if (manuelAbonelikUcreti !== null) return;
+
     const { abonelikUcreti, inputs } = calc;
     if (!inputs || typeof abonelikUcreti === 'undefined') return;
 
@@ -169,12 +205,12 @@ export function SozlesmePlanModal({
     
     if (abonelikIskontoUsed < 100 && genelIskontoUsed < 100) {
       const afterAbonelik = abonelikUcreti / (1 - abonelikIskontoUsed / 100);
-      const gross = afterAbonelik / (1 - genelIskontoUsed / 100);
+      const gross = abonelikUcreti / (1 - abonelikIskontoUsed / 100);
       setOriginalAbonelikUcreti(gross);
     } else {
       setOriginalAbonelikUcreti(0);
     }
-  }, [calc]);
+  }, [calc, manuelAbonelikUcreti]);
 
   // şablon/döviz değişince manuel fiyat sıfırla
   useEffect(() => {
@@ -255,7 +291,11 @@ export function SozlesmePlanModal({
     if (originalAbonelikUcreti && originalAbonelikUcreti > 0) {
       const newDiscount = 100 * (1 - debouncedManuelAbonelikUcreti / originalAbonelikUcreti);
       const finalNewDiscount = Math.max(0, Math.min(100, Math.round(newDiscount * 10000) / 10000));
-      setAbonelikIskonto(finalNewDiscount);
+      
+      setAbonelikIskonto((prev) => {
+        if (Math.abs(prev - finalNewDiscount) < 0.0001) return prev;
+        return finalNewDiscount;
+      });
     }
   }, [debouncedManuelAbonelikUcreti, originalAbonelikUcreti]);
 
@@ -402,7 +442,15 @@ export function SozlesmePlanModal({
                   </Table>
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Planı Sil
+                  </Button>
                   <Button variant="outline" onClick={() => setActiveTab("yeni")}>
                     <FileText className="h-4 w-4 mr-2" /> Planı Düzenle
                   </Button>
@@ -557,6 +605,11 @@ export function SozlesmePlanModal({
           </Button>
         </div>
       </DialogContent>
+      <DeletePlanDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+      />
     </Dialog>
   );
 }

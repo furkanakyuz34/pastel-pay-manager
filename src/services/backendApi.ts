@@ -274,13 +274,29 @@ export const backendApi = createApi({
 
    
     getSozlesmePlanlari: builder.query<SozlesmePlaniDto | null, number>({
-      query: (sozlesmeId) => `/api/sozlesmeplani/sozlesme/${sozlesmeId}`,
-      transformResponse: (response: BackendApiResponse<SozlesmePlaniDto>) => {
-        // Backend tek plan dönebilir veya null
-        if (!response.success) return null;
-        return response.data || null;
+      async queryFn(sozlesmeId, _queryApi, _extraOptions, fetchWithBQ) {
+        // fetchWithBQ, base query'i çalıştırır
+        const result = await fetchWithBQ(`/api/sozlesmeplani/sozlesme/${sozlesmeId}`);
+
+        // Gerçek 404 hatası durumunda, bunu "veri yok" olarak ele alıp başarılı bir şekilde null data dönüyoruz.
+        if (result.error && result.error.status === 404) {
+          return { data: null };
+        }
+        
+        // Diğer HTTP hatalarını olduğu gibi yansıt
+        if (result.error) {
+          return { error: result.error };
+        }
+
+        // Backend'in { success: false } döndüğü 200 OK durumlarını ele al
+        const response = result.data as BackendApiResponse<SozlesmePlaniDto>;
+        if (!response.success) {
+          return { data: null }; 
+        }
+
+        // Başarılı durumda veriyi dön
+        return { data: response.data || null };
       },
-      transformErrorResponse: () => null, // 404 durumunda null dön
       providesTags: (result, error, sozlesmeId) => [{ type: 'SozlesmePlani', id: sozlesmeId }],
     }),
 

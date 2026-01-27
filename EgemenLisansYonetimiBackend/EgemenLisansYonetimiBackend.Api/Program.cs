@@ -1,11 +1,15 @@
 using EgemenLisansYonetimiBackend.Api.Common;
 using EgemenLisansYonetimiBackend.Api.Features.Auth;
 using EgemenLisansYonetimiBackend.Api.Features.Firma;
+using EgemenLisansYonetimiBackend.Api.Features.OdemeTipi;
+using EgemenLisansYonetimiBackend.Api.Features.OdemeYontemi;
 using EgemenLisansYonetimiBackend.Api.Features.Paynet;
 using EgemenLisansYonetimiBackend.Api.Features.Proje;
 using EgemenLisansYonetimiBackend.Api.Features.ProjeModul;
+using EgemenLisansYonetimiBackend.Api.Features.Sample;
 using EgemenLisansYonetimiBackend.Api.Features.Sozlesme;
 using EgemenLisansYonetimiBackend.Api.Features.SozlesmeModul;
+using EgemenLisansYonetimiBackend.Api.Features.SozlesmeOdeme;
 using EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Db;
 using EgemenLisansYonetimiBackend.Api.Infrastructure.Logging;
@@ -13,25 +17,22 @@ using EgemenLisansYonetimiBackend.Api.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Serilog;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// -------------------- Serilog --------------------
 builder.Host.UseSerilog((ctx, services, cfg) =>
 {
     cfg.ReadFrom.Configuration(ctx.Configuration)
        .ReadFrom.Services(services)
-       .WriteTo.Console(); // Konsolda da gözüksün
+       .WriteTo.Console(); 
 });
 
-// -------------------- MVC --------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
-
-// -------------------- DI --------------------
 builder.Services.AddSingleton<IDbConnectionFactory, FirebirdConnectionFactory>();
 
 builder.Services.AddScoped<UserRepository>();
@@ -44,11 +45,14 @@ builder.Services.AddScoped<ProjeModulRepository>();
 builder.Services.AddScoped<SozlesmeRepository>();
 builder.Services.AddScoped<SozlesmeModulRepository>();
 builder.Services.AddScoped<SozlesmePlaniRepository>();
+builder.Services.AddScoped<SozlesmeOdemeRepository>();
+builder.Services.AddScoped<OdemeYontemiRepository>();
+builder.Services.AddScoped<OdemeTipiRepository>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<SampleService>();
 
-// -------------------- Options --------------------
 builder.Services.Configure<PaynetOptions>(builder.Configuration.GetSection("Paynet"));
 
-// -------------------- HttpClient (Paynet) --------------------
 builder.Services.AddHttpClient<PaynetClient>((sp, client) =>
 {
     var opt = sp.GetRequiredService<IOptions<PaynetOptions>>().Value;
@@ -62,14 +66,12 @@ builder.Services.AddHttpClient<PaynetClient>((sp, client) =>
     client.BaseAddress = new Uri(opt.BaseUrl.TrimEnd('/'));
     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds <= 0 ? 30 : opt.TimeoutSeconds);
 
-    // Paynet: Basic {secret_key} (base64 deðil)
     client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Basic {opt.SecretKey}");
 
-    // Accept
+
     client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 });
 
-// -------------------- CORS --------------------
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -79,7 +81,6 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-// -------------------- JWT --------------------
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var issuer = jwtSection["Issuer"];
 var audience = jwtSection["Audience"];
@@ -109,36 +110,41 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddOpenApi();
 var app = builder.Build();
 
-// -------------------- Middlewares --------------------
-// app.UseSwagger();
-// app.UseSwaggerUI();
 
-// CorrelationId
+app.MapOpenApi();
+
+app.MapScalarApiReference(opt =>
+{
+    opt.WithTitle("EgemenLicense API");
+    opt.WithEndpointPrefix("docs"); 
+    opt.WithTheme(ScalarTheme.Kepler);
+
+    opt.Authentication = new ScalarAuthenticationOptions
+    {
+        PreferredSecurityScheme = "Bearer"
+    };
+});
+
+
 app.UseMiddleware<CorrelationIdMiddleware>();
 
-// Request log
 app.UseSerilogRequestLogging(options =>
 {
     options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} => {StatusCode} in {Elapsed:0.0000} ms";
 });
 
-// Exception Handling (log + standart response)
 app.UseMiddleware<ExceptionMiddleware>();
 
-// CORS (policy'yi burada mutlaka uygula)
 app.UseCors("AllowAll");
 
-// Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Controllers
 app.MapControllers();
 
-// Basit health endpoint (istersen kalsýn)
 app.MapGet("/health", () => Results.Ok(new { ok = true }));
 
 app.Run();

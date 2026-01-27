@@ -20,7 +20,6 @@ public sealed class SozlesmeController : ControllerBase
         _logger = logger;
     }
 
-    // New: list all contracts when no id provided
     [HttpGet]
     public async Task<ActionResult<ApiResponse<IEnumerable<SozlesmeRow>>>> List(CancellationToken ct)
     {
@@ -75,7 +74,6 @@ public sealed class SozlesmeController : ControllerBase
         var traceId = HttpContext.TraceIdentifier;
         var corrId = CorrelationIdMiddleware.Get(HttpContext);
 
-        // ensure id matches route
         if (req.SozlesmeId != sozlesmeId)
         {
             _logger.LogWarning("Sozlesme.Update bad request. RouteId={RouteId} BodyId={BodyId} TraceId={TraceId} CorrelationId={CorrelationId}",

@@ -61,6 +61,7 @@ RETURNING SOZLESMEPLANID;
         return await conn.ExecuteScalarAsync<long>(def);
     }
 
+
     public async Task<bool> UpdateAsync(UpdateSozlesmePlaniCommand cmd, CancellationToken ct = default)
     {
         const string sql = @"
@@ -94,7 +95,6 @@ WHERE SOZLESMEPLANID = @SozlesmePlanId;
         return affected == 1;
     }
 
-    // Calls the selectable stored procedure SOZLESMEPLANUCRETHESAPLA and returns totals
     public async Task<SozlesmePlaniUcretRow?> CalculateUcretAsync(
         long sozlesmeId,
         int planId,
@@ -129,6 +129,18 @@ FROM SOZLESMEPLANUCRETHESAPLA(
         return await conn.QuerySingleOrDefaultAsync<SozlesmePlaniUcretRow>(def);
     }
 
+
+    public async Task<bool> DeleteAsync(long sozlesmePlanId, CancellationToken ct = default)
+    {
+        const string sql = @"
+DELETE FROM SOZLESMEPLANI
+WHERE SOZLESMEPLANID = @sozlesmePlanId;";
+
+        await using var conn = _db.Create();
+        var def = new CommandDefinition(sql, new { sozlesmePlanId }, cancellationToken: ct);
+        var affected = await conn.ExecuteAsync(def);
+        return affected == 1;
+    }
     public async Task<SozlesmePlaniRow?> GetBySozlesmeIdAsync(long sozlesmeId, CancellationToken ct = default)
     {
         const string sql = @"

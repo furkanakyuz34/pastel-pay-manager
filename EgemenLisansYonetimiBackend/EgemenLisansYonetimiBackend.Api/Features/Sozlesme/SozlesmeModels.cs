@@ -2,7 +2,6 @@
 
 namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
 {
-    // Sozlesme (master) models used by SozlesmeRepository
 
     public sealed record InsertSozlesmeCommand
     {
@@ -11,7 +10,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
         public int? KullaniciSayisi { get; init; }
         public DateTime? SatisTarihi { get; init; }
         public decimal? SatisFiyati { get; init; }
-        // changed to string to accept currency codes like "USD"
         public string? DovizId { get; init; }
         public bool? LisansVer { get; init; }
         public bool? OtomatikInstall { get; init; }
@@ -22,7 +20,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
         public string? Notu { get; init; }
         public DateTime? IlkSatisTarihi { get; init; }
         public decimal? IlkSatisFiyati { get; init; }
-        // changed to string to accept currency codes like "USD"
         public string? IlkDovizId { get; init; }
         public bool? Demo { get; init; }
         public long? InsertKullaniciId { get; init; }
@@ -40,7 +37,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
         public int? KullaniciSayisi { get; init; }   
         public DateTime? SatisTarihi { get; init; }
         public decimal? SatisFiyati { get; init; }
-        // changed to string
         public string? DovizId { get; init; }
         public bool? LisansVer { get; init; }
         public bool? OtomatikInstall { get; init; }
@@ -51,7 +47,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
         public string? Notu { get; init; }
         public DateTime? IlkSatisTarihi { get; init; }
         public decimal? IlkSatisFiyati { get; init; }
-        // changed to string
         public string? IlkDovizId { get; init; }
         public bool Demo { get; init; }
         public int? SubeSayisi { get; init; }
@@ -66,7 +61,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
         public int KullaniciSayisi { get; init; }
         public DateTime? SatisTarihi { get; init; }
         public decimal? SatisFiyati { get; init; }
-        // changed to string to match DB values like "USD"
         public string? DovizId { get; init; }
         public short LisansVer { get; init; }
         public short OtomatikInstall { get; init; }
@@ -77,7 +71,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sozlesme
         public string? Notu { get; init; }
         public DateTime? IlkSatisTarihi { get; init; }
         public decimal? IlkSatisFiyati { get; init; }
-        // changed to string
         public string? IlkDovizId { get; init; }
         public short Demo { get; init; }
         public DateTime InsertTarihi { get; init; }

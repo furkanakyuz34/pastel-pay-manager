@@ -7,7 +7,18 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Sample;
 [Route("sample")]
 public sealed class SampleController : ControllerBase
 {
+    private readonly SampleService _sampleService;
+
+    public SampleController(SampleService sampleService)
+    {
+        _sampleService = sampleService;
+    }
+
     [Authorize]
-    [HttpGet("secure-ping")]
-    public IActionResult SecurePing() => Ok(new { ok = true, at = DateTime.UtcNow });
+    [HttpGet("hello")]
+    public ActionResult<HelloWorldResponse> Hello()
+    {
+        var result = _sampleService.HelloWorld();
+        return Ok(result);
+    }
 }

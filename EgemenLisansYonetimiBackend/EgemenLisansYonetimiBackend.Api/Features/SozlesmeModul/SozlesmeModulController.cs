@@ -75,7 +75,6 @@ public sealed class SozlesmeModulController : ControllerBase
         }
         catch (FbException ex)
         {
-            // Unknown column / schema mismatch -> return clear client error
             if (ex.Message.Contains("Column unknown", StringComparison.OrdinalIgnoreCase) ||
                 ex.Message.Contains("validation error", StringComparison.OrdinalIgnoreCase))
             {
@@ -85,7 +84,6 @@ public sealed class SozlesmeModulController : ControllerBase
                 return BadRequest(ApiResponse<object>.Fail("DB_SCHEMA_ERROR", "Veritabanı şeması beklenenden farklı.", ex.Message, traceId));
             }
 
-            // Other DB-level business rule (trigger) -> pass as business error
             _logger.LogWarning(ex, "SozlesmeModul.Create DB error. SozlesmeId={SozlesmeId} TraceId={TraceId} CorrelationId={CorrelationId}",
                 sozlesmeId, traceId, corrId);
 
@@ -131,7 +129,6 @@ public sealed class SozlesmeModulController : ControllerBase
         }
         catch (FbException ex)
         {
-            // Trigger-based business rule (licensed module cannot change)
             _logger.LogWarning(ex, "SozlesmeModul.Update trigger/DB error. SozlesmeId={SozlesmeId} TraceId={TraceId} CorrelationId={CorrelationId}",
                 sozlesmeId, traceId, corrId);
 
@@ -169,7 +166,6 @@ public sealed class SozlesmeModulController : ControllerBase
         }
         catch (FbException ex)
         {
-            // Trigger prohibits delete of licensed modules
             _logger.LogWarning(ex, "SozlesmeModul.Delete trigger/DB error. SozlesmeId={SozlesmeId} TraceId={TraceId} CorrelationId={CorrelationId}",
                 sozlesmeId, traceId, corrId);
 

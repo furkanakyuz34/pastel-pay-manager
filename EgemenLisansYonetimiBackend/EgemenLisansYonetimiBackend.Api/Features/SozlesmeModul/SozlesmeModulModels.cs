@@ -1,7 +1,6 @@
 ﻿
 namespace EgemenLisansYonetimiBackend.Api.Features.SozlesmeModul
 {
-    // SozlesmeModul models (moved to separate namespace)
 
     public sealed record InsertSozlesmeModulCommand
     {

@@ -19,7 +19,6 @@ public sealed class CorrelationIdMiddleware
         ctx.Items[HeaderName] = cid;
         ctx.Response.Headers[HeaderName] = cid;
 
-        // ✅ Serilog’a ekle (loglarda {CorrelationId} olarak gözükecek)
         using (LogContext.PushProperty("CorrelationId", cid))
         {
             await _next(ctx);

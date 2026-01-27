@@ -48,8 +48,6 @@ WHERE SOZLESMEID = @sozlesmeId
 
     public async Task InsertAsync(InsertSozlesmeModulCommand cmd, CancellationToken ct = default)
     {
-        // Some databases / schemas don't have audit columns (INSERTTARIHI / INSERTKULLANICIID).
-        // Use minimal insert that maps to common schema. If your DB has audit cols, add them here.
         const string sql = @"
 INSERT INTO SOZLESMEMODUL (
   SOZLESMEID,

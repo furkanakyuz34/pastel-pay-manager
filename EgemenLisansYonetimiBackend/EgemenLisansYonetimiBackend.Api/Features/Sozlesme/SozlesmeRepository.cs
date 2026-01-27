@@ -76,10 +76,8 @@ RETURNING SOZLESMEID;
             cmd.SatisTarihi,
             cmd.SatisFiyati,
             cmd.DovizId,
-            // pattern-match so works for bool and bool? and yields short? consistently
             LisansVer = cmd.LisansVer is true ? (short)1 : cmd.LisansVer is false ? (short)0 : (short?)null,
             OtomatikInstall = cmd.OtomatikInstall is true ? (short)1 : cmd.OtomatikInstall is false ? (short)0 : (short?)null,
-            // default SATISKULLANICIID to 1 when not provided
             SatisKullaniciId = cmd.SatisKullaniciId ?? 1L,
             cmd.DataServerIp,
             cmd.StatikIp,
@@ -89,7 +87,7 @@ RETURNING SOZLESMEID;
             cmd.IlkSatisFiyati,
             cmd.IlkDovizId,
             Demo = cmd.Demo is true ? (short)1 : cmd.Demo is false ? (short)0 : (short?)null,
-            // keep InsertKullaniciId / KullaniciId as provided (they may be null)
+
             InsertKullaniciId = cmd.InsertKullaniciId,
             KullaniciId = cmd.KullaniciId,
             cmd.SubeSayisi,
@@ -140,7 +138,6 @@ WHERE SOZLESMEID = @SozlesmeId;
             cmd.DovizId,
             LisansVer = cmd.LisansVer is true ? (short)1 : cmd.LisansVer is false ? (short)0 : (short?)null,
             OtomatikInstall = cmd.OtomatikInstall is true ? (short)1 : cmd.OtomatikInstall is false ? (short)0 : (short?)null,
-            // ensure SATISKULLANICIID is always sent (default = 1)
             SatisKullaniciId = cmd.SatisKullaniciId ?? 1L,
             cmd.DataServerIp,
             cmd.StatikIp,
@@ -203,7 +200,6 @@ WHERE SOZLESMEID = @sozlesmeId;
         return await conn.QuerySingleOrDefaultAsync<SozlesmeRow>(def);
     }
 
-    // New: return all contracts (so controller can return all when no id provided)
     public async Task<IEnumerable<SozlesmeRow>> ListSozlesmeAsync(CancellationToken ct = default)
     {
         const string sql = @"

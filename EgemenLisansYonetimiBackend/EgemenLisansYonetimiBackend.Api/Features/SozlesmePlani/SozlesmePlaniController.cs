@@ -28,7 +28,8 @@ public sealed class SozlesmePlaniController : ControllerBase
 
         var id = await _repo.InsertAsync(req, ct);
 
-        _logger.LogInformation("SozlesmePlani.Create succeeded. SozlesmePlanId={SozlesmePlanId} SozlesmeId={SozlesmeId} TraceId={TraceId} CorrelationId={CorrelationId}",
+        _logger.LogInformation(
+            "SozlesmePlani.Create succeeded. SozlesmePlanId={SozlesmePlanId} SozlesmeId={SozlesmeId} TraceId={TraceId} CorrelationId={CorrelationId}",
             id, req.SozlesmeId, traceId, corrId);
 
         return Ok(ApiResponse<long>.Ok(id, "Sözleşme planı oluşturuldu", traceId));
@@ -42,7 +43,8 @@ public sealed class SozlesmePlaniController : ControllerBase
 
         if (req.SozlesmePlanId != sozlesmePlanId)
         {
-            _logger.LogWarning("SozlesmePlani.Update bad request. RouteId={RouteId} BodyId={BodyId} TraceId={TraceId} CorrelationId={CorrelationId}",
+            _logger.LogWarning(
+                "SozlesmePlani.Update bad request. RouteId={RouteId} BodyId={BodyId} TraceId={TraceId} CorrelationId={CorrelationId}",
                 sozlesmePlanId, req.SozlesmePlanId, traceId, corrId);
 
             return BadRequest(ApiResponse<object>.Fail("INVALID_REQUEST", "ID uyuşmuyor.", "ID uyuşmuyor", traceId));
@@ -51,16 +53,41 @@ public sealed class SozlesmePlaniController : ControllerBase
         var ok = await _repo.UpdateAsync(req, ct);
         if (!ok)
         {
-            _logger.LogWarning("SozlesmePlani.Update not found. SozlesmePlanId={SozlesmePlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
+            _logger.LogWarning(
+                "SozlesmePlani.Update not found. SozlesmePlanId={SozlesmePlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
                 sozlesmePlanId, traceId, corrId);
 
             return NotFound(ApiResponse<object>.Fail("NOT_FOUND", "Sözleşme planı bulunamadı.", "Bulunamadı", traceId));
         }
 
-        _logger.LogInformation("SozlesmePlani.Update succeeded. SozlesmePlanId={SozlesmePlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
+        _logger.LogInformation(
+            "SozlesmePlani.Update succeeded. SozlesmePlanId={SozlesmePlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
             sozlesmePlanId, traceId, corrId);
 
         return Ok(ApiResponse<object>.Ok(new { }, "Sözleşme planı güncellendi", traceId));
+    }
+
+    [HttpDelete("{sozlesmePlanId:long}")]
+    public async Task<ActionResult<ApiResponse<object>>> Delete(long sozlesmePlanId, CancellationToken ct)
+    {
+        var traceId = HttpContext.TraceIdentifier;
+        var corrId = CorrelationIdMiddleware.Get(HttpContext);
+
+        var ok = await _repo.DeleteAsync(sozlesmePlanId, ct);
+        if (!ok)
+        {
+            _logger.LogWarning(
+                "SozlesmePlani.Delete not found. SozlesmePlanId={SozlesmePlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
+                sozlesmePlanId, traceId, corrId);
+
+            return NotFound(ApiResponse<object>.Fail("NOT_FOUND", "Sözleşme planı bulunamadı.", "Bulunamadı", traceId));
+        }
+
+        _logger.LogInformation(
+            "SozlesmePlani.Delete succeeded. SozlesmePlanId={SozlesmePlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
+            sozlesmePlanId, traceId, corrId);
+
+        return Ok(ApiResponse<object>.Ok(new { }, "Sözleşme planı silindi", traceId));
     }
 
     [HttpGet("sozlesme/{sozlesmeId:long}")]
@@ -75,7 +102,6 @@ public sealed class SozlesmePlaniController : ControllerBase
         return Ok(ApiResponse<SozlesmePlaniRow>.Ok(result, traceId: traceId));
     }
 
-    // GET /api/sozlesmeplani/hesapla?sozlesmeId=...&planId=...&genelIskonto=...&abonelikIskonto=...&dovizId=...
     [HttpGet("hesapla")]
     public async Task<ActionResult<ApiResponse<SozlesmePlaniUcretRow>>> Hesapla(
         [FromQuery] long sozlesmeId,
@@ -92,13 +118,15 @@ public sealed class SozlesmePlaniController : ControllerBase
 
         if (result is null)
         {
-            _logger.LogWarning("SozlesmePlani.Hesapla no result. SozlesmeId={SozlesmeId} PlanId={PlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
+            _logger.LogWarning(
+                "SozlesmePlani.Hesapla no result. SozlesmeId={SozlesmeId} PlanId={PlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
                 sozlesmeId, planId, traceId, corrId);
 
             return NotFound(ApiResponse<SozlesmePlaniUcretRow>.Fail("NOT_FOUND", "Hesaplama sonucu bulunamadı.", "Hesaplama sonucu bulunamadı", traceId));
         }
 
-        _logger.LogInformation("SozlesmePlani.Hesapla succeeded. SozlesmeId={SozlesmeId} PlanId={PlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
+        _logger.LogInformation(
+            "SozlesmePlani.Hesapla succeeded. SozlesmeId={SozlesmeId} PlanId={PlanId} TraceId={TraceId} CorrelationId={CorrelationId}",
             sozlesmeId, planId, traceId, corrId);
 
         return Ok(ApiResponse<SozlesmePlaniUcretRow>.Ok(result, traceId: traceId));

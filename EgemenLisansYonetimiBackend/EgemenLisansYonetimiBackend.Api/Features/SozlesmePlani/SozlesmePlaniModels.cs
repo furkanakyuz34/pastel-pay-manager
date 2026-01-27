@@ -2,7 +2,6 @@
 
 namespace EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani
 {
-    // Commands matching your SOZLESMEPLANI table (only fields required for insert/update)
     public sealed record InsertSozlesmePlaniCommand
     {
         public long SozlesmeId { get; init; }
@@ -46,7 +45,6 @@ namespace EgemenLisansYonetimiBackend.Api.Features.SozlesmePlani
         public DateTime DegisimTarihi { get; init; }
     }
 
-    // Result type for SOZLESMEPLANUCRETHESAPLA procedure
     public sealed record SozlesmePlaniUcretRow
     {
         public decimal? ToplamTutar { get; init; }

@@ -11,24 +11,24 @@ public sealed class FirmaRepository
     public async Task<IReadOnlyList<FirmaDto>> ListAsync()
     {
         const string sql = @"
-SELECT
-  FIRMAID as FirmaId,
-  ADI as Adi,
-  YETKILIADI as YetkiliAdi,
-  ADRESI1 as Adres1,
-  ADRESI2 as Adres2,
-  ADRESI3 as Adres3,
-  SEMT as Semt,
-  SEHIR as Sehir,
-  VERGIDAIRESI as VergiDairesi,
-  VERGIHESAPNO as VergiHesapNo,
-  TELEFON1 as Telefon1,
-  TELEFON2 as Telefon2,
-  FAX as Fax,
-  EMAIL as Email,
-  NOTU as Notu
-FROM FIRMA
-ORDER BY ADI";
+            SELECT
+              FIRMAID as FirmaId,
+              ADI as Adi,
+              YETKILIADI as YetkiliAdi,
+              ADRESI1 as Adres1,
+              ADRESI2 as Adres2,
+              ADRESI3 as Adres3,
+              SEMT as Semt,
+              SEHIR as Sehir,
+              VERGIDAIRESI as VergiDairesi,
+              VERGIHESAPNO as VergiHesapNo,
+              TELEFON1 as Telefon1,
+              TELEFON2 as Telefon2,
+              FAX as Fax,
+              EMAIL as Email,
+              NOTU as Notu
+            FROM FIRMA
+            ORDER BY ADI";
 
         await using var conn = _db.Create();
         var rows = await conn.QueryAsync<FirmaDto>(sql);
@@ -38,24 +38,24 @@ ORDER BY ADI";
     public async Task<FirmaDto?> GetAsync(int firmaId)
     {
         const string sql = @"
-SELECT
-  FIRMAID as FirmaId,
-  ADI as Adi,
-  YETKILIADI as YetkiliAdi,
-  ADRESI1 as Adres1,
-  ADRESI2 as Adres2,
-  ADRESI3 as Adres3,
-  SEMT as Semt,
-  SEHIR as Sehir,
-  VERGIDAIRESI as VergiDairesi,
-  VERGIHESAPNO as VergiHesapNo,
-  TELEFON1 as Telefon1,
-  TELEFON2 as Telefon2,
-  FAX as Fax,
-  EMAIL as Email,
-  NOTU as Notu
-FROM FIRMA
-WHERE FIRMAID = @firmaId";
+            SELECT
+              FIRMAID as FirmaId,
+              ADI as Adi,
+              YETKILIADI as YetkiliAdi,
+              ADRESI1 as Adres1,
+              ADRESI2 as Adres2,
+              ADRESI3 as Adres3,
+              SEMT as Semt,
+              SEHIR as Sehir,
+              VERGIDAIRESI as VergiDairesi,
+              VERGIHESAPNO as VergiHesapNo,
+              TELEFON1 as Telefon1,
+              TELEFON2 as Telefon2,
+              FAX as Fax,
+              EMAIL as Email,
+              NOTU as Notu
+            FROM FIRMA
+            WHERE FIRMAID = @firmaId";
 
         await using var conn = _db.Create();
         return await conn.QuerySingleOrDefaultAsync<FirmaDto>(sql, new { firmaId });
@@ -99,24 +99,24 @@ RETURNING FIRMAID;
     public async Task<bool> UpdateAsync(int firmaId, FirmaUpdateRequest req, int userId)
     {
         const string sql = @"
-UPDATE FIRMA SET
-  ADI = @Adi,
-  YETKILIADI = @YetkiliAdi,
-  ADRESI1 = @Adres1,
-  ADRESI2 = @Adres2,
-  ADRESI3 = @Adres3,
-  SEMT = @Semt,
-  SEHIR = @Sehir,
-  VERGIDAIRESI = @VergiDairesi,
-  VERGIHESAPNO = @VergiHesapNo,
-  TELEFON1 = @Telefon1,
-  TELEFON2 = @Telefon2,
-  FAX = @Fax,
-  EMAIL = @Email,
-  NOTU = @Notu,
-  DEGISIMTARIHI = CURRENT_TIMESTAMP,
-  KULLANICIID = @UserId
-WHERE FIRMAID = @FirmaId;";
+            UPDATE FIRMA SET
+              ADI = @Adi,
+              YETKILIADI = @YetkiliAdi,
+              ADRESI1 = @Adres1,
+              ADRESI2 = @Adres2,
+              ADRESI3 = @Adres3,
+              SEMT = @Semt,
+              SEHIR = @Sehir,
+              VERGIDAIRESI = @VergiDairesi,
+              VERGIHESAPNO = @VergiHesapNo,
+              TELEFON1 = @Telefon1,
+              TELEFON2 = @Telefon2,
+              FAX = @Fax,
+              EMAIL = @Email,
+              NOTU = @Notu,
+              DEGISIMTARIHI = CURRENT_TIMESTAMP,
+              KULLANICIID = @UserId
+            WHERE FIRMAID = @FirmaId;";
 
         await using var conn = _db.Create();
         var affected = await conn.ExecuteAsync(sql, new
@@ -144,7 +144,6 @@ WHERE FIRMAID = @FirmaId;";
 
     public async Task<bool> DeleteAsync(int firmaId)
     {
-        // Eğer FK varsa önce projeler/modüller engel olur. İstersen soft delete yaparız.
         const string sql = @"DELETE FROM FIRMA WHERE FIRMAID = @firmaId";
         await using var conn = _db.Create();
         var affected = await conn.ExecuteAsync(sql, new { firmaId });

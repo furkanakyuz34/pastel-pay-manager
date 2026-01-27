@@ -21,7 +21,6 @@ public class PaynetClient
         _logger = logger;
     }
 
-    // 🔥 Tek Generic Core
     public async Task<TRes> PostAsync<TReq, TRes>(
         string path,
         TReq body,

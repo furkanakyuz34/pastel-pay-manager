@@ -10,7 +10,7 @@ namespace EgemenLisansYonetimiBackend.Api.Features.Plan;
 
 public sealed record PlanRow(int PlanId, string Adi, int PesinatOrani, int AbonelikHesaplamaKatsayisi);
 
-// Request DTOs for Create / Update
+
 public sealed record CreatePlanRequest(string Adi, int PesinatOrani, int AbonelikHesaplamaKatsayisi);
 public sealed record UpdatePlanRequest(int PlanId, string Adi, int PesinatOrani, int AbonelikHesaplamaKatsayisi);
 
@@ -69,10 +69,10 @@ ORDER BY ADI;
         var corrId = CorrelationIdMiddleware.Get(HttpContext);
 
         const string sql = @"
-INSERT INTO ""PLAN"" (ADI, PesinatOrani, AbonelikHesaplamaKatsayisi)
-VALUES (@Adi, @PesinatOrani, @AbonelikHesaplamaKatsayisi)
-RETURNING PLANID;
-";
+            INSERT INTO ""PLAN"" (ADI, PesinatOrani, AbonelikHesaplamaKatsayisi)
+            VALUES (@Adi, @PesinatOrani, @AbonelikHesaplamaKatsayisi)
+            RETURNING PLANID;
+            ";
 
         try
         {
@@ -108,12 +108,12 @@ RETURNING PLANID;
             return BadRequest(ApiResponse<object>.Fail("INVALID_REQUEST", "Route PlanId and body PlanId must match.", "ID uyuşmuyor", traceId));
 
         const string sql = @"
-UPDATE ""PLAN""
-SET ADI = @Adi,
-    PesinatOrani = @PesinatOrani,
-    AbonelikHesaplamaKatsayisi = @AbonelikHesaplamaKatsayisi
-WHERE PLANID = @PlanId;
-";
+            UPDATE ""PLAN""
+            SET ADI = @Adi,
+                PesinatOrani = @PesinatOrani,
+                AbonelikHesaplamaKatsayisi = @AbonelikHesaplamaKatsayisi
+            WHERE PLANID = @PlanId;
+            ";
 
         try
         {
